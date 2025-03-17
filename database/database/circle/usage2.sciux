@@ -1,0 +1,8 @@
+```sciux
+<canvas :width="200" :height="300" :origin="[0, 300]">
+  <plane :x="0" :y="0" :domain="[0, 10]" :range="[0, 12]">
+    <parametric :expr="(t) => [Math.cos(t) - 5, Math.sin(t) - 7]"/>
+    <dot label="(5, 7)" :x="5" :y="7" />
+  </plane>
+</canvas>
+```

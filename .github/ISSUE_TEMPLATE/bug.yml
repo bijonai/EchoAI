@@ -1,0 +1,50 @@
+name: Bug Report
+description: Report an issue or unexpected behavior in EchoAI
+title: "[Bug] "
+labels: [bug]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🐞 Thanks for reporting a bug in **EchoAI**, maintained by **BijonAI (https://github.com/bijonai)**.  
+        Please be respectful and provide as much detail as possible to help us resolve the issue quickly.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Bug Description
+      description: Describe what the bug is and what you expected to happen.
+      placeholder: When I try to ..., I get an error...
+    validations:
+      required: true
+
+  - type: textarea
+    id: steps
+    attributes:
+      label: Steps to Reproduce
+      description: Please provide a clear list of steps to reproduce the issue.
+      placeholder: |
+        1. Go to '...'
+        2. Click on '...'
+        3. See the error
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment Details
+      description: OS, browser (if applicable), EchoAI version, etc.
+      placeholder: OS: macOS 14.1, Browser: Chrome 122, EchoAI v1.2.0
+    validations:
+      required: false
+
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or Logs
+      description: If applicable, add screenshots or logs to help explain your problem.
+      placeholder: Drag and drop images, paste logs, etc.
+    validations:
+      required: false

@@ -1,0 +1,22 @@
+```sciux
+<canvas :width="300" :height="200" :origin="[150, 200]">
+  <plane
+    :x="0" :y="0"
+    :domain="[-5, 5]" :range="[0, 9]"
+    :division="20"  
+  >
+    <parametric :expr="(t) => [Math.cos(t) - 1, Math.sin(t) - 6]"/>
+    <dot :x="-3" :y="8" label="A(-3, 8)" as="A" />
+    <dot :x="5" :y="4" label="B(5, 4)" as="B" />
+    <line :from="A" :to="B" />
+    <dot :x="middle(A, B)" label="(1, 6)"/>
+  </plane>
+</canvas>
+```
+
+explanation:
+- Set the coordinate system division to 20 to fit the coordinate size when the canvas size is 300x200 and the origin is at (150, 200)
+- Use parametric equations to represent a circle
+- Define points A and B
+- Connect points A and B
+- Use the `middle` function to calculate the midpoint of points A and B

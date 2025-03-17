@@ -1,0 +1,14 @@
+```sciux
+<tex>
+  \begin{array}{r}
+  2x^2+3x-4\phantom{-16x} \\
+  x-4\overline{)2x^3-5x^2-16x+10} \\
+  \underline{2x^3-8x^2\phantom{-16x+10}} \\
+  3x^2-16x\phantom{+10} \\
+  \underline{3x^2-12x\phantom{+10}} \\
+  -4x+10 \\
+  \underline{-4x+16} \\
+  -6
+  \end{array}
+</tex>
+```

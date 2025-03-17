@@ -1,0 +1,24 @@
+```sciux
+<canvas :width="200" :height="300" :origin="[100, 0]">
+  <let :division="20" :r="2" :R="6" />
+  <angle :from="120" :to="60" :start-side="R * division" :end-side="R * division" end-side-value="6cm">
+    <bounding/>
+    <origin as="O">O</origin>
+    <start-point as="A">A</start-point>
+    <end-point as="B">B</end-point>
+  </angle>
+  <line :from="O" :to="division * R" type="dashed">
+    <end-point as="T">T</end-point>
+  </line>
+  <dot :x="0" :y="T[1] - r * division" :label="C" as="C"/>
+  <circle :x="C[0]" :y="C[1]" :r="r * division" />
+  <line :from="C" :to="normal(O, B, C)" />
+</canvas>
+```
+explanation:
+- Let the original point move to the center of the width.
+- Define the division of the unit, in there 1 unit = 20 px
+- Define the radius of the large sector R and the radius of the full circle in the sector r.
+- Save positions of O, A, B
+- Line OT divides the angle into two same parts.
+- Use the util `normal` to calculate the position of E to make CE perpendicular to OB.

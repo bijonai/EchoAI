@@ -1,0 +1,38 @@
+name: Feature Request
+description: Suggest a new feature or improvement for EchoAI
+title: "[Feature] "
+labels: [enhancement]
+assignees: []
+body:
+  - type: markdown
+    attributes:
+      value: |
+        🙋 Thank you for taking the time to suggest a feature for **EchoAI**, by **BijonAI (https://github.com/bijonai)**.  
+        Please be polite and clear in your explanation so we can understand your needs better.
+
+  - type: textarea
+    id: description
+    attributes:
+      label: Feature Description
+      description: Clearly describe the feature or improvement you'd like to suggest.
+      placeholder: I would like EchoAI to support...
+    validations:
+      required: true
+
+  - type: textarea
+    id: expected-behavior
+    attributes:
+      label: Expected Behavior
+      description: What do you expect to happen if this feature is implemented?
+      placeholder: When this feature is added, I expect...
+    validations:
+      required: false
+
+  - type: textarea
+    id: context
+    attributes:
+      label: Additional Context
+      description: Add any screenshots, diagrams, or links that help explain your idea.
+      placeholder: Links, screenshots, diagrams, etc.
+    validations:
+      required: false

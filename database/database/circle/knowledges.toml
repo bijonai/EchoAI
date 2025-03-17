@@ -1,0 +1,5 @@
+name = "circle"
+
+[[usages]]
+description = "Given that A(-3, 8) and B(5, 4), line AB is a diameter of the circle, draw the center of the circle C(1, 6) on the canvas."
+usage = "./usage1.sciux"
