@@ -1,0 +1,15 @@
+<!-- TODO: black part of the application of component <figure> -->
+
+```sciux
+<canvas :width="300" :height="300" :origin="[150, 150]">
+  <let :r="120"/>
+  <circle :x="0" :y="0" :r="r" />
+  <angle :x="0" :y="0" :from="80" :to="-40" :start-side="r" :end-side="r">
+    <arc value="\theta" />
+    <origin>O</origin>
+    <start-point as="Q">Q</start-point>
+    <end-point as="P">P</end-point>
+  </angle>
+  <line :from="Q" :to="P" />
+</canvas>
+```

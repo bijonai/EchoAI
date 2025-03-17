@@ -1,0 +1,16 @@
+```sciux
+<math type="align">
+  <line>
+    <text>(3x + 2)(x - 5)(x + 7)</text>
+  </line>
+  <line>
+    <text>= (3x + 2)(x^2 + 2x - 35)</text>
+  </line>
+  <line>
+    <text>= 3x^3 + 6x^2 - 105x + 2x^2 + 4x - 70</text>
+  </line>
+  <line>
+    <text>= 3x^3 + 8x^2 - 101x - 70</text>
+  </line>
+</math>
+```

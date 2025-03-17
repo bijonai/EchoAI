@@ -1,0 +1,19 @@
+{
+  "name": "@echoai/monorepo",
+  "private": true,
+  "scripts": {
+    "db:init": "pnpm --filter @echoai/server run init",
+    "knowledge:init": "cd database && python3 scripts/api/document.py && python3 scripts/qdrant/main.py",
+    "compose:dev": "pnpm run --parallel --filter=./packages/{server,web} dev"
+  },
+  "author": "BijonAI Team",
+  "license": "MIT",
+  "packageManager": "pnpm@10.8.1",
+  "dependencies": {
+    "@logto/next": "^4.2.3",
+    "tsup": "^8.5.0"
+  },
+  "devDependencies": {
+    "drizzle-orm": "^0.42.0"
+  }
+}
