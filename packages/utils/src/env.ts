@@ -5,9 +5,11 @@ dotenv.config({
 })
 
 // Logto
-export const LOGTO_APP_ID = process.env.LOGTO_APP_ID!
 export const LOGTO_ENDPOINT = process.env.LOGTO_ENDPOINT!
+export const LOGTO_APP_ID = process.env.LOGTO_APP_ID!;
 export const LOGTO_APP_SECRET = process.env.LOGTO_APP_SECRET!
+export const LOGTO_BASE_URL = process.env.LOGTO_BASE_URL!;
+export const LOGTO_COOKIE_SECRET = process.env.LOGTO_COOKIE_SECRET!;
 
 // Postgres
 export const DATABASE_URL = process.env.DATABASE_URL!

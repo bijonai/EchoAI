@@ -10,6 +10,7 @@
   "license": "MIT",
   "packageManager": "pnpm@10.8.1",
   "dependencies": {
+    "@logto/next": "^4.2.3",
     "sciux-laplace": "0.0.1-alpha.4",
     "tsup": "^8.4.0"
   },
