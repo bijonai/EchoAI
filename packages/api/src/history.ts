@@ -7,12 +7,12 @@ export type HistoryResponse = {
 
 export default async function fetchHistory(token?: string): Promise<HistoryResponse> {
   const response = await fetch(`${API_URL}/chat/history`, {
-    method: 'GET',
+    method: "GET",
     headers: {
       Authorization: `Bearer ${token}`,
-      'Content-Type': 'application/json'
-    }
-  })
+      "Content-Type": "application/json",
+    },
+  });
 
   return response.json() as Promise<HistoryResponse>
 }

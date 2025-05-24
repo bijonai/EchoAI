@@ -3,44 +3,33 @@ import { table as chats } from "../../../db/chats";
 import db from "../../../db";
 import { DesignerStep, startDesignerWorkflow, StepBranch } from "@echoai/workflow/designer";
 import { ChatCompletionMessageParam } from "openai/resources.mjs";
-import logto from "../../utils/logto";
 import { UNAUTHORIZED_MODE, UNAUTHORIZED_MODE_USER_ID } from "@echoai/utils";
 export interface DisplayedMessage {
-  role: 'user' | 'speaker' | 'processor'
-  content: string
+  role: "user" | "speaker" | "processor";
+  content: string;
 }
 
 export interface DesignerRequestBody {
   chat_id: string;
-  prompt: string
-  refs?: string
-  step?: string
-  next_step?: string
-  model?: string
+  prompt: string;
+  refs?: string;
+  step?: string;
+  next_step?: string;
+  model?: string;
 }
 
 export interface DesignerResponse {
-  steps: DesignerStep[]
-  branches: StepBranch[]
-  displayed_messages: DisplayedMessage[]
+  steps: DesignerStep[];
+  branches: StepBranch[];
+  displayed_messages: DisplayedMessage[];
 }
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<DesignerRequestBody>(event);
-  const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
 
-  if (!token && UNAUTHORIZED_MODE !== "true") {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    });
-  }
+  console.log("next", body.next_step);
 
-  console.log('next', body.next_step)
-
-  const userId = UNAUTHORIZED_MODE === "true"
-    ? UNAUTHORIZED_MODE_USER_ID
-    : (await logto.getAccessTokenClaims(token))?.sub;
+  const userId = event["userId"];
 
   try {
     const [designerContext] = await db
@@ -49,22 +38,20 @@ export default defineEventHandler(async (event) => {
         id: chats.id,
         designer_context: chats.designer_context,
         branches: chats.branches,
-        context: chats.context
+        context: chats.context,
       })
       .from(chats)
-      .where(and(
-        eq(chats.uid, userId),
-        eq(chats.id, body.chat_id)
-      ));
+      .where(and(eq(chats.uid, userId), eq(chats.id, body.chat_id)));
 
     if (!designerContext) {
       throw createError({
         statusCode: 404,
-        message: "Chat not found"
+        message: "Chat not found",
       });
     }
 
-    const context = designerContext.designer_context as ChatCompletionMessageParam[];
+    const context =
+      designerContext.designer_context as ChatCompletionMessageParam[];
 
     const steps = await startDesignerWorkflow(context, {
       prompt: body.prompt,
@@ -77,31 +64,32 @@ export default defineEventHandler(async (event) => {
       steps,
       start: body.step,
       end: body.next_step,
-    }
+    };
     const updateValues = {
       designer_context: context,
       context: [
         ...(designerContext.context as any[]),
-        ...(body.prompt ? [{
-          role: 'user' as const,
-          content: body.prompt,
-        }] : []),
+        ...(body.prompt
+          ? [
+              {
+                role: "user" as const,
+                content: body.prompt,
+              },
+            ]
+          : []),
         {
-          role: 'processor' as const,
-          content: 'Designer',
-        }
+          role: "processor" as const,
+          content: "Designer",
+        },
       ],
-      branches: [
-        ...(designerContext.branches as StepBranch[]),
-        latestBranch,
-      ],
-    }
-    runTask('save-context', {
+      branches: [...(designerContext.branches as StepBranch[]), latestBranch],
+    };
+    runTask("save-context", {
       payload: {
         chat_id: body.chat_id,
-        values: updateValues
-      }
-    })
+        values: updateValues,
+      },
+    });
 
     return {
       steps,
@@ -112,7 +100,7 @@ export default defineEventHandler(async (event) => {
     console.error(error);
     throw createError({
       statusCode: 500,
-      message: `Internal Server Error: ${error.message}`
+      message: `Internal Server Error: ${error.message}`,
     });
   }
 });

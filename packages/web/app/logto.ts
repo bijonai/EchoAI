@@ -14,5 +14,6 @@ export const logtoConfig: LogtoNextConfig = {
   baseUrl: LOGTO_BASE_URL,
   cookieSecret: LOGTO_COOKIE_SECRET,
   cookieSecure: process.env.NODE_ENV === "production",
-  scopes: [UserScope.Email],
+  scopes: [UserScope.Email, "user"],
+  resources: ["http://localhost:3322/api"],
 };

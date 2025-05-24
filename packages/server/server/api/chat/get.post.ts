@@ -3,43 +3,42 @@ import { table as chats } from "../../../db/chats";
 import db from "../../../db";
 import { DesignerStep, StepBranch } from "@echoai/workflow/designer";
 import { ChatCompletionMessageParam } from "openai/resources.mjs";
-import logto from "../../utils/logto";
 import { UNAUTHORIZED_MODE, UNAUTHORIZED_MODE_USER_ID } from "@echoai/utils";
 
-export type Message = ChatCompletionMessageParam
-export type Context = Message[]
+export type Message = ChatCompletionMessageParam;
+export type Context = Message[];
 export interface DisplayedMessage {
-  role: 'user' | 'speaker' | 'processor'
-  content: string
+  role: "user" | "speaker" | "processor";
+  content: string;
 }
 
 export interface DesignerResult {
-  prompt: string
-  refs?: string
-  step?: string
-  model?: string
-  result: DesignerStep[]
+  prompt: string;
+  refs?: string;
+  step?: string;
+  model?: string;
+  result: DesignerStep[];
 }
 
 export interface SpeakerResult {
-  step: string
-  problem: string
-  knowledge: string
-  explanation: string
-  conclusion: string
-  prompt?: string
-  model?: string
-  result: string
+  step: string;
+  problem: string;
+  knowledge: string;
+  explanation: string;
+  conclusion: string;
+  prompt?: string;
+  model?: string;
+  result: string;
 }
 
 export interface LayoutResult {
-  step: string
-  problem: string
-  knowledge: string
-  explanation: string
-  conclusion: string
-  model?: string
-  result: string
+  step: string;
+  problem: string;
+  knowledge: string;
+  explanation: string;
+  conclusion: string;
+  model?: string;
+  result: string;
 }
 
 export interface ChalkResult {
@@ -47,37 +46,27 @@ export interface ChalkResult {
 }
 
 export interface GetChatRequestBody {
-  chat_id: string
+  chat_id: string;
 }
 
 export interface GetChatResponse {
-  chat_id: string
-  designer_context: Context
-  designer_results: DesignerResult[]
-  speaker_context: Context
-  speaker_results: SpeakerResult[]
-  layout_context: Context
-  layout_results: LayoutResult[]
-  chalk_context: Context
-  chalk_results: ChalkResult[]
-  branches: StepBranch[]
-  context: DisplayedMessage[]
+  chat_id: string;
+  designer_context: Context;
+  designer_results: DesignerResult[];
+  speaker_context: Context;
+  speaker_results: SpeakerResult[];
+  layout_context: Context;
+  layout_results: LayoutResult[];
+  chalk_context: Context;
+  chalk_results: ChalkResult[];
+  branches: StepBranch[];
+  context: DisplayedMessage[];
 }
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<GetChatRequestBody>(event);
-  const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
 
-  if (!token && UNAUTHORIZED_MODE !== "true") {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    });
-  }
-
-  const userId = UNAUTHORIZED_MODE === "true"
-    ? UNAUTHORIZED_MODE_USER_ID
-    : (await logto.getAccessTokenClaims(token))?.sub;
+  const userId = event["userId"];
 
   try {
     const [chat] = await db
@@ -92,18 +81,15 @@ export default defineEventHandler(async (event) => {
         chalk_context: chats.chalk_context,
         chalk_results: chats.chalk_results,
         branches: chats.branches,
-        context: chats.context
+        context: chats.context,
       })
       .from(chats)
-      .where(and(
-        eq(chats.uid, userId),
-        eq(chats.id, body.chat_id)
-      ));
+      .where(and(eq(chats.uid, userId), eq(chats.id, body.chat_id)));
 
     if (!chat) {
       throw createError({
         statusCode: 404,
-        message: "Chat not found"
+        message: "Chat not found",
       });
     }
 
@@ -124,7 +110,7 @@ export default defineEventHandler(async (event) => {
     console.error(error);
     throw createError({
       statusCode: 500,
-      message: `Internal Server Error: ${error.message}`
+      message: `Internal Server Error: ${error.message}`,
     });
   }
 });

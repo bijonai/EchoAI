@@ -3,39 +3,28 @@ import { table as chats } from "../../../db/chats";
 import db from "../../../db";
 import { ChatCompletionMessageParam } from "openai/resources.mjs";
 import { startLayoutWorkflow } from "@echoai/workflow/layout";
-import logto from "../../utils/logto";
 import { UNAUTHORIZED_MODE, UNAUTHORIZED_MODE_USER_ID } from "@echoai/utils";
 
 export interface LayoutRequestBody {
-  chat_id: string
-  prompt: string
-  step: string
-  problem: string
-  knowledge: string
-  explanation: string
-  conclusion: string
+  chat_id: string;
+  prompt: string;
+  step: string;
+  problem: string;
+  knowledge: string;
+  explanation: string;
+  conclusion: string;
 }
 
 export interface LayoutResponse {
-  chat_id: string
-  prompt: string
-  content: string
+  chat_id: string;
+  prompt: string;
+  content: string;
 }
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<LayoutRequestBody>(event);
-  const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
 
-  if (!token && UNAUTHORIZED_MODE !== "true") {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    });
-  }
-
-  const userId = UNAUTHORIZED_MODE === "true"
-    ? UNAUTHORIZED_MODE_USER_ID
-    : (await logto.getAccessTokenClaims(token))?.sub;
+  const userId = event["userId"];
 
   try {
     const [layoutContext] = await db
@@ -45,61 +34,60 @@ export default defineEventHandler(async (event) => {
         layout_context: chats.layout_context,
         layout_results: chats.layout_results,
         context: chats.context,
-        branches: chats.branches
+        branches: chats.branches,
       })
       .from(chats)
-      .where(and(
-        eq(chats.uid, userId),
-        eq(chats.id, body.chat_id)
-      ));
+      .where(and(eq(chats.uid, userId), eq(chats.id, body.chat_id)));
 
     if (!layoutContext) {
       throw createError({
         statusCode: 404,
-        message: "Chat not found"
+        message: "Chat not found",
       });
     }
 
-    const context = layoutContext.layout_context as ChatCompletionMessageParam[];
+    const context =
+      layoutContext.layout_context as ChatCompletionMessageParam[];
 
     const layoutResult = await startLayoutWorkflow(context, {
       ...body,
+      interaction: "",
     });
 
     const updateValues = {
       layout_context: context,
       layout_results: [
-        ...(layoutContext.layout_results as any[] || []),
+        ...((layoutContext.layout_results as any[]) || []),
         {
           ...body,
-          result: layoutResult
-        }
+          result: layoutResult,
+        },
       ],
       context: [
         ...(layoutContext.context as any[]),
         {
-          role: 'processor' as const,
-          content: 'Layout',
-        }
-      ]
-    }
-    runTask('save-context', {
+          role: "processor" as const,
+          content: "Layout",
+        },
+      ],
+    };
+    runTask("save-context", {
       payload: {
         chat_id: body.chat_id,
-        values: updateValues
-      }
-    })
+        values: updateValues,
+      },
+    });
 
     return {
       chat_id: body.chat_id,
       prompt: body.prompt,
-      content: layoutResult
+      content: layoutResult,
     };
   } catch (error) {
     console.error(error);
     throw createError({
       statusCode: 500,
-      message: `Internal Server Error: ${error.message}`
+      message: `Internal Server Error: ${error.message}`,
     });
   }
 });

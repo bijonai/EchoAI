@@ -11,6 +11,9 @@ importers:
       '@logto/next':
         specifier: ^4.2.3
         version: 4.2.3(next@15.2.2(react-dom@19.1.0(react@19.1.0))(react@19.1.0))
+      jose:
+        specifier: ^6.0.11
+        version: 6.0.11
       sciux-laplace:
         specifier: 0.0.1-alpha.4
         version: 0.0.1-alpha.4
@@ -3959,6 +3962,9 @@ packages:
 
   jose@5.10.0:
     resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+
+  jose@6.0.11:
+    resolution: {integrity: sha512-QxG7EaliDARm1O1S8BGakqncGT9s25bKL1WSf6/oa17Tkqwi8D2ZNglqCF+DsYF88/rV66Q/Q2mFAy697E1DUg==}
 
   joycon@3.1.1:
     resolution: {integrity: sha512-34wB/Y7MW7bzjKRjUKTa46I2Z7eV62Rkhva+KkopW7Qvv/OSWBqvkSY7vusOPrNuZcUG3tApvdVgNB8POj3SPw==}
@@ -9762,6 +9768,8 @@ snapshots:
 
   jose@5.10.0: {}
 
+  jose@6.0.11: {}
+
   joycon@3.1.1: {}
 
   js-base64@3.7.7: {}
@@ -11476,7 +11484,7 @@ snapshots:
     dependencies:
       color: 4.2.3
       detect-libc: 2.0.3
-      semver: 7.7.1
+      semver: 7.7.2
     optionalDependencies:
       '@img/sharp-darwin-arm64': 0.33.5
       '@img/sharp-darwin-x64': 0.33.5
@@ -11898,7 +11906,7 @@ snapshots:
 
   tsx@4.19.3:
     dependencies:
-      esbuild: 0.25.2
+      esbuild: 0.25.4
       get-tsconfig: 4.10.0
     optionalDependencies:
       fsevents: 2.3.3

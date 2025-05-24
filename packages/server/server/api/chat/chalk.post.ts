@@ -25,31 +25,14 @@ export interface ChalkResponse {
   content: string;
   operations: Operation[];
   delta?: {
-    operation: Operation
-  }
+    operation: Operation;
+  };
 }
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<ChalkRequestBody>(event)
-  const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
+  const body = await readBody<ChalkRequestBody>(event);
 
-  if (!token && UNAUTHORIZED_MODE !== "true") {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    });
-  }
-
-  const userId = UNAUTHORIZED_MODE === "true"
-    ? UNAUTHORIZED_MODE_USER_ID
-    : (await logto.getAccessTokenClaims(token))?.sub;
-
-  if (!userId) {
-    throw createError({
-      statusCode: 401,
-      message: "Unauthorized"
-    });
-  }
+  const userId = event["userId"];
 
   try {
     const [chat] = await db
@@ -60,15 +43,12 @@ export default defineEventHandler(async (event) => {
         chalk_results: chats.chalk_results,
       })
       .from(chats)
-      .where(and(
-        eq(chats.uid, userId),
-        eq(chats.id, body.chat_id)
-      ));
+      .where(and(eq(chats.uid, userId), eq(chats.id, body.chat_id)));
 
     if (!chat) {
       throw createError({
         statusCode: 404,
-        message: "Chat not found"
+        message: "Chat not found",
       });
     }
 
@@ -76,33 +56,37 @@ export default defineEventHandler(async (event) => {
     const results = chat.chalk_results as ChalkResult[];
 
     if (body.stream) {
-      setResponseHeader(event, 'Content-Type', 'text/event-stream');
-      setResponseHeader(event, 'Cache-Control', 'no-cache');
-      setResponseHeader(event, 'Connection', 'keep-alive');
+      setResponseHeader(event, "Content-Type", "text/event-stream");
+      setResponseHeader(event, "Cache-Control", "no-cache");
+      setResponseHeader(event, "Connection", "keep-alive");
 
-      return await startChalkWorkflow(context, {
-        prompt: body.prompt,
-        components: body.components,
-        document: body.document,
-        pageId: body.page_id,
-        model: body.model,
-        stream: true,
-      }, (operations) => {
-        results.push({
-          input: body.prompt,
+      return await startChalkWorkflow(
+        context,
+        {
+          prompt: body.prompt,
           components: body.components,
-          output: operations as unknown as Operation[],
-        })
-        runTask('save-context', {
-          payload: {
-            chat_id: body.chat_id,
-            values: {
-              chalk_context: context,
-              chalk_results: results,
-            }
-          }
-        })
-      });
+          document: body.document,
+          pageId: body.page_id,
+          model: body.model,
+          stream: true,
+        },
+        (operations) => {
+          results.push({
+            input: body.prompt,
+            components: body.components,
+            output: operations as unknown as Operation[],
+          });
+          runTask("save-context", {
+            payload: {
+              chat_id: body.chat_id,
+              values: {
+                chalk_context: context,
+                chalk_results: results,
+              },
+            },
+          });
+        }
+      );
     }
 
     const chalkResult = await startChalkWorkflow(context, {
@@ -117,7 +101,7 @@ export default defineEventHandler(async (event) => {
   } catch (error) {
     throw createError({
       statusCode: 500,
-      message: "Internal server error"
+      message: "Internal server error",
     });
   }
-})
+});
