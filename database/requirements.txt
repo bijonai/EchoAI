@@ -1,8 +1,0 @@
-openai
-qdrant-client
-python-dotenv
-requests
-pyarrow
-pandas
-datasets
-toml

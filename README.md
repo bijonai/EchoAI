@@ -27,8 +27,8 @@ EchoAI is a open-source LLM applied on education with a whiteboard and step-by-s
 |  Frontend  | Backend | Services | Tools | LLM |
 | ---------- | ------- | -------- | ----- | --- |
 | TypeScript | Nitro | Logto | PNPM | DeepSeek |
-|    React   | NodeJs | PostgreSQL | Python | ChatGPT |
-|   NextJs   | Drizzle | Qdrant | | Claude |
+|    VueJs   | NodeJs | PostgreSQL | Python | ChatGPT |
+|   Nuxt   | Drizzle | Qdrant | | Claude |
 | TailwindCSS | Logto Node | | | Qwen |
 | D3 | OpenAI SDK | | | Gemini |
 | Logto SDK | | | | |
