@@ -2,7 +2,7 @@
   <div class="flex relative size-full">
     <div class="flex size-full" ref="boardRef"></div>
     <div class="absolute bottom-0 right-0 m-4">
-      <PageSwitcher :page-id="pageId" :total="whiteboard.getPageCount().toString()" @switch="$emit('switch', $event)" />
+      <PageSwitcher :page-id="pageId" :total="whiteboard.getPageCount()" @switch="$emit('switch', $event)" />
     </div>
   </div>
 </template>
@@ -11,6 +11,7 @@
 import type { Operation } from '~/types';
 import { Whiteboard } from './whiteboard';
 import { renderRoots } from 'sciux';
+import initializeSciux from 'sciux'
 
 const boardRef = ref<HTMLDivElement>()
 const executed = reactive<string[]>([])
@@ -20,6 +21,10 @@ const props = defineProps<{
   pageId: string
   whiteboard: Whiteboard
 }>()
+
+onMounted(() => {
+  initializeSciux()
+})
 
 defineEmits<{
   (e: 'switch', direction: 'previous' | 'next'): void
