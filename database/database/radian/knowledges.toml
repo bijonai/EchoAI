@@ -1,9 +1,0 @@
-name = "radian"
-
-[[usages]]
-description = "A sector OAB value is 90 degrees"
-usage = "./usage1.sciux"
-
-[[usages]]
-description = "The border of a garden pond consists of a straight edge AB of length 2.4m,and a curved part C,as shown in the diagram.The curved part is an arc of a circle,centre Oand radius 2m."
-usage = "./usage2.sciux"

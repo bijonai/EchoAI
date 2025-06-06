@@ -1,9 +1,0 @@
-name = "algebra"
-
-[[usages]]
-description = "A polynomial long division problem.The dividend is 2x^3 - 5x^2 - 16x + 10,and the divisor is x - 4.The final result of the division is 2x^2 + 3x - 4 with a remainder of -6."
-usage = "./usage1.sciux"
-
-[[usages]]
-description = "A expansion of the polynomial expression (3x + 2)(x - 5)(x + 7).The final result is 3x^3 + 8x^2 - 101x - 70."
-usage = "./usage2.sciux"
