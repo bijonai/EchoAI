@@ -41,5 +41,23 @@ export default defineNuxtConfig({
       cookieEncryptionKey: process.env.LOGTO_COOKIE_SECRET,
       postCallbackRedirectUri: process.env.LOGTO_BASE_URL + '/auth/callback'
     }
+  },
+  fonts: {
+    defaults: {
+      weights: [400, 700],
+      fallbacks: {
+        serif: ['Noto Serif SC', 'Noto Serif TC']
+      }
+    },
+    families: [
+      {
+        name: 'Noto Serif SC',
+        provider: 'google'
+      },
+      {
+        name: 'Noto Serif TC',
+        provider: 'google',
+      }
+    ]
   }
 })
