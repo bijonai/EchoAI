@@ -1,20 +1,15 @@
-import { PageSwitch } from './page-switch'
-import { Operation, Position } from './operation'
+import type { PageSwitch } from './page-switch'
+import type { Operation, Position } from './operation'
 
 // ===== 基础类型 =====
 export type Message = {
   role: 'user' | 'speaker' | 'processor';
   content: string;
   step?: string;
+  isLoading?: boolean;
 }
 
 export type Context = Message[]
-
-export interface DisplayedMessage {
-  role: 'user' | 'speaker' | 'processor';
-  content: string;
-  step?: string;
-}
 
 // ===== Designer 相关 =====
 export interface DesignerStep {
@@ -38,12 +33,6 @@ export interface DesignerResult {
   step?: string;
   model?: string;
   result: DesignerStep[];
-}
-
-export interface DesignerResponse {
-  steps: DesignerStep[];
-  branches: StepBranch[];
-  displayed_messages: DisplayedMessage[];
 }
 
 export interface DesignerRequestBody {
@@ -156,5 +145,5 @@ export interface GetChatResponse {
   chalk_context: Context;
   chalk_results: ChalkResult[];
   branches: StepBranch[];
-  context: DisplayedMessage[];
+  context: Context;
 }
