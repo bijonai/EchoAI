@@ -10,6 +10,7 @@
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
+    "@logto/nuxt": "^1.2.5",
     "@nuxt/content": "3.5.1",
     "@nuxt/eslint": "1.4.1",
     "@nuxt/fonts": "0.11.4",

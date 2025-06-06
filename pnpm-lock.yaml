@@ -8,6 +8,9 @@ importers:
 
   .:
     dependencies:
+      '@logto/nuxt':
+        specifier: ^1.2.5
+        version: 1.2.5(magicast@0.3.5)
       '@nuxt/content':
         specifier: 3.5.1
         version: 3.5.1(drizzle-orm@0.44.2(@types/pg@8.15.4)(better-sqlite3@11.10.0)(pg@8.16.0))(magicast@0.3.5)(typescript@5.8.3)
@@ -674,6 +677,18 @@ packages:
   '@kwsites/promise-deferred@1.1.1':
     resolution: {integrity: sha512-GaHYm+c0O9MjZRu0ongGBRbinu8gVAMd2UZjji6jVmqKtZluZnptXGWhz1E8j8D2HJ3f/yMxKAUC0b+57wncIw==}
 
+  '@logto/client@3.1.3':
+    resolution: {integrity: sha512-5vPnl5nOZ4ZGilbMazBqSTnspg08TLG+jyXzv0zWv9dmUf0xNOT0uaD19tCpPh+0WwdeeXKJblrjiyiCQsKBpg==}
+
+  '@logto/js@6.0.0':
+    resolution: {integrity: sha512-YOnK4buIj5r4S/2+eA5zaxSV1kXkMHMpdVJfzWiRT5pzHoCyX4PzOWae8diwGnB7KGKXGVaCirYhlw8LA2ysgQ==}
+
+  '@logto/node@3.1.5':
+    resolution: {integrity: sha512-FRuHr3dw1YJe/JdTIcDlTC+KYvPPopJ5wWL+h+2COpxJ76xsd6QU2L14Y4AMMunlWqnBqpX07sYmJyHXmaLyhw==}
+
+  '@logto/nuxt@1.2.5':
+    resolution: {integrity: sha512-SSeWkU8BwmdHNEJ+NI40GV4g0DtE+fVfdRzfPheeIQHmFFn49zBYFdSHGS6i8hXiaRzHw5Eg0D+gMCuGUxIHjQ==}
+
   '@mapbox/node-pre-gyp@2.0.0':
     resolution: {integrity: sha512-llMXd39jtP0HpQLVI37Bf1m2ADlEb35GYSh1SDSLsBhR+5iCxiNGlT31yqbNtVHygHAtMy6dWFERpU2JgufhPg==}
     engines: {node: '>=18'}
@@ -1240,6 +1255,10 @@ packages:
 
   '@shikijs/vscode-textmate@10.0.2':
     resolution: {integrity: sha512-83yeghZ2xxin3Nj8z1NMd/NCuca+gsYXswywDy5bHvwlWL8tpTQmzGeUuHd9FC3E/SBEMvzJRwWEOz5gGes9Qg==}
+
+  '@silverhand/essentials@2.9.2':
+    resolution: {integrity: sha512-bD+82D9Dfa1F5xX1kfdR5ODIoJS41NOxTuHx4shVS5A4/ayEG+ZplpDDjB19fsa7kZXgSgD75R4sUCXjm88x6w==}
+    engines: {node: ^18.12.0 || ^20.9.0 || ^22.0.0, pnpm: ^9.0.0}
 
   '@sindresorhus/is@4.6.0':
     resolution: {integrity: sha512-t09vSN3MdfsyCHoFcTRCH/iUtG7OJ0CsjzB8cjAmKc/va/kIgeDI/TxsigdncE/4be734m0cvIYwNaV4i2XqAw==}
@@ -1935,6 +1954,14 @@ packages:
   callsites@3.1.0:
     resolution: {integrity: sha512-P8BjAsXvZS+VIDUI11hHCQEv74YT67YUi5JJFNWIqL235sBmjX4+qx9Muvls5ivyNENctx46xQLQ3aTuE7ssaQ==}
     engines: {node: '>=6'}
+
+  camelcase-keys@9.1.3:
+    resolution: {integrity: sha512-Rircqi9ch8AnZscQcsA1C47NFdaO3wukpmIRzYcDOrmvgt78hM/sj5pZhZNec2NM12uk5vTwRHZ4anGcrC4ZTg==}
+    engines: {node: '>=16'}
+
+  camelcase@8.0.0:
+    resolution: {integrity: sha512-8WB3Jcas3swSvjIeA2yvCJ+Miyz5l1ZmB6HFb9R1317dt9LCQoswg/BGrmAmkWVEszSrrg4RwmO46qIm2OEnSA==}
+    engines: {node: '>=16'}
 
   caniuse-api@3.0.0:
     resolution: {integrity: sha512-bsTwuIg/BZZK/vreVTYYbSWoe2F+71P7K5QGEX+pT250DZbfU1MQ5prOKpPR+LL6uWKK3KMwMCAS74QB3Um1uw==}
@@ -3289,8 +3316,14 @@ packages:
     resolution: {integrity: sha512-rg9zJN+G4n2nfJl5MW3BMygZX56zKPNVEYYqq7adpmMh4Jn2QNEwhvQlFy6jPVdcod7txZtKHWnyZiA3a0zP7A==}
     hasBin: true
 
+  jose@5.10.0:
+    resolution: {integrity: sha512-s+3Al/p9g32Iq+oqXxkW//7jk2Vig6FF1CFqzVXoTUXt2qz89YWbL+OwS17NFYEvxC35n0FKeGO2LGYSxeM2Gg==}
+
   jose@6.0.11:
     resolution: {integrity: sha512-QxG7EaliDARm1O1S8BGakqncGT9s25bKL1WSf6/oa17Tkqwi8D2ZNglqCF+DsYF88/rV66Q/Q2mFAy697E1DUg==}
+
+  js-base64@3.7.7:
+    resolution: {integrity: sha512-7rCnleh0z2CkXhH67J8K1Ytz0b2Y+yxTPL+/KOJoa20hfnVQ/3/T6W/KflYI4bRHRagNeXeU2bkNGI3v1oS/lw==}
 
   js-tokens@4.0.0:
     resolution: {integrity: sha512-RdJUflcE3cUzKiMqQgsCu06FPu9UdIJO0beYbPhHN4k6apgJtifcoCtT9bcxOpYBtpD2kCM6Sbzg4CausW/PKQ==}
@@ -3522,6 +3555,10 @@ packages:
 
   magicast@0.3.5:
     resolution: {integrity: sha512-L0WhttDl+2BOsybvEOLK7fW3UA0OQ0IQ2d6Zl2x/a6vVRs3bAY0ECOSHHeL5jD+SbOpOCUEi0y1DgHEn9Qn1AQ==}
+
+  map-obj@5.0.0:
+    resolution: {integrity: sha512-2L3MIgJynYrZ3TYMriLDLWocz15okFakV6J12HXvMXDHui2x/zgChzg1u9mFFGbbGWE+GsLpQByt4POb9Or+uA==}
+    engines: {node: ^12.20.0 || ^14.13.1 || >=16.0.0}
 
   markdown-table@3.0.4:
     resolution: {integrity: sha512-wiYz4+JrLyb/DqW2hkFJxP7Vd7JuTDm77fvbM8VfEQdmSMqcImWeeRbHwZjBjIFki/VaMK2BhFi7oUUZeM5bqw==}
@@ -4398,6 +4435,10 @@ packages:
 
   queue-microtask@1.2.3:
     resolution: {integrity: sha512-NuaNSa6flKT5JaSYQzJok04JzTL1CA6aGhv5rfLW3PgqA+M2ChpZQnAC8h8i4ZFkBS8X5RqkDBHA7r4hej3K9A==}
+
+  quick-lru@6.1.2:
+    resolution: {integrity: sha512-AAFUA5O1d83pIHEhJwWCq/RQcRukCkn/NSm2QsTEMle5f2hP0ChI2+3Xb051PZCkLryI/Ir1MVKviT2FIloaTQ==}
+    engines: {node: '>=12'}
 
   quote-unquote@1.0.0:
     resolution: {integrity: sha512-twwRO/ilhlG/FIgYeKGFqyHhoEhqgnKVkcmqMKi2r524gz3ZbDTcyFt38E9xjJI2vT+KbRNHVbnJ/e0I25Azwg==}
@@ -6055,6 +6096,33 @@ snapshots:
 
   '@kwsites/promise-deferred@1.1.1': {}
 
+  '@logto/client@3.1.3':
+    dependencies:
+      '@logto/js': 6.0.0
+      '@silverhand/essentials': 2.9.2
+      camelcase-keys: 9.1.3
+      jose: 5.10.0
+
+  '@logto/js@6.0.0':
+    dependencies:
+      '@silverhand/essentials': 2.9.2
+      camelcase-keys: 9.1.3
+
+  '@logto/node@3.1.5':
+    dependencies:
+      '@logto/client': 3.1.3
+      '@silverhand/essentials': 2.9.2
+      js-base64: 3.7.7
+
+  '@logto/nuxt@1.2.5(magicast@0.3.5)':
+    dependencies:
+      '@logto/node': 3.1.5
+      '@nuxt/kit': 3.17.5(magicast@0.3.5)
+      '@silverhand/essentials': 2.9.2
+      defu: 6.1.4
+    transitivePeerDependencies:
+      - magicast
+
   '@mapbox/node-pre-gyp@2.0.0':
     dependencies:
       consola: 3.4.2
@@ -6967,6 +7035,8 @@ snapshots:
 
   '@shikijs/vscode-textmate@10.0.2': {}
 
+  '@silverhand/essentials@2.9.2': {}
+
   '@sindresorhus/is@4.6.0': {}
 
   '@sindresorhus/is@7.0.2': {}
@@ -7725,6 +7795,15 @@ snapshots:
   callsite@1.0.0: {}
 
   callsites@3.1.0: {}
+
+  camelcase-keys@9.1.3:
+    dependencies:
+      camelcase: 8.0.0
+      map-obj: 5.0.0
+      quick-lru: 6.1.2
+      type-fest: 4.41.0
+
+  camelcase@8.0.0: {}
 
   caniuse-api@3.0.0:
     dependencies:
@@ -9155,7 +9234,11 @@ snapshots:
 
   jiti@2.4.2: {}
 
+  jose@5.10.0: {}
+
   jose@6.0.11: {}
+
+  js-base64@3.7.7: {}
 
   js-tokens@4.0.0: {}
 
@@ -9366,6 +9449,8 @@ snapshots:
       '@babel/parser': 7.27.5
       '@babel/types': 7.27.6
       source-map-js: 1.2.1
+
+  map-obj@5.0.0: {}
 
   markdown-table@3.0.4: {}
 
@@ -10590,6 +10675,8 @@ snapshots:
   quansync@0.2.10: {}
 
   queue-microtask@1.2.3: {}
+
+  quick-lru@6.1.2: {}
 
   quote-unquote@1.0.0: {}
 
