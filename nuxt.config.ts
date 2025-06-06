@@ -1,4 +1,5 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { UserScope } from '@logto/nuxt'
 import tailwindcss from '@tailwindcss/vite'
 
 export default defineNuxtConfig({
@@ -18,19 +19,22 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@logto/nuxt'
   ],
+  logto: {
+    scopes: [UserScope.Email],
+    pathnames: {
+      signIn: '/auth/signin',
+      signOut: '/auth/signout',
+      callback: '/auth/callback'
+    },
+    debug: true
+  },
   runtimeConfig: {
-    public: {
-      logto: {
-        endpoint: process.env.LOGTO_ENDPOINT,
-        appId: process.env.LOGTO_APP_ID,
-        appSecret: process.env.LOGTO_APP_SECRET,
-        cookieEncryptionKey: process.env.LOGTO_COOKIE_ENCRYPTION_KEY,
-        pathnames: {
-          signIn: '/auth/signin',
-          signOut: '/auth/signout',
-          callback: '/auth/callback'
-        }
-      }
+    logto: {
+      endpoint: process.env.LOGTO_ENDPOINT,
+      appId: process.env.LOGTO_APP_ID,
+      appSecret: process.env.LOGTO_APP_SECRET,
+      cookieEncryptionKey: process.env.LOGTO_COOKIE_SECRET,
+      postCallbackRedirectUri: process.env.LOGTO_BASE_URL + '/auth/callback'
     }
   }
 })

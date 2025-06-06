@@ -13,6 +13,7 @@
         <button class="p-2 rounded-lg hover:bg-gray-100 transition-colors">
           <Icon name="heroicons:cog-6-tooth" class="w-10 h-10 text-gray-700" />
         </button>
+        <UserAvatar />
       </div>
     </div>
     <HistoryPanel v-show="isHistoryOpen" :is-open="isHistoryOpen" @close="isHistoryOpen = false" />
@@ -20,6 +21,7 @@
 </template>
 
 <script setup lang="ts">
+import UserAvatar from './UserAvatar.vue'
 const isHistoryOpen = ref(false)
 </script>
 

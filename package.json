@@ -21,6 +21,7 @@
     "@types/d3": "^7.4.3",
     "@types/pg": "^8.15.4",
     "better-sqlite3": "^11.10.0",
+    "crypto-js": "^4.2.0",
     "d3": "^7.9.0",
     "dotenv": "^16.5.0",
     "drizzle-kit": "^0.31.1",
@@ -35,5 +36,8 @@
     "vue-markdown-render": "^2.2.1",
     "vue-router": "^4.5.1"
   },
-  "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912"
+  "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2"
+  }
 }
