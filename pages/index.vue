@@ -17,7 +17,7 @@ function start() {
 <template>
   <div class="flex flex-col w-full h-full pt-48">
     <div class="text-4xl flex flex-row gap-5 self-center font-blod">
-      {{ `Good ${getPeriod()}, let's get started! 尊重` }}
+      {{ `Good ${getPeriod()}, let's get started!` }}
     </div>
     <div class="w-full h-72 px-56 py-10">
       <div class="w-full h-full mx-auto max-w-[900px]">

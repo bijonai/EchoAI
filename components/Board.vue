@@ -9,7 +9,7 @@
 
 <script setup lang="ts">
 import type { Operation } from '~/types';
-import { Whiteboard } from './whiteboard';
+import { Whiteboard } from '@/utils/whiteboard';
 import { renderRoots } from 'sciux';
 import initializeSciux from 'sciux'
 
@@ -69,4 +69,4 @@ effect(() => {
   }
   render(props.pageId)
 })
-</script>
+</script>../utils/whiteboard
