@@ -1,76 +1,240 @@
 import type { Ref } from "vue";
-import type { StepBranch, Context, Operation, DesignerStep } from "~/types";
+import type { StepBranch, Context, Operation, DesignerStep, DesignerResult, LayoutResponse, ChalkResponse } from "~/types";
 
 export const END = Symbol('END')
 
+export const findStep = (stepId: string, branches: StepBranch[]): DesignerStep | null => {
+  for (const branch of branches) {
+    for (const step of branch.steps) {
+      if (step.step.toString() === stepId.toString()) {
+        return step
+      }
+    }
+  }
+  return null
+}
+
+export const findStepNext = (stepId: string, branches: StepBranch[]): DesignerStep | null | typeof END => {
+  for (const branch of branches) {
+    for (let i = 0; i < branch.steps.length; i++) {
+      const step = branch.steps[i]
+      if (step.step.toString() === stepId.toString()) {
+        if (i < branch.steps.length - 1) {
+          return branch.steps[i + 1]
+        } else if (branch.start && branch.end) {
+          return findStep(branch.end, branches)
+        } else {
+          return END
+        }
+      }
+    }
+  }
+  return null
+}
+
+export const processOperations = (
+  operations: Operation[],
+  whiteboard: Whiteboard,
+  pageId: string,
+  operated: string[] = [],
+) => {
+  for (const operation of operations) {
+    if (operated.includes(operation.id)) continue
+    operated.push(operation.id)
+    switch (operation.type) {
+      case 'add-node':
+        whiteboard.addNode(pageId, operation.position, operation.content)
+        break
+      case 'remove-node':
+        whiteboard.removeNode(pageId, operation.position)
+        break
+      case 'set-prop':
+        whiteboard.setProp(pageId, operation.position, operation.attr, operation.value)
+        break
+      case 'set-content':
+        whiteboard.setContent(pageId, operation.position, operation.content)
+        break
+      case 'remove-prop':
+        whiteboard.removeProp(pageId, operation.position, operation.attr)
+        break
+      default:
+        console.error('Unknown operation:', operation)
+    }
+  }
+}
+
 export interface ComposerContext {
-  pageId: Ref<string>
-  operations: Ref<Operation[]>
+  pageId: Ref<number>
   messages: Ref<Context>
-  prompt: Ref<string>
   branches: Ref<StepBranch[]>
   nextAvailablity: Ref<boolean>
 }
 
 export function useComposer({
   pageId,
-  operations,
   messages,
-  prompt,
   branches,
+  nextAvailablity,
 }: ComposerContext) {
-  const findStep = (stepId: string, branches: StepBranch[]): DesignerStep | null => {
-    for (const branch of branches) {
-      for (const step of branch.steps) {
-        if (step.step.toString() === stepId.toString()) {
-          return step
-        }
+  async function designer(
+    chatId: string,
+    prompt: string,
+    step: string,
+    branches: Ref<StepBranch[]>,
+  ) {
+    const { data, error } = await useFetch<DesignerResult>('/api/designer', {
+      method: 'POST',
+      body: {
+        chat_id: chatId,
+        prompt,
+        step,
+        next_step: findStepNext(step, branches.value),
       }
-    }
-    return null
-  }
-
-  const findStepNext = (stepId: string, branches: StepBranch[]): DesignerStep | null | typeof END => {
-    for (const branch of branches) {
-      for (let i = 0; i < branch.steps.length; i++) {
-        const step = branch.steps[i]
-        if (step.step.toString() === stepId.toString()) {
-          if (i < branch.steps.length - 1) {
-            return branch.steps[i + 1]
-          } else if (branch.start && branch.end) {
-            return findStep(branch.end, branches)
-          } else {
-            return END
-          }
-        }
-      }
-    }
-    return null
-  }
-
-  async function designer() {
+    })
+    if (error) return
     // After request, add new branch to tree
-    branches.value.push()
+    const nextStep = findStepNext(step, branches.value)
+    if (nextStep === END) return
+    branches.value.push({
+      steps: data.value?.result!,
+      start: step,
+      end: nextStep?.step.toString(),
+    })
+    return data.value?.result
   }
 
-  async function speaker() {
-    // Process streaming response
-    messages // Change to messages
+  async function speaker(
+    chatId: string,
+    step: string,
+    problem: string,
+    knowledge: string,
+    explanation: string,
+    conclusion: string,
+  ) {
+    const res = await fetch('/api/speaker', {
+      method: 'POST',
+      body: JSON.stringify({
+        chat_id: chatId,
+        step,
+        problem,
+        knowledge,
+        explanation,
+        conclusion,
+      })
+    })
+    const reader = res.body?.getReader()
+    if (!reader) return
+    const decoder = new TextDecoder()
+    messages.value.push({
+      role: 'speaker',
+      content: '',
+      step,
+      isLoading: true,
+    })
+    while (true) {
+      const { done, value } = await reader.read()
+      if (done) break
+      messages.value.at(-1)!.content += decoder.decode(value, { stream: true })
+    }
+    reader.releaseLock()
+    messages.value.at(-1)!.isLoading = false
   }
 
-  async function layout(): Promise<string> {
+  async function layout(
+    chatId: string,
+    prompt: string,
+    step: string,
+    problem: string,
+    knowledge: string,
+    explanation: string,
+    conclusion: string,
+    interaction: string,
+    pageIdWillBeUsed: string,
+  ) {
     // Request layout
-    return ''
+    const { data, error } = await useFetch<LayoutResponse>('/api/layout', {
+      method: 'POST',
+      body: {
+        chat_id: chatId,
+        prompt,
+        step,
+        problem,
+        knowledge,
+        explanation,
+        conclusion,
+        interaction,
+        page_id_will_be_used: pageIdWillBeUsed,
+      }
+    })
+    if (error) return
+    if (data.value?.operation) {
+      if (data.value.operation.type === "new-page") {
+        // pageId.value = whiteboard.addPage(data.value.operation.title).id;
+      } else if (data.value.operation.type === "switch-page") {
+        pageId.value = parseInt(data.value.operation.pageId);
+      }
+    }
+    return data.value?.content
   }
 
-  async function chalk() {
-    // Process operation from streaming response
-    operations // Change to operations
+  const operated: string[] = []
+  async function chalk(
+    whiteboard: Whiteboard,
+    chatId: string,
+    prompt: string,
+    step: string,
+    document?: string,
+    pageId?: string,
+    model?: string,
+    stream?: boolean,
+  ) {
+    const response = await fetch('/api/chalk', {
+      method: 'POST',
+      body: JSON.stringify({
+        chat_id: chatId,
+        prompt,
+        document,
+        page_id: pageId,
+        model,
+        stream,
+        step,
+      })
+    })
+    if (stream) {
+      const reader = response.body?.getReader();
+      if (!reader) {
+        throw new Error('No reader available');
+      }
+      const decoder = new TextDecoder();
+      try {
+        while (true) {
+          const { done, value } = await reader.read();
+          if (done) break;
+          const operations = JSON.parse(decoder.decode(value, { stream: true }))
+          processOperations(operations, whiteboard, pageId!, operated)
+        }
+      } finally {
+        reader.releaseLock();
+      }
+      return;
+    }
+
+    return await response.json() as ChalkResponse;
   }
   
-  return (input?: string) => {
-    // If input is provided, design a new branch
-    if (input) { }
-    else { }
+  return async (whiteboard: Whiteboard, latestStep: string, input?: string) => {
+    nextAvailablity.value = false
+    let designerResult = null
+    if (input) designerResult = await designer(pageId.value.toString(), input, latestStep, branches)
+    const step = designerResult ? designerResult[0] : findStepNext(latestStep, branches.value)
+    if (!step || step === END) return null
+    const speakerPromise = speaker(pageId.value.toString(), step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion)
+    const boardPromise = new Promise(async (resolve) => {
+      const content = await layout(pageId.value.toString(), input!, step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion, '', pageId.value.toString())
+      chalk(whiteboard, pageId.value.toString(), input!, step.step.toString(), content, pageId.value.toString())
+      resolve(null)
+    })
+    await Promise.all([speakerPromise, boardPromise])
+    nextAvailablity.value = true
   }
 }
