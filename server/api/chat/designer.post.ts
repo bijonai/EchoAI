@@ -1,11 +1,9 @@
 import { eq, and } from "drizzle-orm";
 import { table as chats } from "@/db/chats";
 import db from "@/db";
-import type { StepBranch, DisplayedMessage, DesignerRequestBody } from '@/types'
+import type { StepBranch, Message, DesignerRequestBody } from '@/types'
 import type { ChatCompletionMessageParam } from "openai/resources.mjs";
 import { startDesignerWorkflow } from "@/workflow/designer";
-
-
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<DesignerRequestBody>(event);
@@ -75,7 +73,7 @@ export default defineEventHandler(async (event) => {
     return {
       steps,
       branches: updateValues.branches as StepBranch[],
-      displayed_messages: updateValues.context as DisplayedMessage[],
+      displayed_messages: updateValues.context as Message[],
     };
   } catch (error) {
     console.error(error);

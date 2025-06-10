@@ -1,23 +1,39 @@
 <script setup lang="ts">
-import type { Context, StepBranch, Operation } from '@/types'
-// import { Whiteboard } from '@/utils/whiteboard'
+import type { Context, StepBranch } from '@/types'
+import { Whiteboard } from '@/utils/whiteboard'
+import { useComposer } from './composer'
 
 const nextAvailablity = ref(false)
 const messages = ref<Context>([])
 const branches = ref<StepBranch[]>([])
-const operations = ref<Operation[]>([])
-// const whiteboard = ref<Whiteboard>(new Whiteboard())
-const currentPage = ref<number | null>(null)  
+const whiteboard = new Whiteboard()
+const currentPage = ref<number | null>(null)
+const currentStep = ref<string | null>(null)
+const prompt = ref<string>('')
 
+
+const composer = useComposer({
+  pageId: currentPage as Ref<number>,
+  messages,
+  branches,
+  nextAvailablity,
+})
+provide('composer', composer)
 
 const handleNext = () => {
-  console.log('handleNext')
+  composer(whiteboard, currentStep.value!)
 }
 const handleSend = () => {
-  console.log('handleSend')
+  composer(whiteboard, currentStep.value!, prompt.value)
 }
 const handleSwitch = (direction: 'previous' | 'next') => {
-  console.log('handleSwitch', direction)
+  if (direction === 'previous') {
+    if (currentPage.value! <= 1) return
+    currentPage.value = currentPage.value! - 1
+  } else {
+    if (currentPage.value! >= whiteboard.getPageCount()) return
+    currentPage.value = currentPage.value! + 1
+  }
 }
 </script>
 
@@ -25,7 +41,7 @@ const handleSwitch = (direction: 'previous' | 'next') => {
   <div class="flex w-full gap-2 h-full">
     <div class="flex flex-col h-full w-2/3 gap-y-2">
       <div class="flex flex-3/4 max-h-3/4 min-h-3/4 h-3/4 bg-gray-100 rounded-lg">
-        <!-- <Board :operations="operations" :whiteboard="whiteboard" :page-id="currentPage!.toString()" @switch="handleSwitch" /> -->
+        <Board :whiteboard="whiteboard" :page-id="currentPage!.toString()" @switch="handleSwitch" />
       </div>
       <div class="flex flex-1/4 h-full bg-gray-100 rounded-lg">
         <div class="relative w-full">
@@ -45,8 +61,8 @@ const handleSwitch = (direction: 'previous' | 'next') => {
         </div>
       </div>
       <div class="h-[200px] w-full">
-        <PromptArea @next="handleNext" @send="handleSend" :next="nextAvailablity" />
+        <PromptArea @next="handleNext" @send="handleSend" :next="nextAvailablity" v-model="prompt"/>
       </div>
     </div>
   </div>
-</template>~/utils/whiteboard
+</template>
