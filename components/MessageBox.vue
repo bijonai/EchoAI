@@ -1,11 +1,10 @@
 <script setup lang="ts">
-import Markdown from 'vue-markdown-render'
-
 defineProps<{
   avatar: string
   role: string
-  content: string
+  content?: string
 }>()
+
 </script>
 
 <template>
@@ -16,7 +15,7 @@ defineProps<{
     <div class="flex-grow min-w-0">
       <div class="w-full h-full bg-[rgba(255,255,255,0.5)] rounded-lg p-4">
         <div class="prose prose-sm max-w-none">
-          <Markdown :source="content" />
+          <MarkdownRenderer :content="content" />
         </div>
       </div>
     </div>

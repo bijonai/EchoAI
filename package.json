@@ -28,18 +28,28 @@
     "drizzle-orm": "^0.44.2",
     "eslint": "^9.28.0",
     "jose": "^6.0.11",
+    "katex": "^0.16.22",
     "nuxt": "^3.17.5",
     "openai": "^5.1.1",
     "pg": "^8.16.0",
+    "rehype-katex": "^7.0.1",
+    "rehype-stringify": "^10.0.1",
+    "remark-emoji": "^5.0.1",
+    "remark-gfm": "^4.0.1",
+    "remark-math": "^6.0.0",
+    "remark-parse": "^11.0.0",
+    "remark-rehype": "^11.1.2",
     "sciux": "^0.0.2",
     "sciux-laplace": "0.0.1-alpha.10",
     "tailwindcss": "^4.1.8",
+    "unified": "^11.0.5",
     "vue": "^3.5.16",
     "vue-markdown-render": "^2.2.1",
     "vue-router": "^4.5.1"
   },
   "packageManager": "pnpm@10.11.1+sha512.e519b9f7639869dc8d5c3c5dfef73b3f091094b0a006d7317353c72b124e80e1afd429732e28705ad6bfa1ee879c1fce46c128ccebd3192101f43dd67c667912",
   "devDependencies": {
+    "@shikijs/rehype": "^3.6.0",
     "@types/crypto-js": "^4.2.2"
   }
 }
