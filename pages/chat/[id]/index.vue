@@ -29,6 +29,8 @@ branches.value.push(...data.branches)
 messages.value.push(...data.context)
 currentStep.value = data.chalk_results[data.chalk_results.length - 1].step
 
+const accessToken = useState<string | undefined>('access-token');
+
 const composer = useComposer({
   pageId: currentPage as Ref<number>,
   messages,
