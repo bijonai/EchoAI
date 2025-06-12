@@ -1,5 +1,5 @@
 import type { Ref } from "vue";
-import type { StepBranch, Context, Operation, DesignerStep, DesignerResult, LayoutResponse, ChalkResponse } from "~/types";
+import type { StepBranch, Context, Operation, DesignerStep, DesignerResponse, LayoutResponse, ChalkResponse } from "~/types";
 
 export const END = Symbol('END')
 export const NEW_CHAT = Symbol('NEW_CHAT')
@@ -66,6 +66,7 @@ export const processOperations = (
 
 export interface ComposerContext {
   pageId: Ref<number>
+  chatId: string
   messages: Ref<Context>
   branches: Ref<StepBranch[]>
   nextAvailablity: Ref<boolean>
@@ -78,14 +79,14 @@ export function useComposer({
   branches,
   nextAvailablity,
   token,
+  chatId,
 }: ComposerContext) {
   async function designer(
-    chatId: string,
     step: string,
-    branches: Ref<StepBranch[]>,
     prompt?: string,
   ) {
-    const data = await $fetch<DesignerResult>('/api/chat/designer', {
+    console.log(branches)
+    const data = await $fetch<DesignerResponse>('/api/chat/designer', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`
@@ -101,15 +102,16 @@ export function useComposer({
     const nextStep = findStepNext(step, branches.value)
     if (nextStep === END) return
     branches.value.push({
-      steps: data.result!,
+      steps: data.steps,
       start: step,
       end: nextStep?.step.toString(),
     })
-    return data.result
+    messages.value.length = 0
+    messages.value.push(...data.displayed_messages)
+    return data.steps
   }
 
   async function speaker(
-    chatId: string,
     step: string,
     problem: string,
     knowledge: string,
@@ -128,6 +130,7 @@ export function useComposer({
         knowledge,
         explanation,
         conclusion,
+        stream: true,
       })
     })
     const reader = res.body?.getReader()
@@ -149,7 +152,6 @@ export function useComposer({
   }
 
   async function layout(
-    chatId: string,
     prompt: string,
     step: string,
     problem: string,
@@ -160,7 +162,7 @@ export function useComposer({
     pageIdWillBeUsed: string,
   ) {
     // Request layout
-    const { data, error } = await useFetch<LayoutResponse>('/api/chat/layout', {
+    const data = await $fetch<LayoutResponse>('/api/chat/layout', {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token.value}`
@@ -177,27 +179,25 @@ export function useComposer({
         page_id_will_be_used: pageIdWillBeUsed,
       }
     })
-    if (error) return
-    if (data.value?.operation) {
-      if (data.value.operation.type === "new-page") {
+    if (data.operation) {
+      if (data.operation.type === "new-page") {
         // pageId.value = whiteboard.addPage(data.value.operation.title).id;
-      } else if (data.value.operation.type === "switch-page") {
-        pageId.value = parseInt(data.value.operation.pageId);
+      } else if (data.operation.type === "switch-page") {
+        pageId.value = parseInt(data.operation.pageId);
       }
     }
-    return data.value?.content
+    return data.content
   }
 
   const operated: string[] = []
   async function chalk(
     whiteboard: Whiteboard,
-    chatId: string,
     prompt: string,
     step: string,
     document?: string,
     pageId?: string,
     model?: string,
-    stream?: boolean,
+    stream: boolean = true,
   ) {
     const response = await fetch('/api/chat/chalk', {
       method: 'POST',
@@ -224,7 +224,7 @@ export function useComposer({
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
-          const operations = JSON.parse(decoder.decode(value, { stream: true }))
+          const { operations } = JSON.parse(decoder.decode(value, { stream: true }))
           processOperations(operations, whiteboard, pageId!, operated)
         }
       } finally {
@@ -239,14 +239,14 @@ export function useComposer({
   return async (whiteboard: Whiteboard, latestStep: string, input?: string | typeof NEW_CHAT) => {
     nextAvailablity.value = false
     let designerResult = null
-    if (input) designerResult = await designer(pageId.value.toString(), latestStep, branches, input === NEW_CHAT ? void 0 : input)
+    if (input) designerResult = await designer(latestStep, input === NEW_CHAT ? void 0 : input)
     console.log(designerResult)
     const step = designerResult ? designerResult[0] : findStepNext(latestStep, branches.value)
     if (!step || step === END) return null
-    const speakerPromise = speaker(pageId.value.toString(), step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion)
+    const speakerPromise = speaker(step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion)
     const boardPromise = new Promise(async (resolve) => {
-      const content = await layout(pageId.value.toString(), input!, step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion, '', pageId.value.toString())
-      chalk(whiteboard, pageId.value.toString(), input!, step.step.toString(), content, pageId.value.toString())
+      const content = await layout(typeof input === 'string' ? input : '', step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion, '', pageId.value.toString())
+      chalk(whiteboard, content!, step.step.toString(), '', pageId.value.toString())
       resolve(null)
     })
     await Promise.all([speakerPromise, boardPromise])

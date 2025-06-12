@@ -44,6 +44,12 @@ export interface DesignerRequestBody {
   model?: string;
 }
 
+export interface DesignerResponse {
+  steps: DesignerStep[]
+  branches: StepBranch[]
+  displayed_messages: Message[]
+}
+
 // ===== Speaker 相关 =====
 export interface SpeakerResult {
   step: string;

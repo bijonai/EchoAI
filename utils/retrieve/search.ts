@@ -8,7 +8,6 @@ export interface SearchParams {
   topK?: number
   model?: string
 }
-
 export async function search(
   client: OpenAI,
   qdrant: QdrantClient,
@@ -16,7 +15,7 @@ export async function search(
 ): Promise<string[]> {
   const embeddingRes = await client.embeddings.create({
     model: params.model ?? EMBEDDING_MODEL,
-    input: [params.query],
+    input: [params.query.trim()],
   });
   const queryVector = embeddingRes.data[0].embedding;
   const searchRes = await qdrant.search(params.collection, {
