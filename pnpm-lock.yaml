@@ -96,11 +96,11 @@ importers:
         specifier: ^11.1.2
         version: 11.1.2
       sciux:
-        specifier: ^0.0.2
-        version: 0.0.2
+        specifier: ^0.0.5
+        version: 0.0.5
       sciux-laplace:
-        specifier: 0.0.1-alpha.10
-        version: 0.0.1-alpha.10
+        specifier: 0.0.1-alpha.12
+        version: 0.0.1-alpha.12
       tailwindcss:
         specifier: ^4.1.8
         version: 4.1.8
@@ -1287,14 +1287,14 @@ packages:
     cpu: [x64]
     os: [win32]
 
-  '@sciux/layout@0.0.2':
-    resolution: {integrity: sha512-MueVEgP+VB6TGJe1DxK2R7g+0+gHH/RUd3AS1z43Jk6vgzLZ0VVmNhHXU+ssHKf5Y1kTXpKYwUGWhkx9R5tTCg==}
+  '@sciux/layout@0.0.5':
+    resolution: {integrity: sha512-f+XEU7e+qR1tpYwD0gA29bujDh6GEZ8lRDN+JLomb2iudyBeEvaGUBnlrwwzlCukdazoFzvoDp6FPQQY6Ds43Q==}
 
-  '@sciux/model@0.0.2':
-    resolution: {integrity: sha512-Fdk6X213XyQp0Lcza8B8YqRYQM0uIQs9NizmzKKjIgopgH8eNfz/J7q/tLEe2aX7eww/JP0bdDg9CBlr4NccCg==}
+  '@sciux/model@0.0.5':
+    resolution: {integrity: sha512-oryVl5y0/wO7kWu5CJr+VW9wHsG/YbO/fZ8AJbeoFpIEkNwZbuNtw4Hnx6u7jEzZnKSLHca+xboeM2lJrtm2uQ==}
 
-  '@sciux/widget@0.0.2':
-    resolution: {integrity: sha512-T3Qqz6TQKVhp+5Qr4YFCTjZ6ak0IjwtjejYOIR9P04CCi4SUJSA2xJN5ONRhvklor5iTnW+5KVmWPFm6T+dwfg==}
+  '@sciux/widget@0.0.5':
+    resolution: {integrity: sha512-2a/45dtq/tD9AuIPvE7SX/MQsIuP1NDNwBRAaahudsWJLAfoyvewfyHyHTVdoSzaejdV+gkjdqfuVcZ44I7mxA==}
 
   '@sevinf/maybe@0.5.0':
     resolution: {integrity: sha512-ARhyoYDnY1LES3vYI0fiG6e9esWfTNcXcO6+MPJJXcnyMV3bim4lnFt45VXouV7y82F4x3YH8nOQ6VztuvUiWg==}
@@ -5029,14 +5029,11 @@ packages:
   safer-buffer@2.1.2:
     resolution: {integrity: sha512-YZo3K82SD7Riyi0E1EQPojLz7kpepnSQI9IyPbHHg1XXXevb5dJI7tpyN2ADxGcQbHG7vcyRHk0cbwqcQriUtg==}
 
-  sciux-laplace@0.0.1-alpha.10:
-    resolution: {integrity: sha512-GOxq75oj9ZhP+7v2mXiDEtOo5nEgqIx/3KI0dzMgGc2ifBnDYBUzhpg1HLhgUXkhnXPZbTTb4uVXyHCnTLSwUQ==}
+  sciux-laplace@0.0.1-alpha.12:
+    resolution: {integrity: sha512-ZDF5Ye6FO0z+OFrEqY+x/mjsmqm8dRs7hI+C+h0nSbeyWtd3jgZcnrKV8E98amOVkjOs0snwtEl7WGfCbtUC3g==}
 
-  sciux-laplace@0.0.1-alpha.9:
-    resolution: {integrity: sha512-vummZkORRnUUTP0LyLesw7wcKtOjNTPUInGmGsfr/RJ58I2cY85L+YakIuijduwyMEROT7i/MKoIUXGSQDd9oA==}
-
-  sciux@0.0.2:
-    resolution: {integrity: sha512-hpSeTg9lBFfzHNFbsu9VBljG6mP4SNkMo17z1ObbCb9hiiyLfAx+RT1pcb++B6yWczgqVGje8zMzMlAABX4i3Q==}
+  sciux@0.0.5:
+    resolution: {integrity: sha512-rEkg+tRWmvFeo7JvfQP06ucY7bu3AawpcNhizjiGv28UVoqGwtXQxFV8t4V5+tjG3qnSQWEEG4/kla+vjlTYsA==}
 
   scslre@0.3.0:
     resolution: {integrity: sha512-3A6sD0WYP7+QrjbfNA2FN3FsOaGGFoekCVgTyypy53gPxhbkCIjtO6YWgdrfM+n/8sI8JeXZOIxsHjMTNxQ4nQ==}
@@ -7407,24 +7404,24 @@ snapshots:
   '@rollup/rollup-win32-x64-msvc@4.41.1':
     optional: true
 
-  '@sciux/layout@0.0.2':
+  '@sciux/layout@0.0.5':
     dependencies:
       '@vue/reactivity': 3.5.16
       arktype: 2.1.20
-      sciux-laplace: 0.0.1-alpha.9
+      sciux-laplace: 0.0.1-alpha.12
 
-  '@sciux/model@0.0.2':
+  '@sciux/model@0.0.5':
     dependencies:
       '@vue/reactivity': 3.5.16
       arktype: 2.1.20
-      sciux-laplace: 0.0.1-alpha.9
+      sciux-laplace: 0.0.1-alpha.12
 
-  '@sciux/widget@0.0.2':
+  '@sciux/widget@0.0.5':
     dependencies:
-      '@sciux/layout': 0.0.2
+      '@sciux/layout': 0.0.5
       '@vue/reactivity': 3.5.16
       arktype: 2.1.20
-      sciux-laplace: 0.0.1-alpha.9
+      sciux-laplace: 0.0.1-alpha.12
       shiki: 3.6.0
 
   '@sevinf/maybe@0.5.0': {}
@@ -11809,7 +11806,7 @@ snapshots:
 
   safer-buffer@2.1.2: {}
 
-  sciux-laplace@0.0.1-alpha.10:
+  sciux-laplace@0.0.1-alpha.12:
     dependencies:
       '@vue/reactivity': 3.5.16
       '@vue/shared': 3.5.16
@@ -11821,24 +11818,12 @@ snapshots:
       parse-entities: 4.0.2
       xpath: 0.0.34
 
-  sciux-laplace@0.0.1-alpha.9:
+  sciux@0.0.5:
     dependencies:
-      '@vue/reactivity': 3.5.16
-      '@vue/shared': 3.5.16
-      '@xmldom/xmldom': 0.9.8
-      arktype: 2.1.20
-      clsx: 2.1.1
-      css-what: 6.1.0
-      morphdom: 2.7.5
-      parse-entities: 4.0.2
-      xpath: 0.0.34
-
-  sciux@0.0.2:
-    dependencies:
-      '@sciux/layout': 0.0.2
-      '@sciux/model': 0.0.2
-      '@sciux/widget': 0.0.2
-      sciux-laplace: 0.0.1-alpha.9
+      '@sciux/layout': 0.0.5
+      '@sciux/model': 0.0.5
+      '@sciux/widget': 0.0.5
+      sciux-laplace: 0.0.1-alpha.12
 
   scslre@0.3.0:
     dependencies:
