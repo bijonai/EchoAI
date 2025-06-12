@@ -4,27 +4,32 @@ const jwks = createRemoteJWKSet(new URL("https://pzkd7i.logto.app/oidc/jwks"));
 
 export default defineEventHandler(async (event) => {
 
-  // const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
+  if (!event.path.startsWith("/api/")) {
+    return;
+  }
 
-  // if (!token) {
-  //   throw createError({
-  //     statusCode: 401,
-  //     statusMessage: "Unauthorized: No token provided",
-  //   });
-  // }
+  const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
 
-  // try {
-  //   const { payload } = await jwtVerify(token, jwks, {
-  //     issuer: "https://pzkd7i.logto.app/oidc",
-  //     audience: "http://localhost:3322/api",
-  //   });
+  if (!token) {
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: No token provided",
+    });
+  }
 
-  //   event["userId"] = payload.sub;
-  // } catch (e) {
-  //   console.error(e);
-  //   throw createError({
-  //     statusCode: 401,
-  //     statusMessage: "Unauthorized: Invalid token",
-  //   });
-  // }
+  try {
+    const { payload } = await jwtVerify(token, jwks, {
+      issuer: process.env.LOGTO_ENDPOINT + 'oidc',
+      audience: process.env.LOGTO_BASE_URL + '/api',
+    });
+
+    (event as any).userId = payload.sub;
+
+  } catch (e) {
+    console.error(e);
+    throw createError({
+      statusCode: 401,
+      statusMessage: "Unauthorized: Invalid token",
+    });
+  }
 });

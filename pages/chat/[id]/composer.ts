@@ -68,6 +68,7 @@ export interface ComposerContext {
   messages: Ref<Context>
   branches: Ref<StepBranch[]>
   nextAvailablity: Ref<boolean>
+  token: Ref<string | undefined>
 }
 
 export function useComposer({
@@ -75,6 +76,7 @@ export function useComposer({
   messages,
   branches,
   nextAvailablity,
+  token,
 }: ComposerContext) {
   async function designer(
     chatId: string,
@@ -84,6 +86,9 @@ export function useComposer({
   ) {
     const data = await $fetch<DesignerResult>('/api/chat/designer', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      },
       body: {
         chat_id: chatId,
         prompt,
@@ -112,6 +117,9 @@ export function useComposer({
   ) {
     const res = await fetch('/api/chat/speaker', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      },
       body: JSON.stringify({
         chat_id: chatId,
         step,
@@ -153,6 +161,9 @@ export function useComposer({
     // Request layout
     const { data, error } = await useFetch<LayoutResponse>('/api/chat/layout', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      },
       body: {
         chat_id: chatId,
         prompt,
@@ -189,6 +200,9 @@ export function useComposer({
   ) {
     const response = await fetch('/api/chat/chalk', {
       method: 'POST',
+      headers: {
+        'Authorization': `Bearer ${token.value}`
+      },
       body: JSON.stringify({
         chat_id: chatId,
         prompt,

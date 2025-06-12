@@ -24,22 +24,20 @@ export default defineNuxtConfig({
     '@nuxt/image',
     '@logto/nuxt'
   ],
-  logto: {
-    scopes: [UserScope.Email],
-    pathnames: {
-      signIn: '/auth/signin',
-      signOut: '/auth/signout',
-      callback: '/auth/callback'
-    },
-    debug: true
-  },
   runtimeConfig: {
     logto: {
       endpoint: process.env.LOGTO_ENDPOINT,
       appId: process.env.LOGTO_APP_ID,
       appSecret: process.env.LOGTO_APP_SECRET,
       cookieEncryptionKey: process.env.LOGTO_COOKIE_SECRET,
-      postCallbackRedirectUri: process.env.LOGTO_BASE_URL + '/auth/callback'
+      postCallbackRedirectUri: process.env.LOGTO_BASE_URL + '/auth/callback',
+      resource: ["http://localhost:3000/api"],
+      scopes: [UserScope.Email, "echoai_server"],
+      pathnames: {
+        signIn: '/auth/signin',
+        signOut: '/auth/signout',
+        callback: '/auth/callback'
+      }
     }
   },
   fonts: {

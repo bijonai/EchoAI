@@ -10,12 +10,31 @@ const whiteboard = new Whiteboard()
 const currentPage = ref<number>(1)
 const currentStep = ref<string | null>(null)
 const prompt = ref<string>('')
+const client = useLogtoClient();
+const accessToken = useState<string | undefined>('access-token');
+
+await callOnce(async () => {
+  if (!client) {
+    throw new Error('Logto client is not available');
+  }
+
+  if (!(await client.isAuthenticated())) {
+    return;
+  }
+
+  try {
+    accessToken.value = await client.getAccessToken(process.env.LOGTO_BASE_URL + '/api');
+  } catch (error) {
+    console.error('Failed to get access token', error);
+  }
+});
 
 const composer = useComposer({
   pageId: currentPage as Ref<number>,
   messages,
   branches,
   nextAvailablity,
+  token: accessToken,
 })
 provide('composer', composer)
 
