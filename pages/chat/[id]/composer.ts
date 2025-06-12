@@ -82,7 +82,7 @@ export function useComposer({
     step: string,
     branches: Ref<StepBranch[]>,
   ) {
-    const { data, error } = await useFetch<DesignerResult>('/api/designer', {
+    const data = await $fetch<DesignerResult>('/api/chat/designer', {
       method: 'POST',
       body: {
         chat_id: chatId,
@@ -91,16 +91,15 @@ export function useComposer({
         next_step: findStepNext(step, branches.value),
       }
     })
-    if (error) return
     // After request, add new branch to tree
     const nextStep = findStepNext(step, branches.value)
     if (nextStep === END) return
     branches.value.push({
-      steps: data.value?.result!,
+      steps: data.result!,
       start: step,
       end: nextStep?.step.toString(),
     })
-    return data.value?.result
+    return data.result
   }
 
   async function speaker(
@@ -111,7 +110,7 @@ export function useComposer({
     explanation: string,
     conclusion: string,
   ) {
-    const res = await fetch('/api/speaker', {
+    const res = await fetch('/api/chat/speaker', {
       method: 'POST',
       body: JSON.stringify({
         chat_id: chatId,
@@ -152,7 +151,7 @@ export function useComposer({
     pageIdWillBeUsed: string,
   ) {
     // Request layout
-    const { data, error } = await useFetch<LayoutResponse>('/api/layout', {
+    const { data, error } = await useFetch<LayoutResponse>('/api/chat/layout', {
       method: 'POST',
       body: {
         chat_id: chatId,
@@ -188,7 +187,7 @@ export function useComposer({
     model?: string,
     stream?: boolean,
   ) {
-    const response = await fetch('/api/chalk', {
+    const response = await fetch('/api/chat/chalk', {
       method: 'POST',
       body: JSON.stringify({
         chat_id: chatId,

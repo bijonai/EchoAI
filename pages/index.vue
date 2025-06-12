@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { ChatCreateResponse } from '~/server/api/chat/create.post';
+
 const prompt = ref('')
 
 function getPeriod(): "morning" | "afternoon" | "evening" {
@@ -9,8 +11,14 @@ function getPeriod(): "morning" | "afternoon" | "evening" {
   return "evening";
 }
 
-function start() {
-
+async function start() {
+  const data = await $fetch<ChatCreateResponse>('/api/chat/create', {
+    method: 'POST',
+    body: {
+      prompt: prompt.value,
+    },
+  })
+  navigateTo(`/chat/${data.chat_id}`)
 }
 </script>
 

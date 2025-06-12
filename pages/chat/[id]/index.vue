@@ -7,7 +7,7 @@ const nextAvailablity = ref(false)
 const messages = ref<Context>([])
 const branches = ref<StepBranch[]>([])
 const whiteboard = new Whiteboard()
-const currentPage = ref<number | null>(null)
+const currentPage = ref<number>(1)
 const currentStep = ref<string | null>(null)
 const prompt = ref<string>('')
 
@@ -40,7 +40,7 @@ const handleSwitch = (direction: 'previous' | 'next') => {
   <div class="flex w-full gap-2 h-full">
     <div class="flex flex-col h-full w-2/3 gap-y-2">
       <div class="flex flex-3/4 max-h-3/4 min-h-3/4 h-3/4 bg-gray-100 rounded-lg">
-        <Board :whiteboard="whiteboard" :page-id="currentPage" @switch="handleSwitch" />
+        <Board :whiteboard="whiteboard" :page-id="currentPage.toString()" @switch="handleSwitch" />
       </div>
       <div class="flex flex-1/4 h-full bg-gray-100 rounded-lg">
         <div class="relative w-full">
