@@ -3,6 +3,9 @@ import type { ChatCreateResponse } from '~/server/api/chat/create.post';
 
 const prompt = ref('')
 
+const logtoClient = useLogtoClient();
+const accessToken = useState<string | undefined>('access-token');
+
 function getPeriod(): "morning" | "afternoon" | "evening" {
   const now = new Date();
   const hours = now.getHours();
@@ -11,9 +14,28 @@ function getPeriod(): "morning" | "afternoon" | "evening" {
   return "evening";
 }
 
+await callOnce(async () => {
+  if (!logtoClient) {
+    throw new Error('Logto client is not available');
+  }
+
+  if (!(await logtoClient.isAuthenticated())) {
+    return;
+  }
+
+  try {
+    accessToken.value = await logtoClient.getAccessToken(process.env.LOGTO_BASE_URL + '/api');
+  } catch (error) {
+    console.error('Failed to get access token', error);
+  }
+})
+
 async function start() {
   const data = await $fetch<ChatCreateResponse>('/api/chat/create', {
     method: 'POST',
+    headers: {
+      'Authorization': `Bearer ${accessToken.value}`
+    },
     body: {
       prompt: prompt.value,
     },
