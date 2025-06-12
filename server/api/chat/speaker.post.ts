@@ -6,7 +6,10 @@ import { startSpeakerWorkflow } from "@/workflow/speaker";
 import type { SpeakerRequestBody } from "@/types";
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<SpeakerRequestBody>(event);
+  const body = await JSON.parse(await readBody(event));
+  console.log('Request body:', JSON.stringify(body, null, 2));
+  console.log('Body type:', typeof body);
+  console.log('Chat ID:', body?.chat_id);
 
   const userId = event["userId"];
 
@@ -21,7 +24,8 @@ export default defineEventHandler(async (event) => {
         branches: chats.branches,
       })
       .from(chats)
-      .where(and(eq(chats.uid, userId), eq(chats.id, body.chat_id)));
+      .where(and(/* eq(chats.uid, userId), */ eq(chats.id, body.chat_id)));
+    console.log(userId, body.chat_id)
 
     if (!speakerContext) {
       throw createError({

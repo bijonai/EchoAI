@@ -20,19 +20,21 @@ const data = await $fetch<GetChatResponse>('/api/chat/get', {
   headers: {
     'Authorization': `Bearer ${accessToken.value}`
   },
-  method: 'GET',
+  method: 'POST',
   body: {
     chat_id: route.params.id,
   }
 })
 branches.value.push(...data.branches)
 messages.value.push(...data.context)
-currentStep.value = data.chalk_results[data.chalk_results.length - 1].step
-
-const accessToken = useState<string | undefined>('access-token');
+currentStep.value = 
+  data.context[data.context.length - 1] ?
+    data.context[data.context.length - 1].step ?? null :
+    null
 
 const composer = useComposer({
   pageId: currentPage as Ref<number>,
+  chatId: route.params.id as string,
   messages,
   branches,
   nextAvailablity,

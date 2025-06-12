@@ -15,6 +15,7 @@ const svgRef = ref<SVGSVGElement>()
 
 onMounted(() => {
   effect(() => {
+    console.log(props.branches)
     if (!svgRef.value) return
     generateTimeline(props.branches, props.width, props.minGap, svgRef as Ref<SVGSVGElement>)
   })
