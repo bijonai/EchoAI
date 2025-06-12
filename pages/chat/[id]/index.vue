@@ -1,7 +1,7 @@
 <script setup lang="ts">
-import type { Context, StepBranch } from '@/types'
+import type { Context, GetChatResponse, StepBranch } from '@/types'
 import { Whiteboard } from '@/utils/whiteboard'
-import { useComposer } from './composer'
+import { useComposer, NEW_CHAT } from './composer'
 
 const nextAvailablity = ref(false)
 const messages = ref<Context>([])
@@ -13,21 +13,21 @@ const prompt = ref<string>('')
 const client = useLogtoClient();
 const accessToken = useState<string | undefined>('access-token');
 
-await callOnce(async () => {
-  if (!client) {
-    throw new Error('Logto client is not available');
-  }
+const route = useRoute()
+const router = useRouter()
 
-  if (!(await client.isAuthenticated())) {
-    return;
+const data = await $fetch<GetChatResponse>('/api/chat/get', {
+  headers: {
+    'Authorization': `Bearer ${accessToken.value}`
+  },
+  method: 'GET',
+  body: {
+    chat_id: route.params.id,
   }
-
-  try {
-    accessToken.value = await client.getAccessToken(process.env.LOGTO_BASE_URL + '/api');
-  } catch (error) {
-    console.error('Failed to get access token', error);
-  }
-});
+})
+branches.value.push(...data.branches)
+messages.value.push(...data.context)
+currentStep.value = data.chalk_results[data.chalk_results.length - 1].step
 
 const composer = useComposer({
   pageId: currentPage as Ref<number>,
@@ -52,6 +52,13 @@ const handleSwitch = (direction: 'previous' | 'next') => {
     if (currentPage.value! >= whiteboard.getPageCount()) return
     currentPage.value = currentPage.value! + 1
   }
+}
+
+const newParam = route.query.new
+
+if (newParam) {
+  composer(whiteboard, currentStep.value!, NEW_CHAT)
+  router.replace({ query: { ...route.query, new: undefined } });
 }
 </script>
 

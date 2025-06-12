@@ -2,6 +2,7 @@ import type { Ref } from "vue";
 import type { StepBranch, Context, Operation, DesignerStep, DesignerResult, LayoutResponse, ChalkResponse } from "~/types";
 
 export const END = Symbol('END')
+export const NEW_CHAT = Symbol('NEW_CHAT')
 
 export const findStep = (stepId: string, branches: StepBranch[]): DesignerStep | null => {
   for (const branch of branches) {
@@ -80,9 +81,9 @@ export function useComposer({
 }: ComposerContext) {
   async function designer(
     chatId: string,
-    prompt: string,
     step: string,
     branches: Ref<StepBranch[]>,
+    prompt?: string,
   ) {
     const data = await $fetch<DesignerResult>('/api/chat/designer', {
       method: 'POST',
@@ -235,10 +236,11 @@ export function useComposer({
     return await response.json() as ChalkResponse;
   }
   
-  return async (whiteboard: Whiteboard, latestStep: string, input?: string) => {
+  return async (whiteboard: Whiteboard, latestStep: string, input?: string | typeof NEW_CHAT) => {
     nextAvailablity.value = false
     let designerResult = null
-    if (input) designerResult = await designer(pageId.value.toString(), input, latestStep, branches)
+    if (input) designerResult = await designer(pageId.value.toString(), latestStep, branches, input === NEW_CHAT ? void 0 : input)
+    console.log(designerResult)
     const step = designerResult ? designerResult[0] : findStepNext(latestStep, branches.value)
     if (!step || step === END) return null
     const speakerPromise = speaker(pageId.value.toString(), step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion)

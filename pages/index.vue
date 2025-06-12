@@ -40,7 +40,7 @@ async function start() {
       prompt: prompt.value,
     },
   })
-  navigateTo(`/chat/${data.chat_id}`)
+  navigateTo(`/chat/${data.chat_id}?new=true`)
 }
 </script>
 
