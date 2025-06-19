@@ -1,74 +1,117 @@
 <template>
-  <Teleport to="body">
-    <div>
-      <!-- Backdrop -->
-      <div v-show="isOpen" class="fixed inset-0 bg-black/20 backdrop-blur-sm z-40" @click="$emit('close')" />
-
-      <!-- Panel -->
-      <div :class="`fixed top-0 right-0 h-full bg-white/90 backdrop-blur-sm shadow-xl
-          transform transition-all duration-300 ease-in-out
-          ${isOpen ? 'translate-x-0' : 'translate-x-full'}
-          w-80 z-50 bg-blue-100`">
-        <div class="p-6">
-          <div class="flex items-center justify-between mb-8">
-            <h2 class="text-xl font-semibold text-gray-800">History</h2>
-            <button @click="$emit('close')" class="p-2 hover:bg-gray-100 rounded-full transition-colors">
-              <Icon name="heroicons:x-mark" class="w-5 h-5 text-gray-500" />
-            </button>
-          </div>
-
-          <div class="space-y-3">
-            <div class="p-4 bg-[#EBEBDB] rounded-xl hover:opacity-65 cursor-pointer transition-colors duration-200"
-              @click="navigateTo('/')">
-              <div class="font-medium text-gray-800">+ New</div>
-            </div>
-
-            <div v-for="item in history" :key="item.id"
-              class="p-4 bg-white rounded-xl hover:bg-gray-50 cursor-pointer transition-colors duration-200"
-              @click="navigateTo(`/chat/${item.id}`)">
-              <div class="font-medium text-gray-800">{{ item.title }}</div>
-              <div class="text-sm text-gray-500 mt-1">{{ item.date }}</div>
-            </div>
-          </div>
-        </div>
-      </div>
+  <div class="flex flex-col flex-grow gap-5 p-2 items-stretch h-full">
+    <div
+      class="h-14 mb-2 flex justify-center items-center bg-[#E7E3C5] text-[#605F54] rounded-md hover:shadow-lg transition-all duration-100"
+      @click="navigateTo('/')">
+      <span class="opacity-60">New Chat</span>
     </div>
-  </Teleport>
+    <div class="flex h-full flex-col gap-2 scroll-smooth text-[#8B8876] overflow-y-scroll scrollbar-hide">
+      <template v-for="groupName in Object.keys(groupedHistory)" :key="groupName">
+        <template v-if="groupedHistory[groupName as keyof typeof groupedHistory].length">
+          <div class="flex items-center mt-2">
+            <span class="text-sm text-[#A6A28B] opacity-40 whitespace-nowrap">{{ groupLabels[groupName as keyof typeof
+              groupLabels] }}</span>
+          </div>
+          <div v-for="item in groupedHistory[groupName as keyof typeof groupedHistory]" :key="item.id"
+            class="h-16 flex flex-col justify-between p-2 bg-[#E7E3C5] rounded-md hover:shadow-lg transition-all duration-100"
+            @click="navigateTo(`/chat/${item.id}`)">
+            <span class="font-medium whitespace-nowrap overflow-hidden text-ellipsis">
+              {{ item.title }}
+            </span>
+            <span class="flex items-center gap-2">
+              <Icon name="humbleicons:bookmark" class="!w-4 !h-4" />
+              <span class="text-sm">{{ item.date }}</span>
+            </span>
+          </div>
+        </template>
+      </template>
+    </div>
+  </div>
 </template>
 
 <script setup lang="ts">
-const props = defineProps({
-  isOpen: {
-    type: Boolean,
-    required: true
+import { ref, computed } from 'vue'
+
+interface HistoryItem {
+  id: string
+  title: string
+  date: string
+}
+
+const accessToken = useState<string | undefined>('access-token');
+
+const history = ref<HistoryItem[]>([])
+
+const groupLabels = {
+  recent: 'Recent',
+  week: 'Last 7 days',
+  month: 'Last 30 days',
+  older: 'Older',
+}
+
+function parseDate(str: string) {
+  return new Date(str)
+}
+
+function formatDate(dateStr: string) {
+  const d = new Date(dateStr)
+  const y = d.getFullYear()
+  const m = String(d.getMonth() + 1).padStart(2, '0')
+  const day = String(d.getDate()).padStart(2, '0')
+  const h = String(d.getHours()).padStart(2, '0')
+  const min = String(d.getMinutes()).padStart(2, '0')
+  return `${y}-${m}-${day} ${h}:${min}`
+}
+
+const groupedHistory = computed(() => {
+  const now = new Date()
+  const groups: Record<string, any[]> = {
+    recent: [],
+    week: [],
+    month: [],
+    older: []
   }
+  history.value
+    .slice()
+    .sort((a, b) => parseDate(b.date).getTime() - parseDate(a.date).getTime())
+    .forEach(item => {
+      const diff = (now.getTime() - parseDate(item.date).getTime()) / 1000
+      if (diff < 60 * 60 * 24) {
+        groups.recent.push(item)
+      } else if (diff < 60 * 60 * 24 * 7) {
+        groups.week.push(item)
+      } else if (diff < 60 * 60 * 24 * 30) {
+        groups.month.push(item)
+      } else {
+        groups.older.push(item)
+      }
+    })
+  return groups
 })
 
-defineEmits<{
-  (e: 'close'): void
-}>()
-
-const history = ref([
-  {
-    id: '1',
-    title: 'Chat 1',
-    date: '2024-03-20 10:30'
-  },
-  {
-    id: '2',
-    title: 'Chat 2',
-    date: '2024-03-20 11:45'
-  }
-])
-
-// Mock data - replace with actual API call
 onMounted(async () => {
-  // TODO: Replace with actual API call
+  const data = await $fetch('/api/chat/history', {
+    method: 'GET',
+    headers: {
+      'Authorization': `Bearer ${accessToken.value}`
+    }
+  })
+  history.value = data.map((item: any) => ({
+    id: item.id,
+    title: item.id,
+    date: formatDate(item.updated_at)
+  }))
 })
 </script>
 
 <style scoped>
-.history-panel {
-  @apply h-full;
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 </style>
+
