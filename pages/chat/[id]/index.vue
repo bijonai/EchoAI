@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import type { Context, GetChatResponse, StepBranch } from '@/types'
 import { Whiteboard } from '@/utils/whiteboard'
-import { useComposer, NEW_CHAT } from './composer'
+import { useComposer, NEW_CHAT, findStepNext, END } from './composer'
 
 const nextAvailablity = ref(false)
 const messages = ref<Context>([])
@@ -10,8 +10,10 @@ const whiteboard = new Whiteboard()
 const currentPage = ref<number>(1)
 const currentStep = ref<string | null>(null)
 const prompt = ref<string>('')
-const client = useLogtoClient();
+
 const accessToken = useState<string | undefined>('access-token');
+
+whiteboard.addPage('Primary Page')
 
 const route = useRoute()
 const router = useRouter()
@@ -27,10 +29,13 @@ const data = await $fetch<GetChatResponse>('/api/chat/get', {
 })
 branches.value.push(...data.branches)
 messages.value.push(...data.context)
-currentStep.value = 
-  data.context[data.context.length - 1] ?
-    data.context[data.context.length - 1].step ?? null :
-    null
+currentStep.value = data.context[data.context.length - 1].step ?? null
+
+watch([currentStep, branches, messages], () => {
+  const nextStep = currentStep.value ? findStepNext(currentStep.value, branches.value) : null
+  console.log(nextStep)
+  nextAvailablity.value = nextStep !== END && nextStep !== null
+})
 
 const composer = useComposer({
   pageId: currentPage as Ref<number>,
@@ -43,10 +48,14 @@ const composer = useComposer({
 provide('composer', composer)
 
 const handleNext = () => {
-  composer(whiteboard, currentStep.value!)
+  composer(whiteboard, currentStep.value!).then((step) => {
+    if (step) currentStep.value = step.step.toString()
+  })
 }
 const handleSend = () => {
-  composer(whiteboard, currentStep.value!, prompt.value)
+  composer(whiteboard, currentStep.value!, prompt.value).then((step) => {
+    if (step) currentStep.value = step.step.toString()
+  })
 }
 const handleSwitch = (direction: 'previous' | 'next') => {
   if (direction === 'previous') {
@@ -61,37 +70,53 @@ const handleSwitch = (direction: 'previous' | 'next') => {
 const newParam = route.query.new
 
 if (newParam) {
-  composer(whiteboard, currentStep.value!, NEW_CHAT)
+  composer(whiteboard, currentStep.value!, NEW_CHAT).then((step) => {
+    if (step) currentStep.value = step.step.toString()
+  })
   router.replace({ query: { ...route.query, new: undefined } });
 }
 </script>
 
 <template>
-  <div class="flex w-full gap-2 h-full">
-    <div class="flex flex-col h-full w-2/3 gap-y-2">
-      <div class="flex flex-3/4 max-h-3/4 min-h-3/4 h-3/4 bg-gray-100 rounded-lg">
-        <Board :whiteboard="whiteboard" :page-id="currentPage.toString()" @switch="handleSwitch" />
+  <div class="grid grid-cols-10 gap-2 w-full h-full p-2">
+    <div class="col-span-7 flex flex-col gap-2 w-full h-full">
+      <div class="flex-grow rounded-md bg-[#FEFFE4]">
+        <Board :pageId="currentPage.toString()" :whiteboard="whiteboard" @switch="handleSwitch" />
       </div>
-      <div class="flex flex-1/4 h-full bg-gray-100 rounded-lg">
-        <div class="relative w-full">
-          <Timeline :branches="branches" />
-        </div>
+      <div class="h-48 rounded-md bg-[#FEFFE4]">
+        <Timeline :branches="branches" />
       </div>
     </div>
-    <div class="flex flex-col w-1/3 gap-y-2 bg-gray-100 rounded-lg p-4">
-      <div class="flex flex-1 overflow-y-auto scroll-smooth" ref={messagesContainerRef}>
-        <div class="size-full">
-          <div v-for="(message, index) in messages" :key="index">
-            <ToolBox v-if="message.role === 'processor'" :content="message.content"
-              :is-loading="message.isLoading ?? false" />
-            <MessageBox v-else :avatar="'https://picsum.photos/200/300'" :role="message.role"
-              :content="message.content" />
-          </div>
+    <div class="col-span-3 flex flex-col gap-2 w-full h-full">
+      <div class="flex flex-col w-full h-full max-h-[calc(100vh-13.5rem)] overflow-y-auto scroll-smooth scrollbar-hide"
+        ref={messagesContainerRef}>
+        <div v-for="(message, index) in messages" :key="index">
+          <MessageBox :role="message.role" :content="message.content" :is-loading="message.isLoading ?? false" />
         </div>
       </div>
-      <div class="h-[200px] w-full">
-        <PromptArea @next="handleNext" @send="handleSend" :next="nextAvailablity" v-model="prompt"/>
+      <div class="h-48 w-full">
+        <PromptArea @next="handleNext" @send="handleSend" :next="nextAvailablity" v-model="prompt" />
       </div>
     </div>
   </div>
 </template>
+<style scoped>
+.scrollbar-hide::-webkit-scrollbar {
+  width: 8px;
+  background: transparent;
+}
+
+.scrollbar-hide::-webkit-scrollbar-thumb {
+  background: rgba(140, 140, 120, 0.3);
+  border-radius: 4px;
+}
+
+.scrollbar-hide::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.scrollbar-hide {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(140, 140, 120, 0.3) transparent;
+}
+</style>

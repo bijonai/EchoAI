@@ -1,7 +1,7 @@
 import { eq, and } from "drizzle-orm";
 import { table as chats } from "@/db/chats";
 import db from "@/db";
-import type { StepBranch, DesignerResult, SpeakerResult, LayoutResult, ChalkResult, Context, DisplayedMessage, GetChatRequestBody } from '@/types'
+import type { StepBranch, DesignerResult, SpeakerResult, LayoutResult, ChalkResult, Context, GetChatRequestBody, Message } from '@/types'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody<GetChatRequestBody>(event);
@@ -44,7 +44,7 @@ export default defineEventHandler(async (event) => {
       chalk_context: chat.chalk_context as Context,
       chalk_results: chat.chalk_results as ChalkResult[],
       branches: chat.branches as StepBranch[],
-      context: chat.context as DisplayedMessage[],
+      context: chat.context as Message[],
     };
   } catch (error) {
     console.error(error);

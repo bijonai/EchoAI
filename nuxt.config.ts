@@ -44,10 +44,15 @@ export default defineNuxtConfig({
     defaults: {
       weights: [400, 700],
       fallbacks: {
+        monospace: ['Inconsolata'],
         serif: ['Noto Serif SC', 'Noto Serif TC']
       }
     },
     families: [
+      {
+        name: 'Inconsolata',
+        provider: 'google'
+      },
       {
         name: 'Noto Serif SC',
         provider: 'google'

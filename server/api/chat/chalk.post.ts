@@ -10,6 +10,7 @@ export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event));
 
   const userId = event["userId"];
+
   const [chat] = await db
     .select({
       chat_id: chats.id,

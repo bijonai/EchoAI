@@ -34,21 +34,23 @@ export async function startChalkWorkflow(
 ): Promise<ChalkWorkflowResult> {
   const { prompt: userPrompt, components, model: modelOption, document, stream, pageId } = options;
   const model = modelOption ?? defaultModel
-  const referencePromise = new Promise<string[]>((resolve, reject) => {
-    search(embedding(), client, {
-      collection: API_COLLECTION_NAME,
-      query: userPrompt,
-      topK: 12,
-    }).then(resolve).catch(reject)
-  })
-  const knowledgePromise = new Promise<string[]>((resolve, reject) => {
-    search(embedding(), client, {
-      collection: KNOWLEDGE_COLLECTION_NAME,
-      query: userPrompt,
-      topK: 3
-    }).then(resolve).catch(reject)
-  })
-  const [references, knowledge] = await Promise.all([referencePromise, knowledgePromise])
+  // const referencePromise = new Promise<string[]>((resolve, reject) => {
+  //   search(embedding(), client, {
+  //     collection: API_COLLECTION_NAME,
+  //     query: userPrompt,
+  //     topK: 12,
+  //   }).then(resolve).catch(reject)
+  // })
+  // const knowledgePromise = new Promise<string[]>((resolve, reject) => {
+  //   search(embedding(), client, {
+  //     collection: KNOWLEDGE_COLLECTION_NAME,
+  //     query: userPrompt,
+  //     topK: 3
+  //   }).then(resolve).catch(reject)
+  // })
+  // const [references, knowledge] = await Promise.all([referencePromise, ])
+  const references = ['']
+  const knowledge = ['']
 
   if (context.length === 0) {
     context.push({

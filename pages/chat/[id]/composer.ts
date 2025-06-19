@@ -19,6 +19,7 @@ export const findStepNext = (stepId: string, branches: StepBranch[]): DesignerSt
   for (const branch of branches) {
     for (let i = 0; i < branch.steps.length; i++) {
       const step = branch.steps[i]
+      if (!step || !step.step) continue;
       if (step.step.toString() === stepId.toString()) {
         if (i < branch.steps.length - 1) {
           return branch.steps[i + 1]
@@ -118,6 +119,12 @@ export function useComposer({
     explanation: string,
     conclusion: string,
   ) {
+    messages.value.push({
+      role: 'speaker',
+      content: '',
+      step,
+      isLoading: true,
+    })
     const res = await fetch('/api/chat/speaker', {
       method: 'POST',
       headers: {
@@ -136,12 +143,7 @@ export function useComposer({
     const reader = res.body?.getReader()
     if (!reader) return
     const decoder = new TextDecoder()
-    messages.value.push({
-      role: 'speaker',
-      content: '',
-      step,
-      isLoading: true,
-    })
+
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
@@ -235,14 +237,22 @@ export function useComposer({
 
     return await response.json() as ChalkResponse;
   }
-  
+
   return async (whiteboard: Whiteboard, latestStep: string, input?: string | typeof NEW_CHAT) => {
     nextAvailablity.value = false
     let designerResult = null
-    if (input) designerResult = await designer(latestStep, input === NEW_CHAT ? void 0 : input)
-    console.log(designerResult)
+    if (input) {
+      messages.value.push({
+        role: 'processor',
+        content: 'Designer',
+        isLoading: true,
+      })
+      designerResult = await designer(latestStep, input === NEW_CHAT ? void 0 : input)
+    }
     const step = designerResult ? designerResult[0] : findStepNext(latestStep, branches.value)
-    if (!step || step === END) return null
+    if (!step || step === END) {
+      return null
+    }
     const speakerPromise = speaker(step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion)
     const boardPromise = new Promise(async (resolve) => {
       const content = await layout(typeof input === 'string' ? input : '', step.step.toString(), step.problem, step.knowledge, step.explanation, step.conclusion, '', pageId.value.toString())
@@ -251,5 +261,6 @@ export function useComposer({
     })
     await Promise.all([speakerPromise, boardPromise])
     nextAvailablity.value = true
+    return step
   }
 }
