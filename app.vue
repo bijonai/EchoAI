@@ -17,8 +17,8 @@ useHead({
 
 <style scoped>
 .bg {
-  background: #D9D9D9;
-  font-family: 'Noto Serif SC', 'Noto Serif TC';
+  background: #E7E3C5;
+    font-family: "Inconsolata", "Noto Serif SC", "Noto Serif TC", serif;
   font-weight: 400;
 }
 </style>

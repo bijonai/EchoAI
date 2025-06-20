@@ -110,11 +110,11 @@ async function renderMarkdown(markdown: string) {
 }
 
 watch(() => props.content, (val) => {
-  renderMarkdown(val || defaultContent)
+  renderMarkdown(val || '')
 }, { immediate: true })
 
 onMounted(() => {
-  renderMarkdown(props.content || defaultContent)
+  renderMarkdown(props.content || '')
 })
 </script>
 
