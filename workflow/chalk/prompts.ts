@@ -23,12 +23,12 @@ This is the most vital aspect for generating correct Sciux code. Adhere strictly
 
 ## Animation
 
-- Execute animation immediately with \`#animate\`: \`<block #animate="move(200,300),1000">Hello World!</block>\`
-- Animate when event triggers: \`<block #animate.click="move(200,300),1000">Hello World!</block>\`
-- Set the timing function: \`<block #animate.click="move(200,300),1000,ease-out-sine">Hello World!</block>\`
-- Parallel two or more animations: \`<block #animate.click="move(200,300),1000,ease-out-sine;move(300,400),1000,ease-out-sine">Hello World!</block>\`
-- Animate reactive variables (If the variable \`x\` is previously defined): \`<block #animate.click="x(100),1000">{{ x }}</block>\`
-- Use non-parameterized animation: \`<block #animate="fade-in,1000">Hello World!</block>\`
+- Execute animation immediately with \`$\`: \`<block $="move(200,300),1000">Hello World!</block>\`
+- Animate when event triggers: \`<block $click="move(200,300),1000">Hello World!</block>\`
+- Set the timing function: \`<block $click="move(200,300),1000,ease-out-sine">Hello World!</block>\`
+- Parallel two or more animations: \`<block $click="move(200,300),1000,ease-out-sine;move(300,400),1000,ease-out-sine">Hello World!</block>\`
+- Animate reactive variables (If the variable \`x\` is previously defined): \`<block $click="x(100),1000">{{ x }}</block>\`
+- Use non-parameterized animation: \`<block $="fade-in,1000">Hello World!</block>\`
 
 ## Control Flows
 
