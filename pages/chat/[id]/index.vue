@@ -80,7 +80,7 @@ if (newParam) {
 <template>
   <div class="grid grid-cols-10 gap-2 w-full h-full p-2">
     <div class="col-span-7 flex flex-col gap-2 w-full h-full">
-      <div class="flex-grow rounded-md bg-[#FEFFE4]">
+      <div class="flex-grow rounded-md bg-[#24292F]">
         <Board :pageId="currentPage.toString()" :whiteboard="whiteboard" @switch="handleSwitch" />
       </div>
       <div class="h-48 rounded-md bg-[#FEFFE4]">
