@@ -1,5 +1,5 @@
-export type NewPage = {
-  type: 'new-page',
+export type AddPage = {
+  type: 'add-page',
   title: string
 }
 
@@ -8,4 +8,4 @@ export type SwitchPage = {
   pageId: string
 }
 
-export type PageSwitch = NewPage | SwitchPage
+export type PageSwitch = AddPage | SwitchPage
