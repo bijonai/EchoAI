@@ -134,5 +134,13 @@ export interface GetChatResponse {
   messages: Message[];
   branches: Branch[];
   pages: PageStore;
-  chalk: ChalkResponse;
+  chalk: ChalkResult[];
+}
+
+export interface CreateChatRequestBody {
+  prompt: string;
+}
+
+export interface CreateChatResponse {
+  chat_id: string;
 }
