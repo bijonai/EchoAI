@@ -46,14 +46,15 @@ export async function layout(body: LayoutRequestBody, callbacks: LayoutCallbacks
   return result
 }
 
-export async function designer(body: DesignerRequestBody, token?: string) {
+export async function designer(body: DesignerRequestBody, token?: string): Promise<DesignerResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
-  return fetch('/api/chat/designer', {
+  const response = await fetch('/api/chat/designer', {
     headers,
     method: 'POST',
     body: JSON.stringify(body),
-  }).then(res => res.json()) satisfies Promise<DesignerResponse>
+  })
+  return await response.json() satisfies DesignerResponse
 }
 
 export type SpeakerCallbacks = {
