@@ -28,7 +28,7 @@ export type Context = Message[]
 //   end?: string
 // }
 
-type Stream<T extends object> = T | {
+type Stream<T extends object> = {
   delta: T
   done: boolean
 }
@@ -144,3 +144,9 @@ export interface CreateChatRequestBody {
 export interface CreateChatResponse {
   chat_id: string;
 }
+
+export type HistoryResponse = {
+  uid: string;
+  id: string;
+  updated_at: string;
+}[]
