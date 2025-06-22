@@ -1,58 +1,70 @@
 @import 'tailwindcss';
+
 body {
   overflow: hidden;
 }
 
+/* 表格样式 */
 .markdown-container table {
-  @apply text-sm min-w-full border-collapse my-2;
+  @apply text-base min-w-full border-collapse my-2 block overflow-x-auto whitespace-nowrap;
 }
 
-.markdown-container th {
-  @apply text-sm border border-gray-300 px-3 py-1.5 bg-gray-50;
-}
-
+.markdown-container th,
 .markdown-container td {
-  @apply text-sm border border-gray-300 px-3 py-1.5;
+  @apply text-base border px-3 py-1.5;
+  border-color: rgba(92, 91, 79, 0.5);
+}
+
+/* 列表样式 */
+.markdown-container ul,
+.markdown-container ol {
+  @apply text-base pl-2 my-2 space-y-1 list-inside;
 }
 
 .markdown-container ul {
-  @apply text-sm list-disc pl-4 my-2 space-y-1;
+  @apply list-disc;
 }
 
 .markdown-container ol {
-  @apply text-sm list-decimal pl-4 my-2 space-y-1;
+  @apply list-decimal;
 }
 
 .markdown-container li {
-  @apply text-sm;
+  @apply text-base;
 }
 
+/* 引用块 */
 .markdown-container blockquote {
-  @apply text-sm border-l-4 border-gray-300 pl-3 my-2 italic;
+  @apply text-base border-l-4 pl-4 my-3 italic;
+    border-color: rgba(92, 91, 79, 0.5);
 }
 
+/* 链接、强调、代码 */
 .markdown-container a {
-  @apply text-sm text-blue-600 hover:underline;
+  @apply text-base text-blue-600 hover:underline;
 }
 
 .markdown-container strong {
-  @apply text-sm font-bold;
+  @apply text-base font-bold;
 }
 
 .markdown-container em {
-  @apply text-sm italic;
+  @apply text-base italic;
 }
 
 .markdown-container code {
-  @apply bg-gray-100 px-1 py-0.5 rounded text-sm;
+  @apply bg-[#FFFFE4] px-1 py-0.5 rounded text-base;
 }
 
+/* 标题 */
 .markdown-container h1 {
-  @apply text-3xl font-bold mt-0 mb-3 border-b border-gray-200 pb-2;
+  @apply text-3xl font-bold mt-0 mb-4 border-b pb-2;
+    border-color: rgba(92, 91, 79, 0.5);
 }
 
 .markdown-container h2 {
-  @apply text-2xl font-semibold mt-0 mb-2 border-b border-gray-100 pb-1;
+  @apply text-2xl font-semibold mt-0 mb-3 border-b pb-1;
+    border-color: rgba(92, 91, 79, 0.5);
 }
 
 .markdown-container h3 {
@@ -60,7 +72,7 @@ body {
 }
 
 .markdown-container h4 {
-  @apply text-lg font-semibold mt-0 mb-1;
+  @apply text-lg font-semibold mt-0 mb-2;
 }
 
 .markdown-container h5 {
@@ -68,9 +80,10 @@ body {
 }
 
 .markdown-container h6 {
-  @apply text-sm font-semibold mt-0 mb-1 text-gray-500;
+  @apply text-sm font-semibold mt-0 mb-1 text-[#5C5B4F];
 }
 
+/* 图片 */
 .markdown-container img {
   @apply max-w-full h-auto rounded my-3 shadow;
   display: block;
@@ -78,20 +91,24 @@ body {
   margin-right: auto;
 }
 
+/* 分割线 */
 .markdown-container hr {
-  @apply my-6 border-t border-gray-300;
+  @apply my-6 border-t;
+    border-color: rgba(92, 91, 79, 0.5);
 }
 
+/* 代码块 */
 .markdown-container pre {
-  @apply bg-gray-900 text-gray-100 rounded p-3 my-3 overflow-x-auto text-sm;
+  @apply bg-[#FFFFE4] text-[#5C5B4F] rounded p-3 my-3 overflow-x-auto text-base;
 }
 
 .markdown-container pre code {
-  @apply bg-transparent text-inherit p-0 rounded-none;
+  @apply bg-transparent text-[#5C5B4F] p-0 rounded-none;
 }
 
+/* 删除线、上下标 */
 .markdown-container del {
-  @apply line-through text-gray-500;
+  @apply line-through text-[#5C5B4F];
 }
 
 .markdown-container sup,
@@ -99,32 +116,26 @@ body {
   @apply text-xs;
 }
 
+/* 脚注 */
 .markdown-container .footnote-ref {
   @apply text-blue-500 underline cursor-pointer;
 }
 
 .markdown-container .footnotes {
-  @apply text-xs text-gray-500 mt-4 border-t border-gray-200 pt-2;
+  @apply text-xs text-gray-500 mt-4 border-t pt-2;
+    border-color: #5C5B4F;
 }
 
-.markdown-container table {
-  @apply block overflow-x-auto whitespace-nowrap;
-}
-
-.markdown-container tr:nth-child(even) td {
-  @apply bg-gray-50;
-}
-
-/* 提示块（如 info/warning） */
+/* 提示块（如 info/warning/danger/note）统一背景色 */
 .markdown-container .info,
 .markdown-container .note {
-  @apply bg-blue-50 border-l-4 border-blue-400 text-blue-800 p-3 my-3 rounded;
+  @apply bg-[#E7E3C5] border-l-4 border-blue-400 text-blue-800 p-3 my-3 rounded;
 }
 
 .markdown-container .warning {
-  @apply bg-yellow-50 border-l-4 border-yellow-400 text-yellow-800 p-3 my-3 rounded;
+  @apply bg-[#E7E3C5] border-l-4 border-yellow-400 text-yellow-800 p-3 my-3 rounded;
 }
 
 .markdown-container .danger {
-  @apply bg-red-50 border-l-4 border-red-400 text-red-800 p-3 my-3 rounded;
+  @apply bg-[#E7E3C5] border-l-4 border-red-400 text-red-800 p-3 my-3 rounded;
 }
