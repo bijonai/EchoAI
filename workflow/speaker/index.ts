@@ -9,7 +9,8 @@ import { message } from "@xsai/utils-chat";
 import { streamText } from "@xsai/stream-text"
 import type { SpeakerRequestBody } from "~/types";
 import { prompt } from "~/utils";
-import { SYSTEM, USER } from "./prompts";
+import { SYSTEM, USER } from "./prompts"; 
+import { SPEAKER_MODEL_BASE_URL, SPEAKER_MODEL_API_KEY, SPEAKER_MODEL } from "~/utils/env"
 
 // const provider = speaker()
 // const defaultModel = SPEAKER_MODEL

@@ -1,7 +1,7 @@
 import type { DocumentNode } from "sciux";
 import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, SpeakerResponseStream, SwitchPage, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation } from "~/types";
 
-export async function create(body: CreateChatRequestBody, token?: string) {
+export async function create(body: CreateChatRequestBody, token?: string): Promise<CreateChatResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   return fetch('/api/chat/create', {
@@ -11,7 +11,7 @@ export async function create(body: CreateChatRequestBody, token?: string) {
   }).then(res => res.json()) satisfies Promise<CreateChatResponse>
 }
 
-export async function get(body: GetChatRequestBody, token?: string) {
+export async function get(body: GetChatRequestBody, token?: string): Promise<GetChatResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   return fetch('/api/chat/get', {
@@ -21,7 +21,7 @@ export async function get(body: GetChatRequestBody, token?: string) {
   }).then(res => res.json()) satisfies Promise<GetChatResponse>
 }
 
-export async function history(token?: string) {
+export async function history(token?: string): Promise<HistoryResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   return fetch('/api/chat/history', {
@@ -33,7 +33,7 @@ export async function history(token?: string) {
 export type LayoutCallbacks = {
   onOperate?(operation: SwitchPage): void
 }
-export async function layout(body: LayoutRequestBody, callbacks: LayoutCallbacks = {}, token?: string) {
+export async function layout(body: LayoutRequestBody, callbacks: LayoutCallbacks = {}, token?: string): Promise<LayoutResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   const response = await fetch('/api/chat/layout', {
@@ -60,7 +60,7 @@ export async function designer(body: DesignerRequestBody, token?: string): Promi
 export type SpeakerCallbacks = {
   onChunk?(chunk: string): void
 }
-export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallbacks = {}, token?: string) {
+export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallbacks = {}, token?: string): Promise<SpeakerResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   const response = await fetch('/api/chat/speaker', {
@@ -90,7 +90,7 @@ export type ChalkCallbacks = {
   onRemoveProp?(op: RemovePropOperation): DocumentNode
   onRemoveNode?(op: RemoveNodeOperation): DocumentNode
 }
-export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string) {
+export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string): Promise<ChalkResponse> {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   const response = await fetch('/api/chat/chalk', {

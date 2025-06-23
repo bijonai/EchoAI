@@ -7,8 +7,8 @@
 import type { DesignerRequestBody } from "~/types";
 import { message } from "@xsai/utils-chat";
 import { type Message } from "xsai";
-import { DESIGNER_MODEL, DESIGNER_MODEL_API_KEY, DESIGNER_MODEL_BASE_URL } from "~/utils";
-import { prompt } from "~/utils";
+import { DESIGNER_MODEL_BASE_URL, DESIGNER_MODEL_API_KEY, DESIGNER_MODEL } from "~/utils/env";
+import { prompt, latest } from "~/utils";
 import { SYSTEM, USER } from "./prompts";
 import { structure } from "./structure";
 import { generateObject } from "@xsai/generate-object";
@@ -74,11 +74,13 @@ export function createDesigner(context: Message[]) {
   return async (options: DesignerRequestBody) => {
     if (context.length === 0)
       context.push(message.system(prompt(SYSTEM)))
-    context.push(message.user(prompt(USER, {
-      prompt: options.prompt,
-    })))
+    if (latest(context)!.role !== 'user')
+      context.push(message.user(prompt(USER, {
+        prompt: options.prompt,
+      })))
     const { object, messages } = await generateObject({
       messages: context,
+      output: 'array',
       schema: structure,
       ...env,
     })

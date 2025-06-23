@@ -1,3 +1,5 @@
+import { structure, wrapper } from "./structure"
+
 export const SYSTEM = `
 You are a lesson designer specialized in breaking down complex concepts into clear, logical steps. Your task is to create a step-by-step lesson plan that guides students from basic understanding to mastery of the given topic.
 
@@ -44,6 +46,13 @@ Each step includes:
 - explanation: the explanation of the step
 - interaction: the interaction of the step
 - conclusion: the conclusion of the step
+
+# Output Rules:
+
+The output should be following the JSON schema:
+\`\`\`json
+${JSON.stringify(wrapper.toJsonSchema(), null, 2)}
+\`\`\`
 `.trim()
 
 export const USER = `

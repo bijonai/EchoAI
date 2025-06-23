@@ -14,6 +14,8 @@ import { streamText } from "@xsai/stream-text"
 import type { ChalkRequestBody, Operation } from "~/types"
 import { prompt } from "~/utils"
 import { SYSTEM, INTERACTIVE_REFERENCE, LAYOUT_REFERENCE, USER } from "./prompts"
+import { EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from "~/utils/env"
+import { CHALK_MODEL_BASE_URL, CHALK_MODEL_API_KEY, CHALK_MODEL } from "~/utils/env"
 import { parse } from "./parse"
 
 // const provider = chalk()

@@ -35,22 +35,33 @@ export const findStepNext = (stepId: string, branches: Branch[]): Step | null | 
   return null
 }
 
-export default function useDesigner(nextType: NextType, info: ChatInfo) {
+export default function useDesigner(nextType: NextType, info: ChatInfo, messages: Ref<Message[]>) {
   const branches = ref<Branch[]>([])
 
-  async function next(step: Step, prompt: string, refs?: string): Promise<Message[] | undefined> {
+  async function next(step: Step | null, { prompt, refs }: {
+    prompt?: string,
+    refs?: string,
+  }): Promise<Message[] | undefined> {
+    console.log('designer')
     if (nextType.value !== 'doubt') return
     nextType.value = 'prohibited'
+    messages.value.push({
+      role: 'processor',
+      content: 'Designer is thinking...',
+      isLoading: true,
+    })
     const result = await chat.designer({
       chat_id: info.chat_id,
-      prompt,
-      refs,
-      step: step.step.toString(),
-      next_step: (findStepNext(step.step.toString(), branches.value) as Step)?.step.toString(),
+      prompt: prompt ?? '',
+      refs: refs ?? '',
+      step: step ? step.step.toString() : undefined,
+      next_step: step ? (findStepNext(step.step.toString(), branches.value) as Step)?.step.toString() : void 0,
     }, info.token)
     nextType.value = 'next'
     branches.value.length = 0
     branches.value.push(...result.branches)
+    messages.value.length = 0
+    messages.value.push(...result.messages)
     return result.messages
   }
 

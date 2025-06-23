@@ -13,4 +13,8 @@ export const structure = t({
     .describe('The interaction design of the lesson'),
   conclusion: t.string
     .describe('The key learning outcome or solution for this step'),
-}).array()
+})
+
+export const wrapper = t({
+  elements: structure.array(),
+})

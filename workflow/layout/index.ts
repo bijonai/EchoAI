@@ -97,9 +97,10 @@ import { generateText } from '@xsai/generate-text'
 import { message } from '@xsai/utils-chat'
 import type { LayoutRequestBody, PageSwitch } from '~/types'
 import { SYSTEM, USER } from './prompts'
-import { prompt } from '#imports'
+import { prompt } from '~/utils'
 import { tools as toolsGenerator } from './tools'
 import { latest } from '~/utils'
+import { LAYOUT_MODEL_BASE_URL, LAYOUT_MODEL_API_KEY, LAYOUT_MODEL } from '~/utils/env'
 
 const env = {
   baseURL: LAYOUT_MODEL_BASE_URL,

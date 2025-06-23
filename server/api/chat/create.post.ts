@@ -63,7 +63,7 @@ import { table as chats } from "~/db/chats"
 // });
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<CreateChatRequestBody>(event)
+  const body = JSON.parse(await readBody(event)) as CreateChatRequestBody
   const userId = (event as unknown as withAuth)['userId']
   const [chat] = await db.insert(chats)
     .values({

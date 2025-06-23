@@ -1,23 +1,17 @@
 <script setup lang="ts">
-import type { ChatCreateResponse } from '~/server/api/chat/create.post';
-
-const prompt = ref('')
+import { chat } from '~/api';
 
 const accessToken = useState<string | undefined>('access-token');
 const isAuthenticated = useState<boolean | undefined>('is-authenticated');
-const userInfo = useLogtoUser();
+const userInfo = useLogtoUser()
+
+const prompts = ref('')
 
 async function start() {
-  const data = await $fetch<ChatCreateResponse>('/api/chat/create', {
-    method: 'POST',
-    headers: {
-      'Authorization': `Bearer ${accessToken.value}`
-    },
-    body: {
-      prompt: prompt.value,
-    },
-  })
-  navigateTo(`/chat/${data.chat_id}?new=true`)
+  const data = await chat.create({
+    prompt: prompts.value,
+  }, accessToken.value)
+  navigateTo(`/chat/${data.chat_id}?new=${prompts.value}`)
 }
 </script>
 
@@ -28,7 +22,7 @@ async function start() {
       {{ `Hello, ${isAuthenticated ? userInfo.username : 'Please Login'}!` }}
     </div>
     <div class="w-full h-72 max-w-4xl py-10 px-4">
-      <PromptArea v-model="prompt" @send="start" :displayNext="false" />
+      <PromptArea v-model="prompts" @send="start" :displayNext="false" />
     </div>
   </div>
 </template>

@@ -63,7 +63,7 @@ import { table as chats } from "~/db/chats"
 import { Branch } from "~/types/timeline"
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<GetChatRequestBody>(event)
+  const body = JSON.parse(await readBody(event)) as GetChatRequestBody
   const userId = (event as unknown as withAuth)['userId']
   const [chat] = await db.select({
     id: chats.id,
