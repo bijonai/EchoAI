@@ -10,7 +10,7 @@ const info = {
   chat_id: route.params.id as string,
 }
 const { messages, next: speaker } = useSpeaker(nextType, info)
-const { branches, next: designer } = useDesigner(nextType, info, messages)
+const { branches, step, next: designer } = useDesigner(nextType, info, messages)
 
 console.log(info)
 const { apply } = useHistory(info)
@@ -22,8 +22,10 @@ watch(prompts, (newVal) => {
   else nextType.value = 'doubt'
 })
 
-async function handleNext() {
-  // TODO
+async function handleNext(move: boolean = true) {
+  const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
+  if (!activeStep || activeStep === END) return
+  await speaker(activeStep)
 }
 
 const newParam = route.query.new
@@ -32,8 +34,10 @@ if (newParam) {
   nextType.value = 'doubt'
   designer(null, {
     prompt: newParam as string,
+  }).then(() => {
+    handleNext(false)
   })
-  router.replace({ query: { ...route.query, new: undefined } });
+  router.replace({ query: { ...route.query, new: undefined } })
 }
 </script>
 

@@ -75,9 +75,8 @@ export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallba
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
-      const text = decoder.decode(value, { stream: true })
-      const data = <SpeakerResponseStream>JSON.parse(text)
-      callbacks.onChunk?.(data.delta.content)
+      const text = decoder.decode(value)
+      callbacks.onChunk?.(text)
     }
   })()
   return response

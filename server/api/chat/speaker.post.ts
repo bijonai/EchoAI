@@ -11,7 +11,7 @@ import { withAuth } from "~/types/auth";
 import { table as chats } from "~/db/chats";
 import { createSpeaker } from "~/workflow/speaker";
 import { message, Message } from "xsai";
-import { SpeakerResponseStream, SpeakerResult, Message as ChatMessage } from "~/types";
+import { SpeakerResponse, Message as ChatMessage } from "~/types";
 
 // export default defineEventHandler(async (event) => {
 //   const body = await JSON.parse(await readBody(event));
@@ -165,6 +165,9 @@ export default defineEventHandler(async (event) => {
   const speaker = createSpeaker(chatContext)
   const result = await speaker(body)
 
+  setResponseHeader(event, "Content-Type", "text/event-stream");
+  setResponseHeader(event, "Cache-Control", "no-cache");
+  setResponseHeader(event, "Connection", "keep-alive");
   return new ReadableStream({
     async start(controller) {
       const reader = result.getReader()
@@ -172,11 +175,7 @@ export default defineEventHandler(async (event) => {
       while (true) {
         const { done, value } = await reader.read()
         if (done) break
-        const res: SpeakerResponseStream = {
-          delta: { content: value },
-          done,
-        }
-        controller.enqueue(JSON.stringify(res))
+        controller.enqueue(value)
         fullContent += value
       }
       results.push({

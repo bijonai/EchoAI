@@ -37,6 +37,7 @@ export const findStepNext = (stepId: string, branches: Branch[]): Step | null | 
 
 export default function useDesigner(nextType: NextType, info: ChatInfo, messages: Ref<Message[]>) {
   const branches = ref<Branch[]>([])
+  const currentStep = ref<string | null>(null)
 
   async function next(step: Step | null, { prompt, refs }: {
     prompt?: string,
@@ -62,11 +63,13 @@ export default function useDesigner(nextType: NextType, info: ChatInfo, messages
     branches.value.push(...result.branches)
     messages.value.length = 0
     messages.value.push(...result.messages)
+    currentStep.value = latest(result.branches)?.steps[0].step.toString() ?? null
     return result.messages
   }
 
   return {
     branches,
+    step: currentStep,
     next,
   }
 }

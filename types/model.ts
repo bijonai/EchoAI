@@ -69,11 +69,7 @@ export interface SpeakerRequestBody {
   stream?: boolean;
 }
 
-export interface SpeakerResponse {
-  content: string;
-}
-
-export type SpeakerResponseStream = Stream<SpeakerResponse>
+export type SpeakerResponse = string
 
 // ===== Layout 相关 =====
 export interface LayoutResult {
