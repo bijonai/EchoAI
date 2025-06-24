@@ -1,9 +1,10 @@
 import db from "@/db";
 import { eq, desc } from "drizzle-orm";
 import { table as chats } from '@/db/chats'
+import { withAuth } from "~/types/auth"
 
 export default defineEventHandler(async (event) => {
-  const userId = event["userId"];
+  const userId = (event as unknown as withAuth)['userId']
 
   const history = await db
     .select({

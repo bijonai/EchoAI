@@ -19,15 +19,11 @@ The output can use markdown format, you should use markdown components (like tab
 `
 
 export const USER = `
-STEP: <:insert:step>
-
-PROBLEM: <:insert:problem>
-
-KNOWLEDGE: <:insert:knowledge>
-
-EXPLANATION: <:insert:explanation>
-
-CONCLUSION: <:insert:conclusion>
+- STEP: <:insert:step>
+- PROBLEM: <:insert:problem>
+- KNOWLEDGE: <:insert:knowledge>
+- EXPLANATION: <:insert:explanation>
+- CONCLUSION: <:insert:conclusion>
 
 The response from user is:
 
