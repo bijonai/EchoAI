@@ -11,7 +11,8 @@ import { withAuth } from "~/types/auth";
 import { table as chats } from "~/db/chats";
 import { createSpeaker } from "~/workflow/speaker";
 import { message, Message } from "xsai";
-import { SpeakerResponse, Message as ChatMessage } from "~/types";
+import { SpeakerResult, SpeakerResponse, Message as ChatMessage } from "~/types";
+import createUpdate from "~/utils/update";
 
 // export default defineEventHandler(async (event) => {
 //   const body = await JSON.parse(await readBody(event));
@@ -184,16 +185,12 @@ export default defineEventHandler(async (event) => {
       })
       chatContext.push(message.assistant(fullContent))
       context.push({ role: 'speaker', content: fullContent, step: body.step })
-      runTask('save-context', {
-        payload: {
-          chat_id: body.chat_id,
-          values: {
+      const update = createUpdate(body.chat_id)
+      event.waitUntil(update({
             speaker_context: chatContext,
             speaker_results: results,
-            context,
-          }
-        }
-      })
+        context,
+      }))
       controller.close()
     }
   })

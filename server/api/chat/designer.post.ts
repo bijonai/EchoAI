@@ -14,6 +14,7 @@ import { Message as ChatMessage, DesignerRequestBody } from "~/types"
 import { DesignerResult } from "~/types"
 import { createDesigner } from "~/workflow/designer"
 import { Branch, Step } from "~/types/timeline"
+import createUpdate from "~/utils/update"
 
 // export default defineEventHandler(async (event) => {
 //   const body = await readBody<DesignerRequestBody>(event);
@@ -128,24 +129,20 @@ export default defineEventHandler(async (event) => {
   context.push({
     role: 'processor',
     content: 'Timeline Generated',
-    step: body.step,
+    step: object[0],
   })
   branches.push({
     steps: object,
     start: body.step,
     end: body.next_step,
   })
-  runTask('save-context', {
-    payload: {
-      chat_id: body.chat_id,
-      values: {
-        designer_context: chatContext,
-        designer_results: results,
-        context,
-        branches,
-      }
-    }
-  })
+  const update = createUpdate(body.chat_id)
+  event.waitUntil(update({
+    designer_context: chatContext,
+    designer_results: results,
+    context,
+    branches,
+  }))
 
   return {
     branches,

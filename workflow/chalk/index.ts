@@ -194,10 +194,14 @@ export function createChalk(context: Message[]) {
             operations.length = 0
             operations.push(...newOperations)
             controller.enqueue(JSON.stringify({
-              operations,
+              delta: {
+                operations,
+              }
             }))
           }
+          console.log(`[${Date.now()}] ${content}`)
         }
+        console.log(`[${Date.now()}] END`)
         onEnd?.(operations, content)
       }
     })

@@ -2,7 +2,7 @@
 const route = useRoute()
 const router = useRouter()
 
-const nextType = <NextType>ref('prohibited')
+const nextType = <NextType>ref('next')
 const token = useState('access-token')
 const prompts = ref('')
 const info = {
@@ -11,10 +11,11 @@ const info = {
 }
 const { messages, next: speaker } = useSpeaker(nextType, info)
 const { branches, step, next: designer } = useDesigner(nextType, info, messages)
+const { pageId, viewingId, initialize, apply: applyBoard } = useBoard(info)
+initialize()
 
-console.log(info)
 const { apply } = useHistory(info)
-apply(messages, branches)
+apply(messages, branches, step)
 
 watch(prompts, (newVal) => {
   if (nextType.value === 'prohibited') return
@@ -24,8 +25,13 @@ watch(prompts, (newVal) => {
 
 async function handleNext(move: boolean = true) {
   const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
+  console.log(activeStep, step.value, branches.value)
   if (!activeStep || activeStep === END) return
-  await speaker(activeStep)
+  const promises = [
+    speaker(activeStep),
+    applyBoard(activeStep, prompts.value),
+  ]
+  await Promise.all(promises)
 }
 
 const newParam = route.query.new
