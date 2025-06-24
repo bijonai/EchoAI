@@ -12,6 +12,7 @@ import { createLayout } from "~/workflow/layout";
 import { table as chats } from "~/db/chats";
 import { and, eq } from "drizzle-orm";
 import { Message } from "xsai";
+import createUpdate from "~/utils/update";
 
 // export default defineEventHandler(async (event) => {
 //   const body = await readBody<LayoutRequestBody>(event);
@@ -86,7 +87,7 @@ import { Message } from "xsai";
 // });
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<LayoutRequestBody>(event);
+  const body = JSON.parse(await readBody(event)) as LayoutRequestBody;
   const userId = (event as unknown as withAuth)["userId"];
   const [{ context: readContext, results: readResults }] = await db.select({
     id: chats.id,
@@ -109,14 +110,10 @@ export default defineEventHandler(async (event) => {
     operation: operations[0],
   }
   results.push(result)
-  runTask('save-context', {
-    payload: {
-      chat_id: body.chat_id,
-      values: {
-        layout_context: context,
-        layout_results: results,
-      }
-    }
-  })
+  const update = createUpdate(body.chat_id)
+  event.waitUntil(update({
+    layout_context: context,
+    layout_results: results,
+  }))
   return result
 });

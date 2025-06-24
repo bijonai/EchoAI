@@ -2,41 +2,27 @@
   <div class="flex relative size-full">
     <div class="flex size-full" ref="boardRef"></div>
     <div class="absolute bottom-0 right-0 m-4">
-      <PageSwitcher :page-id="pageId" :total="whiteboard.getPageCount()" @switch="$emit('switch', $event)" />
+      <PageSwitcher :page-id="viewingId?.toString() ?? ''" :total="total" @switch="handleSwitch" />
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { Whiteboard } from '@/utils/whiteboard';
-import { renderRoots } from 'sciux';
-import initializeSciux from 'sciux'
+import { usePage } from '~/composables/usePage'
+const { pageId, viewingId, document, total } = usePage()
 
-const boardRef = ref<HTMLDivElement>()
-const executed = reactive<string[]>([])
-
-const props = defineProps<{
-  pageId: string
-  whiteboard: Whiteboard
-}>()
-
-onMounted(() => {
-  initializeSciux()
-})
-
-defineEmits<{
-  (e: 'switch', direction: 'previous' | 'next'): void
-}>()
-
-const render = (pageId: string) => {
-  if (!props.whiteboard) return
-  const { document } = props.whiteboard.findPage(pageId)!
-  if (!document) return
-  try {
-    const roots = renderRoots(document.children)
-    boardRef.value!.replaceChildren(...roots)
-  } catch (e) {
-    console.error('Failed to render page', pageId, 'error:', e)
+function handleSwitch(operation: 'next' | 'previous') {
+  if (operation === 'next') {
+    if (viewingId.value! < total.value) {
+      viewingId.value = viewingId.value! + 1
+    }
+  } else if (operation === 'previous') {
+    if (viewingId.value! > 0) {
+      viewingId.value = viewingId.value! - 1
+    }
   }
 }
+
+const boardRef = ref<HTMLDivElement>()
+
 </script>

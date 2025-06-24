@@ -6,7 +6,7 @@ import type { Branch, Step } from './timeline';
 export type Message = {
   role: 'user' | 'speaker' | 'processor';
   content: string;
-  step?: string;
+  step?: Step;
   isLoading?: boolean;
 }
 

@@ -8,6 +8,7 @@ import db from "~/db"
 import { CreateChatRequestBody, CreateChatResponse } from "~/types"
 import { withAuth } from "~/types/auth"
 import { table as chats } from "~/db/chats"
+import createUpdate from "~/utils/update"
 
 // export interface ChatCreateRequestBody {
 //   prompt?: string;
