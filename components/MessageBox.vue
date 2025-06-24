@@ -3,6 +3,7 @@ const props = defineProps<{
   role: string
   content?: string
   isLoading?: boolean
+  timelineIndex?: number /* start with 0 */
 }>()
 
 const avatar = computed(() => {
@@ -29,16 +30,16 @@ const avatar = computed(() => {
       </div>
     </div>
     <div v-else class="flex items-center justify-start flex-grow px-2">
-      <span v-if="props.content == 'Designer'" class="py-2 text-xl font-bold"
-        :class="{ 'loading-effect-designer': true }">Designer is
+      <span v-if="isLoading" class="py-2 text-xl font-bold" :class="{ 'loading-effect-designer': true }">Designer is
         thinking...</span>
-      <span v-else-if="props.content == 'Layout'" class="py-2 text-xl font-bold flex items-center gap-2">
-        <span>Create Timeline</span>
-        <svg width="95" height="20" viewBox="0 0 95 20" fill="none" xmlns="http://www.w3.org/2000/svg">
-          <circle :class="{ 'flow-ball ball-1': true }" cx="10" cy="10" r="10" fill="#87CEEB" />
-          <circle :class="{ 'flow-ball ball-2': true }" cx="35" cy="10" r="10" fill="#FFA500" />
-          <circle :class="{ 'flow-ball ball-3': true }" cx="60" cy="10" r="10" fill="#E88AFF" />
-          <circle :class="{ 'flow-ball ball-4': true }" cx="85" cy="10" r="10" fill="#FF4B4B" />
+      <span v-else class="py-2 text-xl font-bold flex gap-2 items-center flex-wrap">
+        <span>Created</span>
+        <span>Timeline</span>
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="10" cy="10" r="10" fill="#87CEEB" :class="{ 'hidden': (timelineIndex ?? 0) % 4 !== 0 }" />
+          <circle cx="10" cy="10" r="10" fill="#FFA500" :class="{ 'hidden': (timelineIndex ?? 0) % 4 !== 1 }" />
+          <circle cx="10" cy="10" r="10" fill="#E88AFF" :class="{ 'hidden': (timelineIndex ?? 0) % 4 !== 2 }" />
+          <circle cx="10" cy="10" r="10" fill="#FF4B4B" :class="{ 'hidden': (timelineIndex ?? 0) % 4 !== 3 }" />
         </svg>
       </span>
     </div>
@@ -65,41 +66,6 @@ const avatar = computed(() => {
 
   100% {
     background-position: 200% 50%;
-  }
-}
-
-.flow-ball {
-  opacity: 0.6;
-  animation: ball-flow 0.8s cubic-bezier(0.4, 0, 0.2, 1) infinite;
-}
-
-.ball-1 {
-  animation-delay: 0s;
-}
-
-.ball-2 {
-  animation-delay: 0.2s;
-}
-
-.ball-3 {
-  animation-delay: 0.4s;
-}
-
-.ball-4 {
-  animation-delay: 0.6s;
-}
-
-@keyframes ball-flow {
-  0% {
-    opacity: 0.6;
-  }
-
-  50% {
-    opacity: 1;
-  }
-
-  100% {
-    opacity: 0.6;
   }
 }
 </style>

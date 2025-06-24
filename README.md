@@ -63,6 +63,12 @@ pnpm i
 
 You need to launch [Logto](https://logto.io/), [PostgreSQL](https://www.postgresql.org/) and [Qdrant](https://qdrant.tech/) to start the development environment.
 
+Or, you can use docker compose to launch the required services.
+
+```bash
+docker compose up -d
+```
+
 4. Setup environment variables
 
 Rename `.env.template` in the root to `.env` and fill in the required variables (include your Logto and PostgreSQL credentials).
@@ -73,27 +79,11 @@ Rename `.env.template` in the root to `.env` and fill in the required variables 
 pnpm db:init
 ```
 
-6. Initialize knowledge base
+6. Start the development server
 
 ```bash
-pnpm knowledge:init
+pnpm dev
 ```
-
-7. Start the development server
-
-```bash
-pnpm compose:dev
-```
-
-## 📦 Packages
-
-| Package | Description |
-| ------- | ----------- |
-| `@echoai/api` | Front-end functions to fetch server |
-| `@echoai/server` | Backend server |
-| `@echoai/utils` | Utility functions for workflow |
-| `@echoai/web` | NextJS web app |
-| `@echoai/workflow` | Workflow for AI |
 
 ## 🤝 Contributors
 
