@@ -1,5 +1,5 @@
 import type { DocumentNode } from "sciux";
-import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, SpeakerResponseStream, SwitchPage, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation } from "~/types";
+import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, SpeakerResponseStream, SwitchPage, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation, PageSwitch, ChalkResponse } from "~/types";
 
 export async function create(body: CreateChatRequestBody, token?: string): Promise<CreateChatResponse> {
   const headers = new Headers()
@@ -31,7 +31,7 @@ export async function history(token?: string): Promise<HistoryResponse> {
 }
 
 export type LayoutCallbacks = {
-  onOperate?(operation: SwitchPage): void
+  onOperate?(operation: PageSwitch): void
 }
 export async function layout(body: LayoutRequestBody, callbacks: LayoutCallbacks = {}, token?: string): Promise<LayoutResponse> {
   const headers = new Headers()
@@ -83,11 +83,11 @@ export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallba
 }
 
 export type ChalkCallbacks = {
-  onAddNode?(op: AddNodeOperation): DocumentNode
-  onSetContent?(op: SetContentOperation): DocumentNode
-  onSetProp?(op: SetPropOperation): DocumentNode
-  onRemoveProp?(op: RemovePropOperation): DocumentNode
-  onRemoveNode?(op: RemoveNodeOperation): DocumentNode
+  onAddNode?(op: AddNodeOperation): void
+  onSetContent?(op: SetContentOperation): void
+  onSetProp?(op: SetPropOperation): void
+  onRemoveProp?(op: RemovePropOperation): void
+  onRemoveNode?(op: RemoveNodeOperation): void
 }
 export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string): Promise<ChalkResponse> {
   const headers = new Headers()
