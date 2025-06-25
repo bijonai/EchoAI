@@ -1,5 +1,5 @@
 import { eq } from "drizzle-orm";
-import { table as chats } from "@/db/chats";
+import { chats } from "@/db";
 import db from "@/db";
 
 export default function createUpdate(id: string) {

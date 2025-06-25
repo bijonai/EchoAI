@@ -8,13 +8,27 @@ export default defineNuxtConfig({
   vite: {
     plugins: [
       tailwindcss()
-    ]
-  },
+    ],
+    build: {
+      target: 'esnext',
+      rollupOptions: {
+        external: ['@valibot/to-json-schema'],
+      }
+    },
+  }, 
+  // alias: {
+  //   '@valibot/to-json-schema': './index-CISmcbXk.js',
+  //   'sury': './index-CISmcbXk.js',
+  //   'effect': './index-CISmcbXk.js',
+  // },
   css: ['~/assets/css/main.css'],
   nitro: {
     experimental: {
       tasks: true
     }
+  },
+  hub: {
+
   },
   modules: [
     '@nuxt/content',
@@ -22,7 +36,8 @@ export default defineNuxtConfig({
     '@nuxt/fonts',
     '@nuxt/icon',
     '@nuxt/image',
-    '@logto/nuxt'
+    '@logto/nuxt',
+    '@nuxthub/core'
   ],
   runtimeConfig: {
     logto: {
