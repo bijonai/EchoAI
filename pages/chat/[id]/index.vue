@@ -15,7 +15,6 @@ const { pageId, viewingId, initialize, apply: applyBoard } = useBoard(info)
 initialize()
 
 const { apply } = useHistory(info)
-apply(messages, branches, step)
 
 watch(prompts, (newVal) => {
   if (nextType.value === 'prohibited') return
@@ -32,16 +31,20 @@ async function handleNext(move: boolean = true) {
     applyBoard(activeStep, prompts.value),
   ]
   await Promise.all(promises)
+  step.value = activeStep.step.toString()
+  nextType.value = 'next'
 }
 
 const newParam = route.query.new
 
 if (newParam) {
   nextType.value = 'doubt'
-  designer(null, {
-    prompt: newParam as string,
-  }).then(() => {
-    handleNext(false)
+  apply(messages, branches, step as Ref<string>).then(() => {
+    designer(null, {
+      prompt: newParam as string,
+    }).then(() => {
+      handleNext(false)
+    })
   })
   router.replace({ query: { ...route.query, new: undefined } })
 }

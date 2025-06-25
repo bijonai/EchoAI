@@ -24,7 +24,7 @@ export default function useSpeaker(
         messages.value[messages.value.length - 1].content += chunk
       },
     }, info.token)
-    nextType.value = 'next'
+    // nextType.value = 'next'
   }
 
   return {
