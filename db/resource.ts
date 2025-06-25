@@ -1,7 +1,7 @@
 import { sql } from "drizzle-orm";
 import { pgTable, text, timestamp, uuid, json, numeric } from "drizzle-orm/pg-core";
 
-export const table = pgTable("resources", {
+export const resource = pgTable("resource", {
   id: uuid("id").primaryKey().default(sql`gen_random_uuid()`),
   created_at: timestamp("created_at").notNull().defaultNow(),
   updated_at: timestamp("updated_at").notNull().defaultNow(),
