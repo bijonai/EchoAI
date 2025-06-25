@@ -70,8 +70,14 @@ const env = {
   model: DESIGNER_MODEL,
 }
 
+export interface DesignerOptions {
+  prompt: string;
+  refs?: string;
+  step?: string;
+  next_step?: string;
+}
 export function createDesigner(context: Message[]) {
-  return async (options: DesignerRequestBody) => {
+  return async (options: DesignerOptions) => {
     if (context.length === 0)
       context.push(message.system(prompt(SYSTEM)))
     if (latest(context)!.role !== 'user')
