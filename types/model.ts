@@ -96,6 +96,7 @@ export interface ChalkResult {
   components?: Position[];
   output: Operation[];
   step: string;
+  page: string
 }
 
 export interface ChalkResponse {

@@ -2,6 +2,8 @@ import { NodeType, parse, querySelectorXPath, type AttributeNode, type DocumentN
 import type { ChatInfo } from "."
 import type { Step } from "~/types/timeline"
 import { chat } from "~/api"
+import type { ChalkResult } from "~/types"
+import { processChalkCallbacks, type ChalkCallbacks } from "~/api/chat"
 
 export const PAGE = Symbol('PAGE')
 export const VIEWING = Symbol('VIEWING')
@@ -47,8 +49,8 @@ export default function useBoard(info: ChatInfo) {
     }
   })
 
-  function createPage(title: string) {
-    const id = unused++
+  function createPage(title: string, givenId?: number) {
+    const id = givenId ?? unused++
     pages.set(id, { title, document: createEmptyDocument(id) })
     pageId.value = id
     total.value++
@@ -74,7 +76,70 @@ export default function useBoard(info: ChatInfo) {
     }
   }
 
-  async function apply(step: Step, prompt: string) {
+  const operated: string[] = []
+  const callbacks: ChalkCallbacks = {
+    operated,
+    onAddNode: (op) => {
+      const { children } = parse(op.content)
+      const { document } = pages.get(pageId.value!)!
+      const target = <ElementNode>querySelectorXPath(document, op.position)
+      if (!target) {
+        // TODO: handle error
+        return console.error(`Failed to find target node: ${op.position}`)
+      }
+      target.children.push(...children)
+      console.log(document)
+    },
+    onSetContent: (op) => {
+      const { children } = parse(op.content)
+      const { document } = pages.get(pageId.value!)!
+      const target = <ElementNode>querySelectorXPath(document, op.position)
+      if (!target) {
+        // TODO: handle error
+        return console.error(`Failed to find target node: ${op.position}`)
+      }
+      target.children.length = 0
+      target.children.push(...children)
+    },
+    onSetProp: (op) => {
+      const { document } = pages.get(pageId.value!)!
+      const target = <ElementNode>querySelectorXPath(document, op.position)
+      if (!target) {
+        // TODO: handle error
+        return console.error(`Failed to find target node: ${op.position}`)
+      }
+      target.attributes = target.attributes.filter(attr => attr.name !== op.attr)
+      target.attributes.push(<AttributeNode>{
+        name: op.attr,
+        value: op.value,
+      })
+    },
+    onRemoveProp: (op) => {
+      const { document } = pages.get(pageId.value!)!
+      const target = <ElementNode>querySelectorXPath(document, op.position)
+      if (!target) {
+        // TODO: handle error
+        return console.error(`Failed to find target node: ${op.position}`)
+      }
+      target.attributes = target.attributes.filter(attr => attr.name !== op.attr)
+    },
+    onRemoveNode: (op) => {
+      const { document } = pages.get(pageId.value!)!
+      const target = <ElementNode>querySelectorXPath(document, op.position)
+      if (!target) {
+        // TODO: handle error
+        return console.error(`Failed to find target node: ${op.position}`)
+      }
+      const parent = target.parent
+      if (!parent) {
+        // TODO: handle error
+        return console.error(`Failed to find parent node: ${op.position}`)
+      }
+      parent.children = parent.children.filter(child => child !== target)
+    },
+  }
+
+  async function next(step: Step, prompt: string) {
     const { content } = await chat.layout({
       chat_id: info.chat_id,
       step,
@@ -89,7 +154,6 @@ export default function useBoard(info: ChatInfo) {
         }
       }
     }, info.token)
-    const { document } = pages.get(pageId.value!)!
     await chat.chalk({
       chat_id: info.chat_id,
       layout: content ?? '',
@@ -98,61 +162,18 @@ export default function useBoard(info: ChatInfo) {
       components: [],
       document: '',
       stream: true,
-    }, {
-      onAddNode: (op) => {
-        const { children } = parse(op.content)
-        const target = <ElementNode> querySelectorXPath(document, op.position)
-        if (!target) {
-          // TODO: handle error
-          return console.error(`Failed to find target node: ${op.position}`)
-        }
-        target.children.push(...children)
-        console.log(document)
-      },
-      onSetContent: (op) => {
-        const { children } = parse(op.content)
-        const target = <ElementNode> querySelectorXPath(document, op.position)
-        if (!target) {
-          // TODO: handle error
-          return console.error(`Failed to find target node: ${op.position}`)
-        }
-        target.children.length = 0
-        target.children.push(...children)
-      },
-      onSetProp: (op) => {
-        const target = <ElementNode> querySelectorXPath(document, op.position)
-        if (!target) {
-          // TODO: handle error
-          return console.error(`Failed to find target node: ${op.position}`)
-        }
-        target.attributes = target.attributes.filter(attr => attr.name !== op.attr)
-        target.attributes.push(<AttributeNode>{
-          name: op.attr,
-          value: op.value,
-        })
-      },
-      onRemoveProp: (op) => {
-        const target = <ElementNode> querySelectorXPath(document, op.position)
-        if (!target) {
-          // TODO: handle error
-          return console.error(`Failed to find target node: ${op.position}`)
-        }
-        target.attributes = target.attributes.filter(attr => attr.name !== op.attr)
-      },
-      onRemoveNode: (op) => {
-        const target = <ElementNode> querySelectorXPath(document, op.position)
-        if (!target) {
-          // TODO: handle error
-          return console.error(`Failed to find target node: ${op.position}`)
-        }
-        const parent = target.parent
-        if (!parent) {
-          // TODO: handle error
-          return console.error(`Failed to find parent node: ${op.position}`)
-        }
-        parent.children = parent.children.filter(child => child !== target)
-      },
-    }, info.token)
+    }, callbacks, info.token)
+  }
+
+  async function apply(result: ChalkResult[]) {
+    for (const r of result) {
+      const pageId = parseInt(r.page)
+      if (!pages.has(pageId)) {
+        createPage(r.page, pageId)
+      }
+      processChalkCallbacks(callbacks, operated, r.output)
+      console.log(pages.get(0))
+    }
   }
 
   return {
@@ -160,7 +181,8 @@ export default function useBoard(info: ChatInfo) {
     viewingId,
     initialize,
     createPage,
-    apply,
+    next,
     switchViewing,
+    apply,
   }
 }

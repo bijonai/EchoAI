@@ -11,10 +11,10 @@ const info = {
 }
 const { messages, next: speaker } = useSpeaker(nextType, info)
 const { branches, step, next: designer } = useDesigner(nextType, info, messages)
-const { pageId, viewingId, initialize, apply: applyBoard } = useBoard(info)
+const { pageId, viewingId, initialize, next: nextBoard, apply: applyBoard } = useBoard(info)
 initialize()
 
-const { apply } = useHistory(info)
+const { apply, get } = useHistory(info)
 
 watch(prompts, (newVal) => {
   if (nextType.value === 'prohibited') return
@@ -28,12 +28,17 @@ async function handleNext(move: boolean = true) {
   if (!activeStep || activeStep === END) return
   const promises = [
     speaker(activeStep),
-    applyBoard(activeStep, prompts.value),
+    nextBoard(activeStep, prompts.value),
   ]
   await Promise.all(promises)
   step.value = activeStep.step.toString()
   nextType.value = 'next'
 }
+
+apply(messages, branches, step as Ref<string>)
+get().then((result) => {
+  applyBoard(result.chalk)
+})
 
 const newParam = route.query.new
 

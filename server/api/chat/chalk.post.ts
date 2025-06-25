@@ -33,6 +33,7 @@ export default defineEventHandler(async (event) => {
       components: body.components ?? [],
       output: operations,
       step: body.step,
+      page: body.page_id,
     }]
     console.log('[PRE-UPDATE]')
 

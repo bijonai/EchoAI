@@ -1,5 +1,4 @@
-import type { DocumentNode } from "sciux";
-import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, SpeakerResponseStream, SwitchPage, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation, PageSwitch, ChalkResponse } from "~/types";
+import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation, PageSwitch, Operation } from "~/types";
 
 export async function create(body: CreateChatRequestBody, token?: string): Promise<CreateChatResponse> {
   const headers = new Headers()
@@ -60,7 +59,7 @@ export async function designer(body: DesignerRequestBody, token?: string): Promi
 export type SpeakerCallbacks = {
   onChunk?(chunk: string): void
 }
-export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallbacks = {}, token?: string): Promise<SpeakerResponse> {
+export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallbacks = {}, token?: string) {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   const response = await fetch('/api/chat/speaker', {
@@ -88,8 +87,32 @@ export type ChalkCallbacks = {
   onSetProp?(op: SetPropOperation): void
   onRemoveProp?(op: RemovePropOperation): void
   onRemoveNode?(op: RemoveNodeOperation): void
+  operated?: string[]
 }
-export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string): Promise<ChalkResponse> {
+export function processChalkCallbacks(callbacks: ChalkCallbacks, operated: string[], operations: Operation[]) {
+  for (const op of operations) {
+    if (operated.includes(op.id)) continue
+    operated.push(op.id)
+    switch (op.type) {
+      case 'add-node':
+        callbacks.onAddNode?.(op)
+        break
+      case 'set-content':
+        callbacks.onSetContent?.(op)
+        break
+      case 'set-prop':
+        callbacks.onSetProp?.(op)
+        break
+      case 'remove-prop':
+        callbacks.onRemoveProp?.(op)
+        break
+      case 'remove-node':
+        callbacks.onRemoveNode?.(op)
+        break
+    }
+  }
+}
+export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string) {
   const headers = new Headers()
   headers.set('Authorization', `Bearer ${token}`)
   const response = await fetch('/api/chat/chalk', {
@@ -101,34 +124,13 @@ export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = 
   if (!reader) return
   const decoder = new TextDecoder();
   (async () => {
-    const operated: string[] = []
     while (true) {
       const { done, value } = await reader.read()
       if (done) break
       const text = decoder.decode(value, { stream: true })
       const data = <ChalkResponseStream>JSON.parse(text)
       const { operations } = data.delta
-      for (const op of operations) {
-        if (operated.includes(op.id)) continue
-        operated.push(op.id)
-        switch (op.type) {
-          case 'add-node':
-            callbacks.onAddNode?.(op)
-            break
-          case 'set-content':
-            callbacks.onSetContent?.(op)
-            break
-          case 'set-prop':
-            callbacks.onSetProp?.(op)
-            break
-          case 'remove-prop':
-            callbacks.onRemoveProp?.(op)
-            break
-          case 'remove-node':
-            callbacks.onRemoveNode?.(op)
-            break
-        }
-      }
+      processChalkCallbacks(callbacks, callbacks.operated ?? [], operations)
     }
   })()
   return response
