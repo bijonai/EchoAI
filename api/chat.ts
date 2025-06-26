@@ -82,35 +82,7 @@ export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallba
 }
 
 export type ChalkCallbacks = {
-  onAddNode?(op: AddNodeOperation): void
-  onSetContent?(op: SetContentOperation): void
-  onSetProp?(op: SetPropOperation): void
-  onRemoveProp?(op: RemovePropOperation): void
-  onRemoveNode?(op: RemoveNodeOperation): void
-  operated?: string[]
-}
-export function processChalkCallbacks(callbacks: ChalkCallbacks, operated: string[], operations: Operation[]) {
-  for (const op of operations) {
-    if (operated.includes(op.id)) continue
-    operated.push(op.id)
-    switch (op.type) {
-      case 'add-node':
-        callbacks.onAddNode?.(op)
-        break
-      case 'set-content':
-        callbacks.onSetContent?.(op)
-        break
-      case 'set-prop':
-        callbacks.onSetProp?.(op)
-        break
-      case 'remove-prop':
-        callbacks.onRemoveProp?.(op)
-        break
-      case 'remove-node':
-        callbacks.onRemoveNode?.(op)
-        break
-    }
-  }
+  onOperate?(operation: Operation): void
 }
 export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string) {
   const headers = new Headers()
@@ -130,7 +102,9 @@ export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = 
       const text = decoder.decode(value, { stream: true })
       const data = <ChalkResponseStream>JSON.parse(text)
       const { operations } = data.delta
-      processChalkCallbacks(callbacks, callbacks.operated ?? [], operations)
+      for (const op of operations) {
+        callbacks.onOperate?.(op)
+      }
     }
   })()
   return response

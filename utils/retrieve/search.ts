@@ -1,29 +1,32 @@
-import OpenAI from "openai";
 import { QdrantClient } from "@qdrant/js-client-rest";
-import { EMBEDDING_MODEL } from "../env";
-
 export interface SearchParams {
-  collection: string
-  query: string
-  topK?: number
-  model?: string
+  baseURL: string
+  apiKey: string
+  embedding: number[]
+  collections: string[]
+  limit?: number
 }
-export async function search(
-  client: OpenAI,
-  qdrant: QdrantClient,
-  params: SearchParams,
-): Promise<string[]> {
-  const embeddingRes = await client.embeddings.create({
-    model: params.model ?? EMBEDDING_MODEL,
-    input: [params.query.trim()],
-  });
-  const queryVector = embeddingRes.data[0].embedding;
-  const searchRes = await qdrant.search(params.collection, {
-    vector: queryVector,
-    limit: params.topK,
+export interface Chunk {
+  text: string
+  id: string | number
+  score: number
+}
+export async function search(params: SearchParams) {
+  const client = new QdrantClient({
+    url: params.baseURL,
+    apiKey: params.apiKey,
   })
-
-  const results = searchRes.map(hit => (hit.payload as any).text as string);
-
-  return results;
+  return {
+    chunks: Object.fromEntries(await Promise.all(params.collections.map(async (collection) => {
+      const res = await client.search(collection, {
+        vector: params.embedding,
+        limit: params.limit,
+      })
+      return [collection, res.map((hit) => ({
+        text: hit.payload?.text as string,
+        id: hit.id,
+        score: hit.score,
+      })) as Chunk[]]
+    }))) as Record<string, Chunk[]>
+  }
 }

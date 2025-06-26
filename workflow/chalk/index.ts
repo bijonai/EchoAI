@@ -1,9 +1,11 @@
-import { message, type Message } from "xsai"
+import type { Message } from "xsai"
+import { message } from "@xsai/utils-chat"
+import { embed } from "@xsai/embed"
 import { streamText } from "@xsai/stream-text"
 import type { ChalkRequestBody, Operation } from "~/types"
 import { prompt } from "~/utils"
 import { SYSTEM, INTERACTIVE_REFERENCE, LAYOUT_REFERENCE, USER } from "./prompts"
-import { EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from "~/utils/env"
+import { EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL, QDRANT_URL, QDRANT_API_KEY } from "~/utils/env"
 import { CHALK_MODEL_BASE_URL, CHALK_MODEL_API_KEY, CHALK_MODEL } from "~/utils/env"
 import { parse } from "./parse"
 import { latest } from "~/utils"
@@ -13,17 +15,17 @@ const env = {
   apiKey: CHALK_MODEL_API_KEY,
   model: CHALK_MODEL,
 }
-const embedding = {
+const embeddingEnv = {
   baseURL: EMBEDDING_MODEL_BASE_URL,
   apiKey: EMBEDDING_MODEL_API_KEY,
   model: EMBEDDING_MODEL,
 }
+const searchEnv = {
+  baseURL: QDRANT_URL,
+  apiKey: QDRANT_API_KEY,
+}
 
 export function createChalk(context: Message[]) {
-  async function embed(content: string): Promise<string[]> {
-    return []
-  }
-
   return async (
     options: ChalkRequestBody,
     onEnd?: (operations: Operation[], content: string) => void
@@ -36,12 +38,20 @@ export function createChalk(context: Message[]) {
           prompt(LAYOUT_REFERENCE),
         ].join('\n\n')
       ))
-    const refs = await embed(options.layout)
+    const { embedding } = await embed({
+      ...embeddingEnv,
+      input: options.layout,
+    })
+    const { chunks } = await search({
+      ...searchEnv,
+      embedding,
+      collections: ['chalk-knowledge'],
+    })
     context.push(message.user(prompt(USER, {
       page_id: options.page_id ?? '',
       document: options.document ?? '',
       requirement: options.layout,
-      references: refs.join('\n\n'),
+      references: chunks['chalk-knowledge'].map((chunk) => chunk.text).join('\n\n'),
     })))
     const operations: Operation[] = []
     let content = ''
