@@ -73,7 +73,7 @@ if (newParam) {
         <!-- <Board :pageId="currentPage.toString()" :whiteboard="whiteboard" @switch="handleSwitch" /> -->
       </div>
       <div class="h-56 rounded-md bg-[#FEFFE4]">
-        <Timeline :branches="branches" />
+        <Timeline />
       </div>
     </div>
     <div class="col-span-3 flex flex-col gap-2 w-full h-full">
