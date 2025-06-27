@@ -24,14 +24,25 @@ watch(prompts, (newVal) => {
 
 async function handleNext(move: boolean = true) {
   const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
-  console.log(activeStep, step.value, branches.value)
-  if (!activeStep || activeStep === END) return
-  const promises = [
-    speaker(activeStep),
-    nextBoard(activeStep, prompts.value),
-  ]
-  await Promise.all(promises)
-  step.value = activeStep.step.toString()
+  console.log(activeStep, step.value, JSON.stringify(branches.value))
+  console.log(nextType.value)
+
+  if (nextType.value === 'doubt') {
+    designer(findStep(step.value!, branches.value), {
+      prompt: prompts.value,
+    }).then(() => {
+      handleNext(false)
+    })
+  } else {
+    if (!activeStep || activeStep === END) return
+    const promises = [
+      speaker(activeStep),
+      nextBoard(activeStep, prompts.value),
+    ]
+    await Promise.all(promises)
+    step.value = activeStep.step.toString()
+  }
+
   nextType.value = 'next'
 }
 
@@ -61,17 +72,17 @@ if (newParam) {
       <div class="flex-grow rounded-md bg-[#24292F]">
         <!-- <Board :pageId="currentPage.toString()" :whiteboard="whiteboard" @switch="handleSwitch" /> -->
       </div>
-      <div class="h-48 rounded-md bg-[#FEFFE4]">
+      <div class="h-56 rounded-md bg-[#FEFFE4]">
         <Timeline :branches="branches" />
       </div>
     </div>
     <div class="col-span-3 flex flex-col gap-2 w-full h-full">
-      <div class="flex flex-col w-full h-full max-h-[calc(100vh-13.5rem)] overflow-y-auto scroll-smooth scrollbar-hide">
+      <div class="flex flex-col w-full h-full max-h-[calc(100vh-15.5rem)] overflow-y-auto scroll-smooth scrollbar-hide">
         <div v-for="(message, index) in messages" :key="index">
           <MessageBox :role="message.role" :content="message.content" :is-loading="message.isLoading ?? false" />
         </div>
       </div>
-      <div class="h-48 w-full">
+      <div class="h-56 w-full">
         <PromptArea @next="handleNext" :next="nextType !== 'prohibited'" v-model="prompts" />
       </div>
     </div>
