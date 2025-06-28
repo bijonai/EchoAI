@@ -18,7 +18,15 @@ export interface Page {
 function createEmptyDocument(id: number) {
   return {
     type: NodeType.DOCUMENT,
-    children: [],
+    children: [
+      {
+        type: NodeType.ELEMENT,
+        tag: 'root',
+        children: [],
+        selfClosing: false,
+        attributes: [],
+      },
+    ],
     filename: `page-${id}`,
     raw: '',
   } as DocumentNode
@@ -105,7 +113,8 @@ export default function useBoard(info: ChatInfo) {
       stream: true,
     }, {
       onOperate: (operation) => {
-        handleOperation(operation)
+        const result = handleOperation(operation)
+        console.log(result, activeDocument.value)
       }
     }, info.token)
   }

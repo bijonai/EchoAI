@@ -8,7 +8,7 @@ import { SYSTEM, INTERACTIVE_REFERENCE, LAYOUT_REFERENCE, USER } from "./prompts
 import { EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL, QDRANT_URL, QDRANT_API_KEY } from "~/utils/env"
 import { CHALK_MODEL_BASE_URL, CHALK_MODEL_API_KEY, CHALK_MODEL } from "~/utils/env"
 import { parse } from "./parse"
-import { latest } from "~/utils"
+import { latest, search } from "~/utils"
 
 const env = {
   baseURL: CHALK_MODEL_BASE_URL,
@@ -45,13 +45,13 @@ export function createChalk(context: Message[]) {
     const { chunks } = await search({
       ...searchEnv,
       embedding,
-      collections: ['chalk-knowledge'],
+      collections: ['refers', 'apis'],
     })
     context.push(message.user(prompt(USER, {
       page_id: options.page_id ?? '',
       document: options.document ?? '',
       requirement: options.layout,
-      references: chunks['chalk-knowledge'].map((chunk) => chunk.text).join('\n\n'),
+      references: [chunks].map((chunk) => chunk.text).join('\n\n'),
     })))
     const operations: Operation[] = []
     let content = ''

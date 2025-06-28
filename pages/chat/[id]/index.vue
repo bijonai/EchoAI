@@ -70,7 +70,7 @@ if (newParam) {
   <div class="grid grid-cols-10 gap-2 w-full h-full p-2">
     <div class="col-span-7 flex flex-col gap-2 w-full h-full">
       <div class="flex-grow rounded-md bg-[#24292F]">
-        <!-- <Board :pageId="currentPage.toString()" :whiteboard="whiteboard" @switch="handleSwitch" /> -->
+        <Board />
       </div>
       <div class="h-56 rounded-md bg-[#FEFFE4]">
         <Timeline />

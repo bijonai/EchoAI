@@ -16,6 +16,7 @@ export default function useOperator(
       return console.error(`Failed to find target node: ${op.position}`)
     }
     target.children.push(...children)
+    console.log(document.value)
     return op.type
   }
   const handleSetContent = (op: SetContentOperation) => {
@@ -76,7 +77,8 @@ export default function useOperator(
 
   const handleOperation = (op: Operation) => {
     if (operated.includes(op.id)) return
-    operated.push(op.id)
+    console.log(op)
+    op.position = op.position === '/' ? op.position : '/root' + op.position
     switch (op.type) {
       case 'add-node':
         return handleAddNode(op)
