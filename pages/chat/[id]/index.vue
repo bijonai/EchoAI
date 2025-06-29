@@ -1,10 +1,15 @@
 <script setup lang="ts">
+import type { Timeline } from '#components'
+
 const route = useRoute()
 const router = useRouter()
 
 const nextType = <NextType>ref('next')
 const token = useState('access-token')
 const prompts = ref('')
+
+const nowStep = useState<string | null>('now-step')
+
 const info = {
   token: <string>token.value,
   chat_id: route.params.id as string,
@@ -24,8 +29,6 @@ watch(prompts, (newVal) => {
 
 async function handleNext(move: boolean = true) {
   const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
-  console.log(activeStep, step.value, JSON.stringify(branches.value))
-  console.log(nextType.value)
 
   if (nextType.value === 'doubt') {
     designer(findStep(step.value!, branches.value), {
@@ -35,6 +38,9 @@ async function handleNext(move: boolean = true) {
     })
   } else {
     if (!activeStep || activeStep === END) return
+
+    nowStep.value = activeStep.step.toString()
+
     const promises = [
       speaker(activeStep),
       nextBoard(activeStep, prompts.value),
@@ -46,7 +52,10 @@ async function handleNext(move: boolean = true) {
   nextType.value = 'next'
 }
 
-apply(messages, branches, step as Ref<string>)
+apply(messages, branches, step as Ref<string>).then(() => {
+  nowStep.value = step.value
+})
+
 get().then((result) => {
   applyBoard(result.chalk)
 })
@@ -73,7 +82,7 @@ if (newParam) {
         <Board />
       </div>
       <div class="h-56 rounded-md bg-[#FEFFE4]">
-        <Timeline />
+        <Timeline :branches="branches" />
       </div>
     </div>
     <div class="col-span-3 flex flex-col gap-2 w-full h-full">

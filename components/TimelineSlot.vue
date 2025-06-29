@@ -1,12 +1,12 @@
 <template>
-  <div class="flex flex-col items-stretch relative" ref="containerRef">
+  <div class="flex flex-col items-stretch relative mx-5" ref="containerRef">
     <!-- SVG 连接线层，绝对定位 -->
-    <svg class="absolute top-0 left-0 w-full h-full pointer-events-none" ref="svgRef">
-      <path v-if="pathD" :d="pathD" stroke="#000" stroke-width="2" fill="none" />
-      <path v-for="(connection, index) in connections" :key="index" :d="connection" stroke="#000" stroke-width="2"
-        fill="none" />
-      <path v-if="!isOuter" :d="pathArcLeft" stroke="#000" stroke-width="2" fill="none" />
-      <path v-if="!isOuter" :d="pathArcRight" stroke="#000" stroke-width="2" fill="none" />
+    <svg class="w-full h-full absolute top-0 left-0 pointer-events-none" ref="svgRef">
+      <path v-if="pathD" :d="pathD" :stroke="getTimelineColor(colorIndex - 1)" stroke-width="2" fill="none" />
+      <path v-for="(connection, index) in connections" :key="index" :d="connection"
+        :stroke="getTimelineColor(colorIndex)" stroke-width="2" fill="none" />
+      <path v-if="!isOuter" :d="pathArcLeft" :stroke="getTimelineColor(colorIndex)" stroke-width="2" fill="none" />
+      <path v-if="!isOuter" :d="pathArcRight" :stroke="getTimelineColor(colorIndex)" stroke-width="2" fill="none" />
     </svg>
 
     <div v-if="!props.isOuter" class="flex justify-between items-center">
@@ -15,13 +15,13 @@
     </div>
     <div class="flex flex-col px-16 gap-2">
       <div v-if="!props.isOuter" class="w-full font-bold text-sm text-[#5C5B4F] text-center">
-        {{ props.timeline.conetext }}
+        {{ props.timeline.context }}
       </div>
       <div class="w-full flex gap-2 items-start justify-center">
         <template v-for="(child, index) in props.timeline.children" :key="index">
-          <TimelineCard v-if="child.children.length === 0" :conetext="child.conetext" :fullDisplay="false"
-            pointShape="circle" ref="childrenRefs" />
-          <TimelineSlot v-else :is-outer="false" :timeline="child" ref="childrenRefs" />
+          <TimelineCard v-if="child.children.length === 0" :conetext="child.context" :fullDisplay="true"
+            :color-index="colorIndex" pointShape="circle" ref="childrenRefs" />
+          <TimelineSlot v-else :is-outer="false" :timeline="child" :color-index="colorIndex + 1" ref="childrenRefs" />
         </template>
       </div>
     </div>
@@ -29,15 +29,16 @@
 </template>
 
 <script setup lang="ts">
-import type { Timeline, TimelineSlotPosition, TimelinePosition, TimelinePointPosition } from './TimelineUtils';
-import { ref, onMounted, reactive, onUnmounted, nextTick } from 'vue';
+import type { Timeline, TimelineSlotPosition, TimelinePointPosition } from './TimelineUtils';
 import TimelinePoint from './TimelinePoint.vue';
 import TimelineCard from './TimelineCard.vue';
 import TimelineSlot from './TimelineSlot.vue';
+import { getTimelineColor } from './TimelineUtils';
 
 const props = defineProps<{
   isOuter: boolean
   timeline: Timeline
+  colorIndex: number
 }>()
 
 const containerRef = ref<HTMLElement | null>(null);
@@ -50,14 +51,12 @@ const pathArcLeft = ref<string>('');
 const pathArcRight = ref<string>('');
 const connections = ref<string[]>([]);
 
-// 定义存储点坐标的响应式对象
 const pointPositions = reactive<TimelineSlotPosition>({
   type: 'slot',
   left: { type: 'point', x: 0, y: 0 },
   right: { type: 'point', x: 0, y: 0 }
 });
 
-// 计算点相对位置的函数
 const calculatePointPositions = () => {
   if (!containerRef.value || !startPointRef.value?.$el || !endPointRef.value?.$el) return;
 
@@ -65,7 +64,6 @@ const calculatePointPositions = () => {
   const startPointRect = startPointRef.value.$el.getBoundingClientRect();
   const endPointRect = endPointRef.value.$el.getBoundingClientRect();
 
-  // 计算中心点相对于容器的坐标
   pointPositions.left = {
     type: 'point',
     x: startPointRect.left + startPointRect.width / 2 - containerRect.left,
@@ -78,11 +76,9 @@ const calculatePointPositions = () => {
     y: endPointRect.top + endPointRect.height / 2 - containerRect.top
   };
 
-  // 更新连接路径
   updateLRConnectionPath();
 };
 
-// 更新连接路径的函数
 const updateLRConnectionPath = () => {
   const { left, right } = pointPositions;
   pathD.value = `M ${left.x} ${left.y} L ${right.x} ${right.y}`;
@@ -91,6 +87,8 @@ const updateLRConnectionPath = () => {
 const updateChildrenConnectionPath = () => {
   if (!containerRef.value) return;
   const containerRect = containerRef.value.getBoundingClientRect();
+
+  connections.value = []
 
   for (let i = 0; i < childrenRefs.value.length - 1; i++) {
     const child = childrenRefs.value[i];
@@ -171,24 +169,20 @@ const updateArcConnectionPath = () => {
     right.y += childEnd.pointPositions.right.y;
   }
 
-  // 左侧弧线
   pathArcLeft.value = `M ${pointPositions.left.x} ${pointPositions.left.y} A ${Math.abs(left.y - pointPositions.left.y)} ${Math.abs(left.y - pointPositions.left.y)} 0 0 0 ${pointPositions.left.x + Math.abs(left.y - pointPositions.left.y)} ${left.y} L ${left.x} ${left.y}`;
   pathArcRight.value = `M ${pointPositions.right.x} ${pointPositions.right.y} A ${Math.abs(right.y - pointPositions.right.y)} ${Math.abs(right.y - pointPositions.right.y)} 0 0 1 ${pointPositions.right.x - Math.abs(right.y - pointPositions.right.y)} ${right.y} L ${right.x} ${right.y}`;
 }
 
-// 暴露方法和数据给父组件
 defineExpose({
   pointPositions,
   calculatePointPositions
 });
 
 onMounted(async () => {
-  // 初始计算点位置
   calculatePointPositions();
   updateChildrenConnectionPath();
   updateArcConnectionPath();
 
-  // 监听窗口大小变化时重新计算
   window.addEventListener('resize', calculatePointPositions);
   window.addEventListener('resize', updateChildrenConnectionPath);
   window.addEventListener('resize', updateArcConnectionPath);

@@ -14,7 +14,7 @@ export const getTimelineColor = (index: number): string => {
 }
 
 export interface Timeline {
-  conetext: string
+  context: string
   children: Timeline[]
 }
 

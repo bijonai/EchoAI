@@ -53,6 +53,12 @@ The output should be following the JSON schema:
 \`\`\`json
 ${JSON.stringify(wrapper.toJsonSchema(), null, 2)}
 \`\`\`
+
+The output json shouldn't in \`\`\`json\`\`\` code block, output a binary string.
+
+# Step Number Rules:
+
+The step number must be unique in all the branches, and the step number is incremented by 1 for each step.
 `.trim()
 
 export const USER = `
