@@ -117,7 +117,8 @@ onBeforeUnmount(() => {
     <div class="w-full h-full absolute top-0 left-0 rounded-md">
       <div ref="viewBoxRef"
         class="absolute top-0 left-0 origin-top-left pointer-events-auto flex gap-2 p-2 items-center justify-center overflow-hidden">
-        <TimelineSlot ref="timelineSlotRef" v-if="timelines" :is-outer="true" :timeline="timelines" :color-index="0" />
+        <TimelineSlot ref="timelineSlotRef" v-if="timelines" :is-outer="true" :timeline="timelines" :color-index="0"
+          :key="recalculateKey" />
       </div>
       <span
         class="w-10 h-10 flex items-center justify-center rounded-md bg-[#FEFFE4] hover:bg-gray-300 transition-all duration-100 absolute top-2 right-2"

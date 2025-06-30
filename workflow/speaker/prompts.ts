@@ -16,6 +16,9 @@ After each step, there is a possibility that user may arise a question, and we h
 If user has no question, the input will be \`NEXT\`.
 
 The output can use markdown format, you should use markdown components (like table, list, title 1~6, etc.) to make the output more clear and easy to understand. If requirement is related to computer science, you can also use code block to show the code.
+
+Any math formula should be written in LaTeX format. Use \`$\` to wrap a inline math formula, and use \`$$\` to wrap a block math formula, \`$$\` must in a independent line.
+Use codeblock to show math formula is disabled, you must use LaTeX format.
 `
 
 export const USER = `
