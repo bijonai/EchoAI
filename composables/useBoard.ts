@@ -137,6 +137,7 @@ export default function useBoard(info: ChatInfo) {
       chat_id: info.chat_id,
       step,
       prompt,
+      page_id: pageId.value?.toString() ?? '',
       page_id_will_be_used: (unused + 1).toString(),
     }, {
       onOperate: (operation) => {

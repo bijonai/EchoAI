@@ -74,9 +74,9 @@ export function createChalk(context: Message[]) {
               }
             }))
           }
-          console.log(`[${Date.now()}] ${content}`)
+          // console.log(`[${Date.now()}] ${content}`)
         }
-        console.log(`[${Date.now()}] END`)
+        // console.log(`[${Date.now()}] END`)
         onEnd?.(operations, content)
       }
     })

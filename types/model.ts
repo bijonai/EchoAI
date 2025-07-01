@@ -87,6 +87,7 @@ export interface LayoutRequestBody {
   chat_id: string;
   prompt: string;
   step: Step;
+  page_id: string;
   page_id_will_be_used: string;
 }
 

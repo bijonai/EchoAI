@@ -87,7 +87,7 @@ Based on the information above and the nature of the content you are about to ge
     * Revisiting a concept on a different, previously established page for review, comparison, or to build a new connection.
     * **You must have a target \`pageId\` in mind for this action.**
 
-NOW,
-  IF the content you will output is non-related to previous content, please use tools to operate the page,
-  OTHERWISE, please describe the layout and figures based on the information above.
+Because the space of each page is limited, you should divide various content into multiple pages as much as possible.
+
+> NOW you are at: PAGE ID \`<:insert:id>\`
 `
