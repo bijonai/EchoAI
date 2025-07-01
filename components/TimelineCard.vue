@@ -2,7 +2,7 @@
   <div class="flex flex-col justify-center gap-1 size-auto" ref="cardRef" @mouseover="display = true"
     @mouseleave="display = props.fullDisplay">
     <TimelinePointShape ref="pointRef" :point-shape="props.pointShape" :color="'#000'" class="min-w-24"
-      :fill="nowStep == props.conetext.split(' ')[0] ? getTimelineColor(props.colorIndex) : '#FEFFE4'" />
+      :fill="'#FEFFE4'" :blink="isActive" :blinkColor="getTimelineColor(props.colorIndex)" />
     <div class="timeline-content font-bold text-sm text-[#5C5B4F] max-w-48 break-words whitespace-pre-line text-center"
       :class="{ 'timeline-visible': display }">
       {{ props.conetext }}
@@ -12,7 +12,7 @@
 
 <script setup lang="ts">
 import TimelinePointShape from './TimelinePoint.vue'
-import { ref, watch, onMounted, onUnmounted, reactive } from 'vue'
+import { ref, watch, onMounted, onUnmounted, reactive, computed } from 'vue'
 import { getTimelineColor, type TimelinePointPosition } from './TimelineUtils'
 
 const props = defineProps<{
@@ -30,6 +30,7 @@ const recalculateKey = useState<number>('recalculate-key')
 const nowStep = useState<string | null>('now-step')
 const activeCardRef = useState<HTMLElement | null>('active-card-ref')
 
+const isActive = computed(() => nowStep.value == props.conetext.split(' ')[0])
 
 const pointPosition = reactive<TimelinePointPosition>({
   type: 'point',
