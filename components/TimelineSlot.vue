@@ -1,6 +1,5 @@
 <template>
   <div class="flex flex-col items-stretch relative mx-5" ref="containerRef">
-    <!-- SVG 连接线层，绝对定位 -->
     <svg class="w-full h-full absolute top-0 left-0 pointer-events-none" ref="svgRef">
       <path v-if="pathD" :d="pathD" :stroke="getTimelineColor(colorIndex - 1)" stroke-width="2" fill="none" />
       <path v-for="(connection, index) in connections" :key="index" :d="connection"

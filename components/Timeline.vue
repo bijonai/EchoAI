@@ -17,7 +17,6 @@ const timelineSlotRef = ref<InstanceType<typeof TimelineSlot> | null>(null)
 const recalculateKey = useState<number>('recalculate-key', () => 0)
 const resizeObserver = ref<ResizeObserver | null>(null)
 
-const nowStep = useState<string | null>('now-step')
 const activeCardRef = useState<HTMLElement | null>('active-card-ref')
 
 const initD3 = () => {
@@ -36,24 +35,34 @@ const initD3 = () => {
   container.call(zoom as any)
 }
 
-function moveToActiveCard() {
-  if (!activeCardRef.value || !containerRef.value || !viewBoxRef.value) return
+async function moveToOrigin() {
+  if (!containerRef.value || !viewBoxRef.value) return
 
   const viewBox = d3.select(viewBoxRef.value)
 
   viewBox.style('transform', `translate(0px, 0px) scale(1)`)
-
-  const containerRect = containerRef.value.getBoundingClientRect()
-  const activeCardRect = activeCardRef.value.getBoundingClientRect()
-
-  const dx = (containerRect.left + containerRect.width / 2) - (activeCardRect.left + activeCardRect.width / 2)
-  const dy = (containerRect.top + containerRect.height / 2) - (activeCardRect.top + activeCardRect.height / 2)
-
-  viewBox.style('transform', `translate(${dx}px, ${dy}px) scale(1)`)
 }
 
-watch(nowStep, () => {
-  moveToActiveCard()
+async function moveToActiveCard() {
+  if (!activeCardRef.value || !containerRef.value || !viewBoxRef.value) return
+
+  const viewBox = d3.select(viewBoxRef.value)
+
+  moveToOrigin().then(() => {
+    if (!containerRef.value || !activeCardRef.value) return
+
+    const containerRect = containerRef.value.getBoundingClientRect()
+    const activeCardRect = activeCardRef.value.getBoundingClientRect()
+
+    const dx = (containerRect.left + containerRect.width / 2) - (activeCardRect.left + activeCardRect.width / 2)
+    const dy = (containerRect.top + containerRect.height / 2) - (activeCardRect.top + activeCardRect.height / 2)
+
+    viewBox.style('transform', `translate(${dx}px, ${dy}px) scale(1)`)
+  })
+}
+
+defineExpose({
+  moveToActiveCard
 })
 
 function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: string, context: string, visited: Set<string> = new Set()): Timeline {
@@ -62,7 +71,6 @@ function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: 
     children: []
   }
 
-  // 防止循环引用：如果已经访问过这个id，直接返回
   if (visited.has(id.toString())) {
     return timeline
   }
@@ -72,14 +80,12 @@ function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: 
     return timeline
   }
 
-  // 将当前id加入已访问集合
   visited.add(id.toString())
 
   for (const step of branch.steps) {
     timeline.children.push(generateTimeline(branches, stepMap, step.step, step.problem, visited))
   }
 
-  // 递归完成后从访问集合中移除（允许在不同分支中重复访问）
   visited.delete(id.toString())
 
   return timeline

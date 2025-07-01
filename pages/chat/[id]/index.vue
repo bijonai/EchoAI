@@ -1,4 +1,6 @@
 <script setup lang="ts">
+import type { Timeline } from '#components'
+
 const route = useRoute()
 const router = useRouter()
 
@@ -19,6 +21,8 @@ initialize()
 
 const { apply, get } = useHistory(info)
 
+const timelines = ref<InstanceType<typeof Timeline> | null>(null)
+
 watch(prompts, (newVal) => {
   if (nextType.value === 'prohibited') return
   if (newVal.trim() === '') nextType.value = 'next'
@@ -38,6 +42,7 @@ async function handleNext(move: boolean = true) {
     if (!activeStep || activeStep === END) return
 
     nowStep.value = activeStep.step.toString()
+    await timelines.value?.moveToActiveCard()
 
     const promises = [
       speaker(activeStep),
@@ -80,7 +85,7 @@ if (newParam) {
         <Board />
       </div>
       <div class="h-56 rounded-md bg-[#FEFFE4]">
-        <Timeline :branches="branches" />
+        <Timeline ref="timelines" :branches="branches" />
       </div>
     </div>
     <div class="col-span-3 flex flex-col gap-2 w-full h-full">
