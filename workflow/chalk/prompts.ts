@@ -98,6 +98,14 @@ The operation should be separated to suitable parts, which could be summarized a
 ## XPath Rules
 - Do not use \`.\` as an XPath. The document must have only one root node, and all content must be inserted inside it. Use absolute XPaths like \`/\` to target the root.
 - \`add-node\` & \`set-content\` are inner insertion operation, not an outer replacement. The node matched by the XPath should be preserved, and the content inserted as its child. Do not treat the content as a new full XPath path.
+  + ✅ Correct: $$start:add-node position="/"$$<node>Hello World!</node>$$end:add-node$$
+  + ❌ Incorrect: $$add-node position="/node"$$<node>Hello World!</node>$$end:add-node$$
+  + ❌ Incorrect: $$add-node position="/node"$$Hello World!$$end:add-node$$
+- Please DO NOT add \`/\` in the end of the XPath.
+  + ✅ Correct: \`/node1/node[1]\`
+  + ❌ Incorrect: \`/node1/node[1]/\`
+- Please DO NOT use double \`//\` syntax in the XPath, because you do not know the relative position of the node.
+- When you use large range search, the operating target will be the first node that matched the XPath.
 
 `.trim()
 

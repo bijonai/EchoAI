@@ -90,6 +90,9 @@ export default function useOperator(
     if (operated.includes(op.id)) return
     console.log(op)
     op.position = op.position === '/' ? op.position : '/root' + op.position
+    if (op.position.endsWith('/') && op.position !== '/') {
+      op.position = op.position.slice(0, -1)
+    }
     console.log(op.position)
     switch (op.type) {
       case 'add-node':
