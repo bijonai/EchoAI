@@ -40,7 +40,7 @@ Designing Improvement:
 - IF: the user give some unmeaningful question or not related to some step you have designed -> THEN: DO NOT think too much, return a empty array.
 
 Each step includes:
-- step: the step number
+- step: the step string
 - problem: the problem of the step
 - knowledge: the knowledge of the step
 - explanation: the explanation of the step
@@ -56,9 +56,10 @@ ${JSON.stringify(wrapper.toJsonSchema(), null, 2)}
 
 The output json shouldn't in \`\`\`json\`\`\` code block, output a binary string.
 
-# Step Number Rules:
-
-The step number must be unique in all the branches, and the step number is incremented by 1 for each step.
+# Step Serialization Rules:
+- Step serial must be a string, not a number .
+- Each step should include previous branch's start string, for example, if the new branch is start from step '2', then the new design should be like '2-1', '2-2', '2-x'
+- Step serial cannot be repeated, no matter how much design you have done.
 `.trim()
 
 export const USER = `

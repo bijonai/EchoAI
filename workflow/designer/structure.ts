@@ -1,7 +1,7 @@
 import { type as t } from "arktype"
 
 export const structure = t({
-  step: t.number
+  step: t.string
     .describe('The step number of the lesson'),
   problem: t.string
     .describe('What specific concept or problem this step addresses'),
