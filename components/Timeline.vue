@@ -56,10 +56,15 @@ watch(nowStep, () => {
   moveToActiveCard()
 })
 
-function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: string, context: string): Timeline {
+function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: string, context: string, visited: Set<string> = new Set()): Timeline {
   const timeline: Timeline = {
     context: `${id} ${context}`,
     children: []
+  }
+
+  // 防止循环引用：如果已经访问过这个id，直接返回
+  if (visited.has(id.toString())) {
+    return timeline
   }
 
   const branch = stepMap.get(id.toString())
@@ -67,9 +72,15 @@ function generateTimeline(branches: Branch[], stepMap: Map<string, Branch>, id: 
     return timeline
   }
 
+  // 将当前id加入已访问集合
+  visited.add(id.toString())
+
   for (const step of branch.steps) {
-    timeline.children.push(generateTimeline(branches, stepMap, step.step, step.problem))
+    timeline.children.push(generateTimeline(branches, stepMap, step.step, step.problem, visited))
   }
+
+  // 递归完成后从访问集合中移除（允许在不同分支中重复访问）
+  visited.delete(id.toString())
 
   return timeline
 }
@@ -81,7 +92,7 @@ function branchesToTimeline(branches: Branch[]): Timeline {
     stepMap.set(branch.start ?? '_', branch);
   });
 
-  return generateTimeline(branches, stepMap, '_', '')
+  return generateTimeline(branches, stepMap, '_', '', new Set())
 }
 
 watch(props.branches, () => {

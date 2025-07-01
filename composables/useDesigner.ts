@@ -60,6 +60,7 @@ export default function useDesigner(nextType: NextType, info: ChatInfo, messages
     }, info.token)
     nextType.value = 'next'
     branches.value.length = 0
+    console.log(result)
     branches.value.push(...result.branches)
     messages.value.length = 0
     messages.value.push(...result.messages)

@@ -1,6 +1,4 @@
 <script setup lang="ts">
-import type { Timeline } from '#components'
-
 const route = useRoute()
 const router = useRouter()
 

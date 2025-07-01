@@ -16,5 +16,5 @@ const { board } = useRenderer()
 </script>
 
 <style>
-@import '@sciux/theme-default/styles/main.css'
+/* @import '@sciux/theme-default/styles/main.css' */
 </style>
