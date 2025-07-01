@@ -32,6 +32,9 @@ importers:
       '@qdrant/js-client-rest':
         specifier: ^1.14.1
         version: 1.14.1(typescript@5.8.3)
+      '@sciux/theme-default':
+        specifier: ^0.0.6
+        version: 0.0.6
       '@tailwindcss/vite':
         specifier: ^4.1.8
         version: 4.1.8(vite@6.3.5(@types/node@22.15.30)(jiti@2.4.2)(lightningcss@1.30.1)(terser@5.41.0)(yaml@2.8.0))
@@ -1654,6 +1657,9 @@ packages:
 
   '@sciux/model@0.0.6':
     resolution: {integrity: sha512-PzxS0Zz6XAYkyiSbK3ThvD5cX7yrfRnkzv7SWRBB3fny36KNj+Nh4VTWqPN7dEI8t5UJm1xbOlJ7bMiUsRXhlA==}
+
+  '@sciux/theme-default@0.0.6':
+    resolution: {integrity: sha512-wbMyBwfJYR5R8Wtsl5VM+F1fnq/imQGL5jk5LrQ+802P+IaJxgSRDHY7gNxT0ow/Kp0xiOoxe3ZTNkGzw1C+bQ==}
 
   '@sciux/utils-theme@0.0.6':
     resolution: {integrity: sha512-VKIvjB2qgfxkW7npKUojI+CR/CnRt2JSOWM6H6FiupHs2qfHpol7LWDl86GUWve/GZSM1RYSlIgyfmzHILNwOg==}
@@ -8254,6 +8260,15 @@ snapshots:
       '@vue/reactivity': 3.5.16
       arktype: 2.1.20
       sciux-laplace: 0.0.1-beta.10
+
+  '@sciux/theme-default@0.0.6':
+    dependencies:
+      '@sciux/layout': 0.0.6
+      '@vue/reactivity': 3.5.16
+      arktype: 2.1.20
+      katex: 0.16.22
+      sciux-laplace: 0.0.1-beta.10
+      shiki: 3.6.0
 
   '@sciux/utils-theme@0.0.6':
     dependencies:

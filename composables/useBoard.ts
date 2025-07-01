@@ -13,6 +13,7 @@ export const TOTAL = Symbol('TOTAL')
 export interface Page {
   title: string
   document: DocumentNode
+  version: number
 }
 
 function createEmptyDocument(id: number) {
@@ -41,8 +42,34 @@ export default function useBoard(info: ChatInfo) {
   // ViewingId: The page id that is currently visible to the user
   const viewingId = ref<number | null>(null)
   // Document: The document that is currently visible to the user
-  const viewingDocument = computed(() => pages.get(viewingId.value!)!.document)
-  const activeDocument = computed(() => pages.get(pageId.value!)!.document)
+  // const viewingDocument = computed(() => pages.get(viewingId.value!)!.document)
+  const viewingDocument = ref<DocumentNode>()
+  const documentVersion = ref<number>(0)
+
+  // Use a flag to prevent circular updates
+  let isUpdatingDocument = false
+
+  watch(viewingId, (id) => {
+    if (id && !isUpdatingDocument) {
+      isUpdatingDocument = true
+      viewingDocument.value = structuredClone(pages.get(id)!.document)
+      documentVersion.value = pages.get(id)!.version
+      nextTick(() => {
+        isUpdatingDocument = false
+      })
+    }
+  }, {
+    immediate: true,
+  })
+  // const activeDocument = computed(() => pages.get(pageId.value!)!.document)
+  const activeDocument = ref<DocumentNode>()
+  watch(pageId, (id) => {
+    if (id) {
+      activeDocument.value = pages.get(id)!.document
+    }
+  }, {
+    immediate: true,
+  })
   const total = ref<number>(0)
 
   provide(PAGE, pageId)
@@ -61,7 +88,7 @@ export default function useBoard(info: ChatInfo) {
 
   function createPage(title: string, givenId?: number) {
     const id = givenId ?? unused++
-    pages.set(id, { title, document: createEmptyDocument(id) })
+    pages.set(id, { title, document: createEmptyDocument(id), version: 0 })
     pageId.value = id
     total.value++
     return id
@@ -70,6 +97,23 @@ export default function useBoard(info: ChatInfo) {
   function initialize() {
     createPage('PRIMARY')
     viewingId.value = pageId.value
+    activeDocument.value = pages.get(pageId.value!)!.document
+    viewingDocument.value = structuredClone(pages.get(pageId.value!)!.document)
+  }
+
+  function updateViewingDocument() {
+    if (viewingId.value !== null && !isUpdatingDocument) {
+      const page = pages.get(viewingId.value)
+      if (page) {
+        isUpdatingDocument = true
+        page.version++
+        viewingDocument.value = structuredClone(page.document)
+        documentVersion.value = page.version
+        nextTick(() => {
+          isUpdatingDocument = false
+        })
+      }
+    }
   }
 
   function switchViewing(operation: 'next' | 'previous'): number
@@ -86,7 +130,7 @@ export default function useBoard(info: ChatInfo) {
     }
   }
 
-  const { handleOperation } = useOperator(activeDocument)
+  const { handleOperation } = useOperator(activeDocument, updateViewingDocument)
 
   async function next(step: Step, prompt: string) {
     const { content } = await chat.layout({
@@ -140,5 +184,6 @@ export default function useBoard(info: ChatInfo) {
     next,
     switchViewing,
     apply,
+    updateViewingDocument,
   }
 }

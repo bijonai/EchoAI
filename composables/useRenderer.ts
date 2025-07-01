@@ -5,16 +5,20 @@ import patch from 'morphdom'
 
 export default function useRenderer() {
   const board = ref<HTMLElement | null>(null)
+  console.log(board.value)
   
   onMounted(() => {
     initialize()
     const { viewingDocument } = usePage()
+    console.log(viewingDocument.value)
     const container = document.createElement('div')
     container.style.width = '100%'
     container.style.height = '100%'
     board.value?.appendChild(container)
 
-    watch(viewingDocument, (doc) => {
+    watch(() => viewingDocument.value, (doc) => {
+      if (!doc) return
+      console.log('change', viewingDocument.value)
       const roots = renderRoots(doc.children)
       const newContainer = document.createElement('div')
       newContainer.style.width = '100%'
@@ -22,7 +26,7 @@ export default function useRenderer() {
       newContainer.append(...roots)
       patch(container, newContainer)
     }, {
-      deep: true
+      immediate: true
     })
   })
 

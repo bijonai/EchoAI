@@ -14,3 +14,7 @@ const { viewingId, total } = usePage()
 
 const { board } = useRenderer()
 </script>
+
+<style>
+@import '@sciux/theme-default/styles/main.css'
+</style>
