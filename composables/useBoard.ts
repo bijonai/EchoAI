@@ -87,7 +87,8 @@ export default function useBoard(info: ChatInfo) {
   })
 
   function createPage(title: string, givenId?: number) {
-    const id = givenId ?? unused++
+    unused++
+    const id = givenId ?? unused
     pages.set(id, { title, document: createEmptyDocument(id), version: 0 })
     pageId.value = id
     total.value++

@@ -13,6 +13,14 @@ import { usePage } from '~/composables/usePage'
 const { viewingId, total } = usePage()
 
 const { board } = useRenderer()
+
+function handleSwitch(op: 'next' | 'previous') {
+  if (op === 'next') {
+    viewingId.value = viewingId.value! + 1
+  } else {
+    viewingId.value = viewingId.value! - 1
+  }
+}
 </script>
 
 <style>
