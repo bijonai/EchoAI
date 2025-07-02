@@ -52,7 +52,7 @@ export function createChalk(context: Message[]) {
       page_id: options.page_id ?? '',
       document: options.document ?? '',
       requirement: options.layout,
-      references: [chunks].map((chunk) => chunk.text).join('\n\n'),
+      references: Object.values(chunks).flat().map((chunk) => chunk.text).join('\n\n'),
     })))
     const operations: Operation[] = []
     let content = ''
