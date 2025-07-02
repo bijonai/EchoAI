@@ -35,7 +35,6 @@ export default defineEventHandler(async (event) => {
       step: body.step,
       page: body.page_id,
     }]
-    console.log('[PRE-UPDATE]')
 
     // Use await instead of event.waitUntil for database update
     const update = createUpdate(body.chat_id)

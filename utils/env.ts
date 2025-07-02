@@ -48,3 +48,5 @@ export const LAYOUT_MODEL = process.env.LAYOUT_MODEL!
 export const LAYOUT_MODEL_BASE_URL = process.env.LAYOUT_MODEL_BASE_URL!
 export const LAYOUT_MODEL_API_KEY = process.env.LAYOUT_MODEL_API_KEY!
 
+// Devtools
+export const BOARD_DEBUG = process.env.BOARD_DEBUG!

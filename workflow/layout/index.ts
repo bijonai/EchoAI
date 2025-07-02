@@ -26,7 +26,6 @@ export function createLayout(context: Message[]) {
       ...options.step,
       id: options.page_id,
     })))
-    console.log(tools)
     const { text, messages, steps } = await generateText({
       messages: context,
       tools,
@@ -43,48 +42,5 @@ export function createLayout(context: Message[]) {
         ...JSON.parse(call.args),
       })),
     }
-    // response
-    // console.log(response)
-    // const latestMessage = latest(response.messages) as AssistantMessage
-    // if (!latestMessage) return null
-    // context.push(latestMessage)
-    // const operations: PageSwitch[] = []
-    // const res: {
-    //   content: string
-    //   operations: PageSwitch[]
-    // } = {
-    //   content: '',
-    //   operations,
-    // }
-    // if (latestMessage.tool_calls) {
-    //   const toolCall = latestMessage.tool_calls[0]
-    //   const toolName = toolCall.function.name
-    //   const toolArgs = JSON.parse(toolCall.function.arguments)
-    //   if (toolName === 'add-page') {
-    //     operations.push({
-    //       type: toolName,
-    //       title: toolArgs.title,
-    //     })
-    //   } else if (toolName === 'switch-page') {
-    //     operations.push({
-    //       type: toolName,
-    //       pageId: toolArgs.pageId,
-    //     })
-    //   }
-    //   const tool = tools.find(tool => tool.function.name === toolName)
-    //   if (!tool) return null
-    //   const result = <string> await tool.execute(toolArgs, {
-    //     messages: context,
-    //     toolCallId: toolCall.id,
-    //   })
-    //   context.push(message.tool(result, toolCall))
-    //   const { text } = await generateText({
-    //     messages: context,
-    //     ...env,
-    //   })
-    //   res.content = text!
-    // }
-    // res.content = latestMessage.content as string
-    // return res
   }
 }

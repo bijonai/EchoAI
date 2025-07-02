@@ -15,7 +15,8 @@ export default defineNuxtConfig({
         external: ['@valibot/to-json-schema'],
       }
     },
-  }, 
+  },
+  
   // alias: {
   //   '@valibot/to-json-schema': './index-CISmcbXk.js',
   //   'sury': './index-CISmcbXk.js',
@@ -53,6 +54,9 @@ export default defineNuxtConfig({
         signOut: '/auth/signout',
         callback: '/auth/callback'
       }
+    },
+    public: {
+      boardDebug: process.env.BOARD_DEBUG,
     }
   },
   fonts: {

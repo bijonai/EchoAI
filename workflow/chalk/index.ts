@@ -47,6 +47,7 @@ export function createChalk(context: Message[]) {
       embedding,
       collections: ['refers', 'apis'],
     })
+    console.log(chunks)
     context.push(message.user(prompt(USER, {
       page_id: options.page_id ?? '',
       document: options.document ?? '',
@@ -74,9 +75,7 @@ export function createChalk(context: Message[]) {
               }
             }))
           }
-          // console.log(`[${Date.now()}] ${content}`)
         }
-        // console.log(`[${Date.now()}] END`)
         onEnd?.(operations, content)
       }
     })
