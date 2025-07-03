@@ -23,11 +23,14 @@ const { apply, get } = useHistory(info)
 
 const timelines = ref<InstanceType<typeof Timeline> | null>(null)
 
-watch(prompts, (newVal) => {
-  if (nextType.value === 'prohibited') return
-  if (newVal.trim() === '') nextType.value = 'next'
-  else nextType.value = 'doubt'
-})
+watch(prompts, (newPrompts) => {
+  if (nextType.value === 'prohibited') { return }
+  if (newPrompts.trim() === '') {
+    nextType.value = 'next'
+  } else {
+    nextType.value = 'doubt'
+  }
+}, { immediate: true })
 
 async function handleNext(move: boolean = true) {
   const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
@@ -36,6 +39,7 @@ async function handleNext(move: boolean = true) {
     designer(findStep(step.value!, branches.value), {
       prompt: prompts.value,
     }).then(() => {
+      nextType.value = 'next'
       handleNext(false)
     })
   } else {
@@ -49,10 +53,12 @@ async function handleNext(move: boolean = true) {
       nextBoard(activeStep, prompts.value),
     ]
     await Promise.all(promises)
-    step.value = activeStep.step.toString()
-  }
 
-  nextType.value = 'next'
+    step.value = activeStep.step.toString()
+    prompts.value = ''
+
+    nextType.value = 'next'
+  }
 }
 
 apply(messages, branches, step as Ref<string>).then(() => {
@@ -97,7 +103,7 @@ if (newParam) {
         </div>
       </div>
       <div class="h-56 w-full">
-        <PromptArea @next="handleNext" :next="nextType !== 'prohibited'" v-model="prompts" />
+        <PromptArea @action="handleNext" :model="nextType" v-model="prompts" />
       </div>
     </div>
   </div>

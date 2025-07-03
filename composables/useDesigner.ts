@@ -44,13 +44,14 @@ export default function useDesigner(nextType: NextType, info: ChatInfo, messages
     resource_id?: string,
   }): Promise<Message[] | undefined> {
     console.log('designer')
-    if (nextType.value !== 'doubt') return
+
     nextType.value = 'prohibited'
     messages.value.push({
       role: 'processor',
       content: 'Designer is thinking...',
       isLoading: true,
     })
+
     const result = await chat.designer({
       chat_id: info.chat_id,
       prompt: prompt ?? '',
@@ -58,13 +59,15 @@ export default function useDesigner(nextType: NextType, info: ChatInfo, messages
       step: step ? step.step.toString() : undefined,
       next_step: step ? (findStepNext(step.step.toString(), branches.value) as Step)?.step.toString() : void 0,
     }, info.token)
+
     nextType.value = 'next'
+
     branches.value.length = 0
-    console.log(result)
     branches.value.push(...result.branches)
     messages.value.length = 0
     messages.value.push(...result.messages)
     currentStep.value = latest(result.branches)?.steps[0].step.toString() ?? null
+
     return result.messages
   }
 

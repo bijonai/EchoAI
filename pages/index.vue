@@ -22,7 +22,7 @@ async function start() {
       {{ `Hello, ${isAuthenticated ? userInfo.username : 'Please Login'}!` }}
     </div>
     <div class="w-full h-72 max-w-4xl py-10 px-4">
-      <PromptArea v-model="prompts" @send="start" :displayNext="false" />
+      <PromptArea v-model="prompts" @action="start" model="doubt" />
     </div>
   </div>
 </template>
