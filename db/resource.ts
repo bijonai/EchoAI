@@ -13,6 +13,6 @@ export const resource = pgTable("resource", {
   description: text("description").notNull().default(''),
   readme: text("readme").notNull().default(''),
   sources: json("sources").notNull().default({}),
-  metadata: json("metadata").notNull().default({}),
+  sections: json("sections").notNull().default([]),
   value: numeric("value").notNull().default('0'),
 });
