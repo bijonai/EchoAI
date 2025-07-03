@@ -29,24 +29,25 @@ export function createDesigner(context: Message[]) {
         ))
       } else {
         if (options.sections) {
-          context.push(message.system(
+          context.push(message.user(
             prompt(USER_WITH_RESOURCE, {
               resource: options.sections.map(section => section.text).join('\n\n'),
             })
           ))
-        }
-        else {
+        } else {
           context.push(message.user(prompt(USER, {
             prompt: options.prompt,
           })))
         }
       }
+
     const { object, messages } = await generateObject({
       messages: context,
       output: 'array',
       schema: structure,
       ...env,
     })
+
     context.push(messages[messages.length - 1])
     return object as unknown as Step[]
   }

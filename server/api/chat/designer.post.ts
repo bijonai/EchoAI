@@ -1,5 +1,5 @@
 import { and, eq } from "drizzle-orm"
-import db from "~/db"
+import db, { resource } from "~/db"
 import { withAuth } from "~/types/auth"
 import { chats } from "~/db"
 import { generateObject, Message } from "xsai"
@@ -30,10 +30,10 @@ export default defineEventHandler(async (event) => {
 
   let sections: Section[] | undefined = undefined
   if (body.resource_id) {
-    const resource = await $fetch<PrivateResource>(`/api/resource/${body.resource_id}/content`, {
-      method: 'GET',
-    })
-    sections = resource.sections
+    const res = await db.select({
+      sections: resource.sections,
+    }).from(resource).where(eq(resource.id, body.resource_id));
+    sections = res.map((i) => i.sections as Section[]).flat()
   }
 
   const designer = createDesigner(chatContext)

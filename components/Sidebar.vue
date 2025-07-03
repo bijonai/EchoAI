@@ -29,7 +29,8 @@
       <HistoryPanel v-if="isOpen" />
     </div>
     <div class="flex flex-col items-center gap-2" :class="{ 'hidden': isOpen }">
-      <span class="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200 transition-all duration-100">
+      <span class="w-10 h-10 flex items-center justify-center rounded-md hover:bg-gray-200 transition-all duration-100"
+        @click="navigateTo('/resource')">
         <Icon name="humbleicons:dashboard" class="!w-5 !h-5 opacity-60" />
       </span>
       <UserAvatar />
@@ -40,5 +41,4 @@
 <script setup lang="ts">
 import UserAvatar from './UserAvatar.vue'
 let isOpen = ref(false)
-const isAuthenticated = useState<boolean | undefined>('is-authenticated');
 </script>
