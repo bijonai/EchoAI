@@ -78,6 +78,22 @@ Requirements:
 Notice: The content must use the same language as the user's description
 `.trim()
 
+export const USER_WITH_RESOURCE = `
+Please design implementation steps based on the following lesson design:
+
+\`\`\`markdown
+<:insert:resource>
+\`\`\`
+
+Requirements:
+1. Return the response as a pure JSON object
+2. Do not include any markdown code blocks or additional text
+3. Break down the implementation into clear, sequential steps
+4. Each step should be specific and actionable
+
+Notice: The content must use the same language as the user's description
+`
+
 export const ADDITION = `
 Given that the user has a question at step <:insert:step>, design additional sub-steps to address this new question while building upon the previous step designs.
 

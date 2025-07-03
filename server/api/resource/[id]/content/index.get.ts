@@ -16,5 +16,5 @@ export default defineEventHandler(async (event) => {
       statusMessage: 'Resource not found',
     })
   }
-  return result
+  return result as PrivateResource satisfies PrivateResource
 })  

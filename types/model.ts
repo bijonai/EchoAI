@@ -35,7 +35,6 @@ type Stream<T extends object> = {
 
 export interface DesignerResult {
   prompt: string;
-  refs?: string;
   step?: string;
   result: Step[];
 }
@@ -43,9 +42,9 @@ export interface DesignerResult {
 export interface DesignerRequestBody {
   chat_id: string;
   prompt: string;
-  refs?: string;
   step?: string;
   next_step?: string;
+  resource_id?: string;
 }
 
 export interface DesignerResponse {

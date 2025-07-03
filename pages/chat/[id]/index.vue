@@ -64,12 +64,14 @@ get().then((result) => {
 })
 
 const newParam = route.query.new
+const resourceId = route.query.resource_id
 
 if (newParam) {
   nextType.value = 'doubt'
   apply(messages, branches, step as Ref<string>).then(() => {
     designer(null, {
       prompt: newParam as string,
+      resource_id: resourceId as string,
     }).then(() => {
       handleNext(false)
     })

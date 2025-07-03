@@ -8,6 +8,7 @@ import { DesignerResult } from "~/types"
 import { createDesigner } from "~/workflow/designer"
 import { Branch, Step } from "~/types/timeline"
 import createUpdate from "~/utils/update"
+import type { PrivateResource, Section } from "~/types/resource"
 
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as DesignerRequestBody
@@ -27,12 +28,20 @@ export default defineEventHandler(async (event) => {
   const results = (readResults ?? []) as DesignerResult[]
   const branches = (readBranches ?? []) as Branch[]
 
+  let sections: Section[] | undefined = undefined
+  if (body.resource_id) {
+    const resource = await $fetch<PrivateResource>(`/api/resource/${body.resource_id}/content`, {
+      method: 'GET',
+    })
+    sections = resource.sections
+  }
+
   const designer = createDesigner(chatContext)
   const object = await designer({
     prompt: body.prompt,
-    refs: body.refs,
     step: body.step,
     chat_id: body.chat_id,
+    sections,
   })
   results.push({
     prompt: body.prompt,
