@@ -3,7 +3,7 @@ import { withAuth } from "~/types/auth"
 import db, { resource } from "~/db"
 
 export default defineEventHandler(async (event) => {
-  const body = JSON.parse(await readBody(event)) as ResourceUploadRequestBody
+  const body = await readBody(event) as ResourceUploadRequestBody
   const userId = (event as unknown as withAuth)['userId']
 
   const [result] = await db.insert(resource)
