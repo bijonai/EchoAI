@@ -45,7 +45,7 @@ export function createChalk(context: Message[]) {
     const { chunks } = await search({
       ...searchEnv,
       embedding,
-      collections: ['refers', 'apis'],
+      collections: ['refers', 'comps'],
     })
     console.log(chunks)
     context.push(message.user(prompt(USER, {
