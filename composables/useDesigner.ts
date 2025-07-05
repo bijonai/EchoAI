@@ -57,7 +57,7 @@ export default function useDesigner(nextType: NextType, info: ChatInfo, messages
       prompt: prompt ?? '',
       resource_id: resource_id ?? '',
       step: step ? step.step.toString() : undefined,
-      next_step: step ? (findStepNext(step.step.toString(), branches.value) as Step)?.step.toString() : void 0,
+      next_step: void 0,
     }, info.token)
 
     nextType.value = 'next'
