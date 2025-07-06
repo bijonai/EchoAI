@@ -1,36 +1,54 @@
-import { parse, renderRoots } from "sciux";
+import { NodeType, parse, renderRoots } from "sciux";
 import initialize from 'sciux'
+import { createUpdater} from 'sciux'
 import { usePage } from "./usePage";
 import patch from 'morphdom'
 
+
 export default function useRenderer() {
-  const board = ref<HTMLElement | null>(null)
-  console.log(board.value)
-  
+  const { total, pages: pageBucket, pageId, activeTarget } = usePage()
+  const pages: Ref<HTMLElement | null>[] = []
+  const updater = createUpdater()
+
   onMounted(() => {
     initialize()
-    const { viewingDocument } = usePage()
-    console.log(viewingDocument.value)
-    const container = document.createElement('div')
-    container.style.width = '100%'
-    container.style.height = '100%'
-    board.value?.appendChild(container)
+  })
 
-    watch(() => viewingDocument.value, (doc) => {
-      if (!doc) return
-      console.log('change', viewingDocument.value)
-      const roots = renderRoots(doc.children)
-      const newContainer = document.createElement('div')
-      newContainer.style.width = '100%'
-      newContainer.style.height = '100%'
-      newContainer.append(...roots)
-      patch(container, newContainer)
-    }, {
-      immediate: true
-    })
+  watch(total, (v) => {
+    if (v > pages.length) {
+      for (let i = pages.length; i < v; i++) {
+        const page = ref<HTMLElement | null>(null)
+        pages.push(page)
+        nextTick(() => {
+          const { document: doc } = pageBucket.get(i + 1)!
+          const roots = renderRoots(doc.children)
+          const container = document.createElement('div')
+          container.style.width = '100%'
+          container.style.height = '100%'
+          container.append(...roots)
+          patch(page.value!, container)
+        })
+      }
+    }
+  }, { immediate: true })
+
+  watch(activeTarget, (v) => {
+    if (v) {
+      console.log(v)
+      if (v.type === NodeType.DOCUMENT) {
+        const { document: doc } = pageBucket.get(pageId.value!)!
+        const roots = renderRoots(doc.children)
+        const container = document.createElement('div')
+        container.style.width = '100%'
+        container.style.height = '100%'
+        container.append(...roots)
+        patch(pages[pageId.value!].value!, container)
+      }
+      updater(v)
+    }
   })
 
   return {
-    board,
+    pages,
   }
 }

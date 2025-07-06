@@ -1,18 +1,18 @@
 import { inject } from "vue"
-import { ACTIVE_DOCUMENT, PAGE, TOTAL, VIEWING, VIEWING_DOCUMENT } from "./useBoard"
-import type { DocumentNode } from "sciux"
+import { PAGE, PAGES, TOTAL, VIEWING, ACTIVE_TARGET } from "./useBoard"
+import type { BaseNode } from "sciux"
 
 export function usePage() {
   const pageId = inject<Ref<number | null>>(PAGE)!
   const viewingId = inject<Ref<number | null>>(VIEWING)!
-  const document = inject<Ref<DocumentNode>>(ACTIVE_DOCUMENT)!
-  const viewingDocument = inject<Ref<DocumentNode>>(VIEWING_DOCUMENT)!
   const total = inject<Ref<number>>(TOTAL)!
+  const pages = inject<Map<number, Page>>(PAGES)!
+  const activeTarget = inject<Ref<BaseNode>>(ACTIVE_TARGET)!
   return {
     pageId,
     viewingId,  
-    document,
-    viewingDocument,
     total,
+    pages,
+    activeTarget,
   }
 }

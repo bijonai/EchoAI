@@ -1,8 +1,8 @@
 <template>
   <div class="flex relative size-full">
-    <div ref="board" class="flex size-full" v-show="!debugging" />
+    <div class="flex size-full" v-show="!debugging && viewingId === index + 1" v-for="(page, index) in pages" :key="index" :ref="page" />
     <div v-show="debugging">
-      <BoardDebugger :active-document="document" />
+      <BoardDebugger :active-document="pageBucket.get(viewingId!)!.document" />
     </div>
     <div class="absolute bottom-0 right-0 m-4">
       <PageSwitcher :page-id="viewingId?.toString() ?? ''" :total="total" @switch="handleSwitch" />
@@ -19,7 +19,7 @@
 <script setup lang="ts">
 import useRenderer from '~/composables/useRenderer'
 import { usePage } from '~/composables/usePage'
-const { viewingId, total, document } = usePage()
+const { viewingId, total, pages: pageBucket } = usePage()
 
 const isDebug = ref(false)
 const debugging = ref(false)
@@ -28,7 +28,7 @@ if (runtimeConfig.public.boardDebug === 'true') {
   isDebug.value = true
 }
 
-const { board } = useRenderer()
+const { pages } = useRenderer()
 
 function handleSwitch(op: 'next' | 'previous') {
   if (op === 'next') {

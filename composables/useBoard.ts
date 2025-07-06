@@ -1,4 +1,4 @@
-import { NodeType, parse, querySelectorXPath, type AttributeNode, type DocumentNode, type ElementNode } from "sciux"
+import { NodeType, type BaseNode, type DocumentNode } from "sciux"
 import type { ChatInfo } from "."
 import type { Step } from "~/types/timeline"
 import { chat } from "~/api"
@@ -6,14 +6,14 @@ import type { ChalkResult } from "~/types"
 
 export const PAGE = Symbol('PAGE')
 export const VIEWING = Symbol('VIEWING')
-export const VIEWING_DOCUMENT = Symbol('VIEWING_DOCUMENT')
-export const ACTIVE_DOCUMENT = Symbol('ACTIVE_DOCUMENT')
 export const TOTAL = Symbol('TOTAL')
+
+export const PAGES = Symbol('PAGES')
+export const ACTIVE_TARGET = Symbol('ACTIVE_TARGET')
 
 export interface Page {
   title: string
   document: DocumentNode
-  version: number
 }
 
 function createEmptyDocument(id: number) {
@@ -41,43 +41,16 @@ export default function useBoard(info: ChatInfo) {
   const pageId = ref<number | null>(null)
   // ViewingId: The page id that is currently visible to the user
   const viewingId = ref<number | null>(null)
-  // Document: The document that is currently visible to the user
-  // const viewingDocument = computed(() => pages.get(viewingId.value!)!.document)
-  const viewingDocument = ref<DocumentNode>()
-  const documentVersion = ref<number>(0)
 
-  // Use a flag to prevent circular updates
-  let isUpdatingDocument = false
-
-  watch(viewingId, (id) => {
-    if (id && !isUpdatingDocument) {
-      isUpdatingDocument = true
-      viewingDocument.value = structuredClone(pages.get(id)!.document)
-      documentVersion.value = pages.get(id)!.version
-      nextTick(() => {
-        isUpdatingDocument = false
-      })
-    }
-  }, {
-    immediate: true,
-  })
-  // const activeDocument = computed(() => pages.get(pageId.value!)!.document)
   const activeDocument = ref<DocumentNode>()
-  watch(pageId, (id) => {
-    if (id) {
-      activeDocument.value = pages.get(id)!.document
-    }
-  }, {
-    immediate: true,
-  })
   const total = ref<number>(0)
+  const activeTarget = ref<BaseNode>()
 
+  provide(PAGES, pages)
   provide(PAGE, pageId)
   provide(VIEWING, viewingId)
-  provide(VIEWING_DOCUMENT, viewingDocument)
-  provide(ACTIVE_DOCUMENT, activeDocument)
   provide(TOTAL, total)
-
+  provide(ACTIVE_TARGET, activeTarget)
   // The view of user is always follow the page id LLM is working on,
   // But when LLM has no new operation, the user was be allowed to switch to other page.
   watch(pageId, (id) => {
@@ -89,7 +62,7 @@ export default function useBoard(info: ChatInfo) {
   function createPage(title: string, givenId?: number) {
     unused++
     const id = givenId ?? unused
-    pages.set(id, { title, document: createEmptyDocument(id), version: 0 })
+    pages.set(id, { title, document: createEmptyDocument(id) })
     pageId.value = id
     total.value++
     return id
@@ -99,22 +72,6 @@ export default function useBoard(info: ChatInfo) {
     createPage('PRIMARY')
     viewingId.value = pageId.value
     activeDocument.value = pages.get(pageId.value!)!.document
-    viewingDocument.value = structuredClone(pages.get(pageId.value!)!.document)
-  }
-
-  function updateViewingDocument() {
-    if (viewingId.value !== null && !isUpdatingDocument) {
-      const page = pages.get(viewingId.value)
-      if (page) {
-        isUpdatingDocument = true
-        page.version++
-        viewingDocument.value = structuredClone(page.document)
-        documentVersion.value = page.version
-        nextTick(() => {
-          isUpdatingDocument = false
-        })
-      }
-    }
   }
 
   function switchViewing(operation: 'next' | 'previous'): number
@@ -131,7 +88,9 @@ export default function useBoard(info: ChatInfo) {
     }
   }
 
-  const { handleOperation } = useOperator(activeDocument, updateViewingDocument)
+  const { handleOperation } = useOperator(activeDocument, (node) => {
+    activeTarget.value = node
+  })
 
   async function next(step: Step, prompt: string) {
     const { content } = await chat.layout({
@@ -186,6 +145,5 @@ export default function useBoard(info: ChatInfo) {
     next,
     switchViewing,
     apply,
-    updateViewingDocument,
   }
 }

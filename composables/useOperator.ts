@@ -1,10 +1,10 @@
-import type { AttributeNode, DocumentNode, ElementNode } from "sciux";
+import type { AttributeNode, BaseNode, DocumentNode, ElementNode } from "sciux";
 import type { AddNodeOperation, Operation, RemoveNodeOperation, RemovePropOperation, SetContentOperation, SetPropOperation } from "~/types";
 import { querySelectorXPath, parse } from "sciux";
 
 export default function useOperator(
   document: Ref<DocumentNode | undefined>,
-  updateViewingDocument?: () => void
+  onUpdate: (node: BaseNode, op: Operation) => void = () => {}
 ) {
   const operated: string[] = []
   const handleAddNode = (op: AddNodeOperation) => {
@@ -18,8 +18,7 @@ export default function useOperator(
       return console.error(`Failed to find target node: ${op.position}`)
     }
     target.children.push(...children)
-    console.log(document.value)
-    updateViewingDocument?.()
+    onUpdate(target, op)
     return op.type
   }
   const handleSetContent = (op: SetContentOperation) => {
@@ -34,7 +33,7 @@ export default function useOperator(
     }
     target.children.length = 0
     target.children.push(...children)
-    updateViewingDocument?.()
+    onUpdate(target, op)
     return op.type
   }
   const handleSetProp = (op: SetPropOperation) => {
@@ -51,7 +50,7 @@ export default function useOperator(
       name: op.attr,
       value: op.value,
     })
-    updateViewingDocument?.()
+    onUpdate(target, op)
     return op.type
   }
   const handleRemoveProp = (op: RemovePropOperation) => {
@@ -64,7 +63,7 @@ export default function useOperator(
       return console.error(`Failed to find target node: ${op.position}`)
     }
     target.attributes = target.attributes.filter(attr => attr.name !== op.attr)
-    updateViewingDocument?.()
+    onUpdate(target, op)
     return op.type
   }
   const handleRemoveNode = (op: RemoveNodeOperation) => {
@@ -82,13 +81,12 @@ export default function useOperator(
       return console.error(`Failed to find parent node: ${op.position}`)
     }
     parent.children = parent.children.filter(child => child !== target)
-    updateViewingDocument?.()
+    onUpdate(parent, op)
     return op.type
   }
 
   const handleOperation = (op: Operation) => {
     if (operated.includes(op.id)) return
-    console.log(op)
     op.position = op.position === '/' ? op.position : '/root' + op.position
     if (op.position.endsWith('/') && op.position !== '/') {
       op.position = op.position.slice(0, -1)
