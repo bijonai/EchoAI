@@ -14,4 +14,15 @@ services:
       interval: 10s
       timeout: 5s
       retries: 5
+  qdrant:
+    image: qdrant/qdrant:latest
+    restart: always
+    container_name: qdrant
+    ports:
+      - 6333:6333
+      - 6334:6334
 
+configs:
+  qdrant_config:
+    content: |
+      log_level: INFO
