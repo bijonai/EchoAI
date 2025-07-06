@@ -44,8 +44,8 @@ export default defineNuxtConfig({
       appSecret: process.env.LOGTO_APP_SECRET,
       cookieEncryptionKey: process.env.LOGTO_COOKIE_SECRET,
       postCallbackRedirectUri: process.env.LOGTO_BASE_URL + '/auth/callback',
-      resource: ["http://localhost:3000/api"],
-      scopes: [UserScope.Email, "echoai_server"],
+      resource: [process.env.LOGTO_RESOURCE!],
+      scopes: [UserScope.Email, ...process.env.LOGTO_SCOPES!.split(',')],
       pathnames: {
         signIn: '/auth/signin',
         signOut: '/auth/signout',
