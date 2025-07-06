@@ -1,6 +1,6 @@
 <template>
   <div class="flex relative size-full">
-    <div class="flex size-full" v-show="!debugging && viewingId === index + 1" v-for="(page, index) in pages" :key="index" :ref="page" />
+    <div class="flex size-full" v-show="!debugging && viewingId === index + 1" v-for="(page, index) in pages" :key="index" :ref="page"></div>
     <div v-show="debugging">
       <BoardDebugger :active-document="pageBucket.get(viewingId!)!.document" />
     </div>

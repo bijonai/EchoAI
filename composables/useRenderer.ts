@@ -26,7 +26,8 @@ export default function useRenderer() {
           container.style.width = '100%'
           container.style.height = '100%'
           container.append(...roots)
-          patch(page.value!, container)
+          console.log(doc)
+          patch((<any>page.value)[0], container)
         })
       }
     }
@@ -42,7 +43,12 @@ export default function useRenderer() {
         container.style.width = '100%'
         container.style.height = '100%'
         container.append(...roots)
-        patch(pages[pageId.value!].value!, container)
+        nextTick(() => {
+          const page = <any>pages[pageId.value! - 1].value!
+          console.log(page)
+          patch(page[0], container)
+        })
+        return
       }
       updater(v)
     }

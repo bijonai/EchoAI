@@ -24,13 +24,11 @@ export default defineNuxtConfig({
   // },
   css: ['~/assets/css/main.css'],
   nitro: {
-    experimental: {
-      tasks: true
-    }
+    // preset: 'vercel'
   },
-  hub: {
+  // hub: {
 
-  },
+  // },
   modules: [
     '@nuxt/content',
     '@nuxt/eslint',
@@ -38,7 +36,7 @@ export default defineNuxtConfig({
     '@nuxt/icon',
     '@nuxt/image',
     '@logto/nuxt',
-    '@nuxthub/core'
+    // '@nuxthub/core'
   ],
   runtimeConfig: {
     logto: {
