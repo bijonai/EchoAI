@@ -1,7 +1,7 @@
 import { NodeType, type BaseNode, type DocumentNode } from "sciux"
 import type { ChatInfo } from "."
 import type { Step } from "~/types/timeline"
-import { chat } from "~/api"
+import { chat } from "~/endpoint"
 import type { ChalkResult } from "~/types"
 
 export const PAGE = Symbol('PAGE')

@@ -1,6 +1,6 @@
 import type { Branch, Step } from "~/types/timeline";
 import type { ChatInfo } from ".";
-import { chat } from "~/api";
+import { chat } from "~/endpoint";
 import type { Message } from "~/types";
 
 export const END = Symbol('END')

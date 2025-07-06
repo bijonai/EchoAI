@@ -1,7 +1,7 @@
 import type { Message } from "~/types";
 import type { NextType } from ".";
 import type { Step } from "~/types/timeline";
-import { chat } from "~/api";
+import { chat } from "~/endpoint";
 
 export default function useSpeaker(
   nextType: NextType,

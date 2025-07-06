@@ -7,6 +7,10 @@ import { createChalk } from "~/workflow/chalk"
 import { message, Message } from "xsai"
 import createUpdate from "~/utils/update"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as ChalkRequestBody
   const userId = (event as unknown as withAuth)['userId']

@@ -5,6 +5,10 @@ import { withAuth } from "~/types/auth"
 import { chats } from "~/db"
 import { Branch } from "~/types/timeline"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as GetChatRequestBody
   const userId = (event as unknown as withAuth)['userId']

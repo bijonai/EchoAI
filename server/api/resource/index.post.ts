@@ -2,6 +2,10 @@ import { ResourceUploadRequestBody, ResourceUploadResponse } from "~/types/resou
 import { withAuth } from "~/types/auth"
 import db, { resource } from "~/db"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = await readBody(event) as ResourceUploadRequestBody
   const userId = (event as unknown as withAuth)['userId']

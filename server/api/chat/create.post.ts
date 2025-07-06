@@ -3,6 +3,10 @@ import { CreateChatRequestBody, CreateChatResponse } from "~/types"
 import { withAuth } from "~/types/auth"
 import { chats } from "~/db"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as CreateChatRequestBody
   const userId = (event as unknown as withAuth)['userId']

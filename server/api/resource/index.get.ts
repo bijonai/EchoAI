@@ -1,6 +1,10 @@
 import db, { resource } from "~/db"
 import { sql } from "drizzle-orm"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event)
   const limit = parseInt(query.limit as string) ?? 10

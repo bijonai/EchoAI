@@ -1,4 +1,4 @@
-import { chat } from "~/api";
+import { chat } from "~/endpoint";
 import type { ChatInfo } from ".";
 import type { Message } from "~/types";
 import type { Branch } from "~/types/timeline";

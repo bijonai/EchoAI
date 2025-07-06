@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { chat } from '~/api';
+import { chat } from '~/endpoint';
 
 const accessToken = useState<string | undefined>('access-token');
 const isAuthenticated = useState<boolean | undefined>('is-authenticated');

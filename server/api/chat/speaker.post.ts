@@ -7,6 +7,10 @@ import { message, Message } from "xsai";
 import { SpeakerResult, SpeakerResponse, Message as ChatMessage } from "~/types";
 import createUpdate from "~/utils/update";
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = await JSON.parse(await readBody(event));
   const userId = (event as unknown as withAuth)["userId"];

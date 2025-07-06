@@ -3,6 +3,10 @@ import db, { resource } from "~/db"
 import { withAuth } from "~/types/auth"
 import { PrivateResource } from "~/types/resource"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const id = <string>getRouterParam(event, 'id')
   const userId = (event as unknown as withAuth)['userId']

@@ -13,7 +13,7 @@ export default defineNuxtConfig({
       target: 'esnext',
       rollupOptions: {
         external: ['@valibot/to-json-schema'],
-      }
+      },
     },
   },
   
@@ -23,9 +23,8 @@ export default defineNuxtConfig({
   //   'effect': './index-CISmcbXk.js',
   // },
   css: ['~/assets/css/main.css'],
-  nitro: {
-    preset: 'vercel'
-  },
+  nitro: {},
+  serverDir: 'server',
   // hub: {
 
   // },

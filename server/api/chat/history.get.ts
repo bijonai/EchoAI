@@ -3,6 +3,10 @@ import { eq, desc } from "drizzle-orm";
 import { chats } from '@/db'
 import { withAuth } from "~/types/auth"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const userId = (event as unknown as withAuth)['userId']
 

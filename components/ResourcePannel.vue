@@ -30,7 +30,7 @@
 import type { PublicResource } from '~/types/resource';
 import MarkdownRenderer from './MarkdownRenderer.vue'
 import Pagination from './Pagination.vue'
-import { chat } from '~/api';
+import { chat } from '~/endpoint';
 
 const props = defineProps<{
   data: PublicResource[],

@@ -10,6 +10,10 @@ import { Branch, Step } from "~/types/timeline"
 import createUpdate from "~/utils/update"
 import type { PrivateResource, Section } from "~/types/resource"
 
+export const config = {
+  runtime: 'edge'
+}
+
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as DesignerRequestBody
   const userId = (event as unknown as withAuth)["userId"]
