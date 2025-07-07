@@ -1,4 +1,5 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
+import { LOGTO_ENDPOINT, LOGTO_RESOURCE } from "~/utils";
 
 const jwks = createRemoteJWKSet(new URL("https://pzkd7i.logto.app/oidc/jwks"));
 
@@ -19,8 +20,8 @@ export default defineEventHandler(async (event) => {
 
   try {
     const { payload } = await jwtVerify(token, jwks, {
-      issuer: process.env.LOGTO_ENDPOINT + 'oidc',
-      audience: process.env.LOGTO_BASE_URL + '/api',
+      issuer: LOGTO_ENDPOINT + 'oidc',
+      audience: LOGTO_RESOURCE,
     });
 
     (event as any).userId = payload.sub;
