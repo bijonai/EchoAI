@@ -8,6 +8,10 @@ const userInfo = useLogtoUser()
 const prompts = ref('')
 
 async function start() {
+  if (!isAuthenticated.value) {
+    return navigateTo('/auth/signin', { external: true })
+  }
+
   const data = await chat.create({
     prompt: prompts.value,
   }, accessToken.value)
