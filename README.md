@@ -1,95 +1,90 @@
 ![cover](./public/title.png)
+<div align="center">
+  <h1>EchoAI</h1>
+  <p>Visual and Interactive Companion AI Learning Partner</p>
+</div>
 
-EchoAI is a open-source LLM applied on education with a whiteboard and step-by-step teaching mode, which could become your best learning partner or teacher. You can use it to learning mathematics, physics, computer science and whatever you could imagine.
+<div align="center">
+  <a href="https://echo.bingo">[🔗 App]</a> 
+  <a href="https://echo.bijon.ai/blog">[📄 Blog]</a> 
+  <a href="mailto:info@bijon.ai">[📮 Contact]</a> 
+  <a href="https://github.com/bijonai/EchoAI">[GitHub]</a> 
+  <a href="https://github.com/sciux-kit">[Sciux Community]</a> 
+  <a href="https://bijon.ai">[🔗 BijonAI]</a> 
+  <a href="./README.zh.md">[中文]</a>
+</div>
 
-## 📚 Features
+<br>
 
-1. **Interactive Whiteboard**
-   - Powered by our open-source DSL engine [Sciux](https://github.com/sciux-kit)
-   - Rich vector graphics with interactive components
-   - Comprehensive toolset for math, physics, and diagrams
-   - Built-in animations and transitions
-   - Components include: coordinate systems, functions, flowcharts, mindmaps, and more
+<div align="center">
 
-2. **Smart Teaching Assistant**
-   - AI-powered step-by-step teaching
-   - Adaptive learning path based on user feedback
-   - Dynamic branching for alternative explanations
-   - Built-in reasoning model for accurate content
+[![Twitter Follow](https://img.shields.io/twitter/follow/bijon_ai?style=social)](https://x.com/bijon_ai)
+![GitHub stars](https://img.shields.io/github/stars/bijonai/EchoAI)
+![GitHub forks](https://img.shields.io/github/forks/bijonai/EchoAI)
+![GitHub contributors](https://img.shields.io/github/contributors/bijonai/EchoAI)
+![GitHub License](https://img.shields.io/github/license/bijonai/EchoAI)
 
-3. **Lesson Marketplace**
-   - Browse and use pre-designed lesson plans
-   - Community-driven content sharing
-   - Customizable teaching materials
+</div>
 
-## ⚙️ Tech Stack
-
-|  Frontend  | Backend | Services | Tools | LLM |
-| ---------- | ------- | -------- | ----- | --- |
-| TypeScript | Nitro | Logto | PNPM | DeepSeek |
-|    VueJs   | NodeJs | PostgreSQL | Python | ChatGPT |
-|   Nuxt   | Drizzle | Qdrant | | Claude |
-| TailwindCSS | Logto Node | | | Qwen |
-| D3 | OpenAI SDK | | | Gemini |
-| Logto SDK | | | | |
-
-## 🛠️ Development
-
-### Environment
+> [!NOTE]
 >
-> NodeJs >= 20
+> We plan to conduct a small-scale beta test from October to December 2025. If you're interested, please contact us at [info@bijon.ai](mailto:info@bijon.ai)!
 >
-> PNPM >= 9
->
-> Docker
->
-> Python >= 3.10
+> The Sciux component library and knowledge base are still under development, and you can find them at https://github.com/sciux-kit.
 
-### Start
+Have you ever watched the math videos by the famous YouTube creator [3Blue1Brown](https://www.youtube.com/@3blue1brown)?
+His stunning math videos and animations have sparked interest in mathematics for many students, and all his videos are created using his self-developed animation engine [Manim](https://www.manim.com/).
+> Our Sciux component library draws heavily on the style of Manim, so we are grateful to 3Blue1Brown and Manim for the inspiration!
 
-1. Clone the repository
+Later, several teams used LLMs to generate Python code for rendering Manim videos. Some were open-source projects, while others were auxiliary modules for educational AI products. However, they all faced significant issues:
 
-```bash
-git clone https://github.com/bijonai/echoai.git
-```
+1. Python code has low fault tolerance, and combined with issues like LLM output accuracy and hallucinations, the generated Python code often contains errors.
+2. Rendering a Manim video takes a long time, making it inefficient for real-time educational AI products, and video rendering places a heavy burden on servers.
+3. The generated videos lack precision and are limited in length, failing to meet the needs of educational AI products.
 
-2. Install dependencies
+To address these issues, we developed Sciux – defined as an “AI-native interactive DSL language” designed specifically to adapt to LLM generation:
+- We drew heavily from Vue’s syntax and used [@vue/reactivity](https://github.com/vuejs/core) in our renderer Laplace (https://github.com/sciux-kit/laplace) as the foundation for reactivity.
+- Sciux syntax supports embedding JavaScript expressions but is fully structured, eliminating the need to write JavaScript statements to control interaction logic.
+- The syntax also allows defining animations, loops, conditions, and other control flows for each component.
+- [Sciux Library](https://github.com/sciux-kit/lib) supports a wide range of layouts, interactions, and components for mathematics, physics, statistics, and various disciplines, along with animations and utility functions.
+- [Sciux Knowledge](https://github.com/sciux-kit/knowledge) includes sample code for various disciplinary units, used for RAG retrieval and planned fine-tuning of smaller models in the future.
 
-```bash
-pnpm i
-```
+To meet the actual learning needs of students, we designed additional UX features beyond the canvas:
 
-3. Launch the required services
+1. **Pre-designed Teaching Plans and Timeline Generation**
 
-You need to launch [Logto](https://logto.io/), [PostgreSQL](https://www.postgresql.org/) and [Qdrant](https://qdrant.tech/) to start the development environment.
+Using the model, we pre-design teaching steps based on user needs and course content, generating a subway-style timeline below to significantly improve user focus. This transforms the traditional chatbot’s one-time knowledge delivery into AI-guided companion learning.
 
-Or, you can use docker compose to launch the required services.
+When you encounter a question you don’t understand, you can pause at any point, and EchoAI will generate a side branch to explain while creating diagrams.
 
-```bash
-docker compose up -d
-```
+2. **Multi-Model Design**
 
-4. Setup environment variables
+Our functionality consists of four LLM contexts:
 
-Rename `.env.template` in the root to `.env` and fill in the required variables (include your Logto and PostgreSQL credentials).
+- 📄 **Designer**: The course designer, triggered by each user query, designs a timeline and provides corresponding teaching steps based on the query.
+- 🧑‍🏫 **Speaker**: Delivers explanations for each timeline node based on the Designer’s plan.
+- 🎨 **Layout**: The layout designer creates corresponding layouts, components, and games based on the Designer’s plan.
+- 🖌️ **Chalk**: The artist writes Sciux code or modifies existing documents based on the Layout’s design.
 
-5. Initialize database
+3. **Course Community**
 
-```bash
-pnpm db:init
-```
+We plan to introduce a course community in EchoAI, where users can upload their own courses, with future plans to open revenue opportunities for content creators.
 
-6. Start the development server
+Additionally, we plan to include courses, practice questions, and real exam questions for A-level, AP, SAT, and other exam systems as official community content.
 
-```bash
-pnpm dev
-```
+## 📚 Our Published Content
+- [2025-06-04@About EchoAI’s Generation and Modification of Structured Data](https://echo.bijon.ai/blog/2025-06-04.html)
+- [2025-06-03@About EchoAI](https://echo.bijon.ai/documentation/guides/about-echoai.html)
+
+## 🗺️ Get Started
+
+For those who want to deploy the project locally, please refer to [docs/RUN.md](./docs/RUN.md).
 
 ## 🤝 Contributors
 
 ![contributors](https://opencollective.com/bijonai/contributors.svg)
 
-## 🌟 Star history
+## 🌟 Star History
 
 [![Star History Chart](https://api.star-history.com/svg?repos=bijonai/echoai&type=Date)](https://star-history.com/#bijonai/echoai&Date)
 
