@@ -5,7 +5,7 @@ export const LOGTO_APP_SECRET = process.env.LOGTO_APP_SECRET!
 export const LOGTO_BASE_URL = process.env.LOGTO_BASE_URL!;
 export const LOGTO_COOKIE_SECRET = process.env.LOGTO_COOKIE_SECRET!;
 export const LOGTO_RESOURCE = process.env.LOGTO_RESOURCE!;
-export const LOGTO_SCOPES = process.env.LOGTO_SCOPES!.split(',');
+export const LOGTO_SCOPES = process.env.LOGTO_SCOPES ? process.env.LOGTO_SCOPES.split(',') : [];
 
 // Postgres
 export const DATABASE_URL = process.env.DATABASE_URL!
