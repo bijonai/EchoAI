@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import type { Timeline } from '#components'
+import { nextTick, ref, watch, onMounted } from 'vue'
 
 const route = useRoute()
 const router = useRouter()
@@ -84,6 +85,27 @@ if (newParam) {
   })
   router.replace({ query: { ...route.query, new: undefined } })
 }
+
+const messageList = ref<HTMLElement | null>(null)
+
+function scrollToBottom(mandatory: boolean = false) {
+  const el = messageList.value
+  if (!el) return
+
+  const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100
+  if (isAtBottom || mandatory) {
+    el.scrollTo({
+      top: el.scrollHeight,
+      behavior: 'smooth',
+    })
+  }
+}
+
+watch(messages.value, () => {
+  nextTick(() => {
+    scrollToBottom()
+  })
+})
 </script>
 
 <template>
@@ -96,8 +118,14 @@ if (newParam) {
         <Timeline ref="timelines" :branches="branches" />
       </div>
     </div>
-    <div class="col-span-3 flex flex-col gap-2 w-full h-full">
-      <div class="flex flex-col w-full h-full max-h-[calc(100vh-15.5rem)] overflow-y-auto scroll-smooth scrollbar-hide">
+    <div class="col-span-3 flex flex-col gap-2 w-full h-full relative">
+      <div ref="messageList"
+        class="flex flex-col w-full h-full max-h-[calc(100vh-15.5rem)] overflow-y-auto scroll-smooth scrollbar-hide">
+        <span
+          class="w-10 h-10 flex items-center justify-center rounded-md bg-[#FEFFE4] hover:shadow-xl transition-all duration-100 absolute top-[calc(100vh-18rem)] right-2 z-10"
+          @click="scrollToBottom(true)">
+          <Icon name="humbleicons:align-objects-bottom" class="!w-5 !h-5 opacity-60" />
+        </span>
         <div v-for="(message, index) in messages" :key="index">
           <MessageBox :role="message.role" :content="message.content" :is-loading="message.isLoading ?? false" />
         </div>

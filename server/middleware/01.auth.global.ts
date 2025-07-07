@@ -18,9 +18,6 @@ export default defineEventHandler(async (event) => {
     });
   }
 
-  console.log(LOGTO_ENDPOINT + 'oidc');
-  console.log(LOGTO_RESOURCE);
-
   try {
     const { payload } = await jwtVerify(token, jwks, {
       issuer: LOGTO_ENDPOINT + 'oidc',
