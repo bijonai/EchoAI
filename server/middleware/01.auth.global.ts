@@ -1,7 +1,7 @@
 import { createRemoteJWKSet, jwtVerify } from "jose";
 import { LOGTO_ENDPOINT, LOGTO_RESOURCE } from "~/utils";
 
-const jwks = createRemoteJWKSet(new URL("https://pzkd7i.logto.app/oidc/jwks"));
+const jwks = createRemoteJWKSet(new URL(LOGTO_ENDPOINT + 'oidc/jwks'));
 
 export default defineEventHandler(async (event) => {
 
@@ -17,6 +17,9 @@ export default defineEventHandler(async (event) => {
       statusMessage: "Unauthorized: No token provided",
     });
   }
+
+  console.log(LOGTO_ENDPOINT + 'oidc');
+  console.log(LOGTO_RESOURCE);
 
   try {
     const { payload } = await jwtVerify(token, jwks, {

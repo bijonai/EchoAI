@@ -26,7 +26,7 @@ await callOnce(async () => {
     return;
 
   try {
-    accessToken.value = await logtoClient.getAccessToken(process.env.LOGTO_BASE_URL + '/api');
+    accessToken.value = await logtoClient.getAccessToken(LOGTO_RESOURCE);
   } catch (error) {
     console.error('Failed to get access token', error);
   }
