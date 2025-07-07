@@ -14,21 +14,10 @@ export const DATABASE_URL = process.env.DATABASE_URL!
 export const QDRANT_URL = process.env.QDRANT_URL!
 export const QDRANT_API_KEY = process.env.QDRANT_API_KEY!
 
-// Unauthorized Mode
-export const UNAUTHORIZED_MODE = process.env.UNAUTHORIZED_MODE!
-export const UNAUTHORIZED_MODE_USER_ID = process.env.UNAUTHORIZED_MODE_USER_ID!
-
-// App Config
-export const API_URL = process.env.API_URL!
-
 // Embedding
 export const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL!
 export const EMBEDDING_MODEL_BASE_URL = process.env.EMBEDDING_MODEL_BASE_URL!
 export const EMBEDDING_MODEL_API_KEY = process.env.EMBEDDING_MODEL_API_KEY!
-
-// Knowledge Base
-export const KNOWLEDGE_COLLECTION_NAME = process.env.KNOWLEDGE_COLLECTION_NAME!
-export const API_COLLECTION_NAME = process.env.API_COLLECTION_NAME!
 
 // Designer
 export const DESIGNER_MODEL = process.env.DESIGNER_MODEL!

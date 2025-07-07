@@ -57,8 +57,10 @@ ${JSON.stringify(wrapper.toJsonSchema(), null, 2)}
 The output json shouldn't in \`\`\`json\`\`\` code block, output a binary string.
 
 # Step Serialization Rules:
-- Step serial must be a string, not a number .
-- Each step should include previous branch's start string, for example, if the new branch is start from step '2', then the new design should be like '2-1', '2-2', '2-x'
+- Step serial must be a string, not a number.
+- The first branch's serial should be '1', '2', '3' ...
+- Next branch which has previous branch 'x' should be 'x-1', 'x-2', 'x-3' ...
+- Each step should include previous branch's start string.
 - Step serial cannot be repeated, no matter how much design you have done.
 `.trim()
 
@@ -105,6 +107,7 @@ User's question:
 Requirements:
 1. Output the response as pure JSON data without markdown code blocks or additional text
 2. Ensure step names are unique and follow a hierarchical naming pattern:
+   - The first branch's serial should be '1', '2', '3' ...
    - For questions about step N, use step numbers like "N-1", "N-2", etc.
    - Example: If user asks about step 1, create steps like "1-1", "1-2", etc.
    - The step number performs as a string in JSON, not a number.

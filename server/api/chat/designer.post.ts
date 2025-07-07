@@ -2,13 +2,13 @@ import { and, eq } from "drizzle-orm"
 import db, { resource } from "~/db"
 import { withAuth } from "~/types/auth"
 import { chats } from "~/db"
-import { generateObject, Message } from "xsai"
 import { Message as ChatMessage, DesignerRequestBody } from "~/types"
 import { DesignerResult } from "~/types"
 import { createDesigner } from "~/workflow/designer"
 import { Branch, Step } from "~/types/timeline"
 import createUpdate from "~/utils/update"
 import type { PrivateResource, Section } from "~/types/resource"
+import { Message } from "ai"
 
 export const config = {
   runtime: 'edge'

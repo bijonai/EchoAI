@@ -4,7 +4,7 @@ import { withAuth } from "~/types/auth";
 import { createLayout } from "~/workflow/layout";
 import { chats } from "~/db";
 import { and, eq } from "drizzle-orm";
-import { Message } from "xsai";
+import { Message } from "ai";
 import createUpdate from "~/utils/update";
 
 export const config = {

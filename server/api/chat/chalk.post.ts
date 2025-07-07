@@ -4,8 +4,9 @@ import { withAuth } from "~/types/auth"
 import db from "~/db"
 import { chats } from "~/db"
 import { createChalk } from "~/workflow/chalk"
-import { message, Message } from "xsai"
 import createUpdate from "~/utils/update"
+import { message } from "~/utils/ai-sdk/message"
+import { Message } from "ai"
 
 export const config = {
   runtime: 'edge'

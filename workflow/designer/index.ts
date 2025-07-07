@@ -1,19 +1,12 @@
 import type { DesignerRequestBody } from "~/types";
-import { message } from "@xsai/utils-chat";
-import { type Message } from "xsai";
-import { DESIGNER_MODEL_BASE_URL, DESIGNER_MODEL_API_KEY, DESIGNER_MODEL } from "~/utils/env";
 import { prompt, latest } from "~/utils";
 import { ADDITION, SYSTEM, USER, USER_WITH_RESOURCE } from "./prompts";
 import { structure } from "./structure";
-import { generateObject } from "@xsai/generate-object";
 import type { Step } from "~/types/timeline";
 import type { Section } from "~/types/resource";
-
-const env = {
-  baseURL: DESIGNER_MODEL_BASE_URL,
-  apiKey: DESIGNER_MODEL_API_KEY,
-  model: DESIGNER_MODEL,
-}
+import { message } from "~/utils/ai-sdk/message";
+import { generateObject, type Message } from "ai";
+import { designerModel } from "~/utils/ai-sdk/designer_provider";
 
 export function createDesigner(context: Message[]) {
   return async (options: DesignerRequestBody & { sections?: Section[] }) => {
@@ -41,14 +34,13 @@ export function createDesigner(context: Message[]) {
         }
       }
 
-    const { object, messages } = await generateObject({
-      messages: context,
+    const { object } = await generateObject({
+      model: designerModel,
       output: 'array',
       schema: structure,
-      ...env,
+      messages: context,
     })
 
-    context.push(messages[messages.length - 1])
     return object as unknown as Step[]
   }
 }

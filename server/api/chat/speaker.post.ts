@@ -3,9 +3,10 @@ import db from "~/db";
 import { withAuth } from "~/types/auth";
 import { chats } from "~/db";
 import { createSpeaker } from "~/workflow/speaker";
-import { message, Message } from "xsai";
+import { Message } from "ai";
 import { SpeakerResult, SpeakerResponse, Message as ChatMessage } from "~/types";
 import createUpdate from "~/utils/update";
+import { message } from "~/utils/ai-sdk/message";
 
 export const config = {
   runtime: 'edge'
