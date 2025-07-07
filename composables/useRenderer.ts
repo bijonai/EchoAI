@@ -26,7 +26,7 @@ export default function useRenderer() {
           container.style.width = '100%'
           container.style.height = '100%'
           container.append(...roots)
-          console.log(doc)
+          console.log(i + 1, doc, pageBucket)
           patch((<any>page.value)[0], container)
         })
       }

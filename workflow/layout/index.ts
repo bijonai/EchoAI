@@ -24,11 +24,10 @@ export function createLayout(context: Message[]) {
       model: layoutModel,
       messages: context,
       tools: tools(options),
-      maxSteps: 3,
+      maxSteps: 2,
     })
 
     const toolCalls = steps.map(step => step.toolCalls).flat()
-    context.length = 0
     context.push(...response.messages as Message[])
 
     return {

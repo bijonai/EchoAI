@@ -56,15 +56,19 @@ export default function useBoard(info: ChatInfo) {
   watch(pageId, (id) => {
     if (id) {
       viewingId.value = id
+      // activeDocument.value = pages.get(id)!.document
     }
   })
 
-  function createPage(title: string, givenId?: number) {
+  function createPage(title: string, autoSwitch = true, givenId?: number) {
     unused++
     const id = givenId ?? unused
     pages.set(id, { title, document: createEmptyDocument(id) })
     pageId.value = id
-    total.value++
+    if (autoSwitch) {
+      total.value++
+    }
+    activeDocument.value = pages.get(id)!.document
     return id
   }
 
@@ -125,15 +129,25 @@ export default function useBoard(info: ChatInfo) {
   }
 
   async function apply(result: ChalkResult[]) {
+    const { handleOperation: handle } = useOperator(activeDocument)
     for (const r of result) {
-      const pageId = parseInt(r.page)
-      if (!pages.has(pageId)) {
-        createPage(r.page, pageId)
+      const id = parseInt(r.page)
+      const length = pages.size
+      let has = false
+      if (!pages.has(id)) {
+        createPage(r.page, false, id)
+        has = false
+      } else {
+        has = true
       }
+      console.log('before', activeDocument.value, total.value, pageId.value)
       for (const op of r.output) {
-        handleOperation(op)
+        handle(op)
       }
-      console.log(pages.get(0))
+      if (!has) {
+        total.value += id - length
+      }
+      console.log('after', activeDocument.value, total.value, pageId.value)
     }
   }
 
