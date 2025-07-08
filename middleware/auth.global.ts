@@ -1,6 +1,9 @@
 import { defineNuxtRouteMiddleware, navigateTo } from '#app'
 
 export default defineNuxtRouteMiddleware((to, from) => {
+
+  const logtoClient = useLogtoClient();
+
   if (
     to.path.startsWith('/api') ||
     to.path.startsWith('/auth') ||
@@ -9,9 +12,7 @@ export default defineNuxtRouteMiddleware((to, from) => {
     return
   }
 
-  const isAuthenticated = useState<boolean | undefined>('is-authenticated')
-
-  if (!isAuthenticated.value) {
+  if (!logtoClient.isAuthenticated()) {
     return navigateTo('/auth/signin', { external: true })
   }
 }) 
