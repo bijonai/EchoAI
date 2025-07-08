@@ -31,4 +31,10 @@ await callOnce(async () => {
     console.error('Failed to get access token', error);
   }
 })
+
+onMounted(async () => {
+  if (!isAuthenticated.value) {
+    return navigateTo('/auth/signin', { external: true })
+  }
+})
 </script>
