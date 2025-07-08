@@ -4,7 +4,7 @@
       @click="navigateTo(`/auth/${user ? 'signout' : 'signin'}`, { external: true })">
       <template v-if="isAuthenticated">
         <img class="h-6 rounded-full" :src="user.picture || `https://www.gravatar.com/avatar/${avatarHash}`"
-          :alt="user.email || '用户头像'" />
+          :alt="user.email || 'User Avatar'" />
       </template>
       <template v-else>
         <Icon name="humbleicons:user" class="!w-5 !h-5" />

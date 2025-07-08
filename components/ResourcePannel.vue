@@ -19,7 +19,7 @@
           </div>
         </template>
         <template v-else>
-          <div class="text-[#A6A28B] opacity-40 text-center mt-8">请选择一个资源卡片</div>
+          <div class="text-[#A6A28B] opacity-40 text-center mt-8">Please select a resource card</div>
         </template>
       </div>
     </div>
@@ -46,9 +46,9 @@ const accessToken = useState<string | undefined>('access-token');
 
 async function start(resource_id: string) {
   const data = await chat.create({
-    prompt: '根据给出的课程进行设计',
+    prompt: 'Design according to the given course',
   }, accessToken.value)
-  navigateTo(`/chat/${data.chat_id}?new=${'根据给出的课程进行设计'}&resource_id=${resource_id}`)
+  navigateTo(`/chat/${data.chat_id}?new=${'Design according to the given course'}&resource_id=${resource_id}`)
 }
 </script>
 
