@@ -17,5 +17,8 @@ export const chats = pgTable("chats", {
   layout_results: json("layout_results").notNull().default([]),
   chalk_context: json("chalk_context").notNull().default([]),
   chalk_results: json("chalk_results").notNull().default([]),
+  resource: json("resource").notNull().default({
+    knowledge: []
+  }),
 });
 

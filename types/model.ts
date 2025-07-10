@@ -96,7 +96,8 @@ export interface ChalkResult {
   components?: Position[];
   output: Operation[];
   step: string;
-  page: string
+  page: string;
+  knowledges: (string | number)[];
 }
 
 export interface ChalkResponse {
@@ -147,3 +148,7 @@ export type HistoryResponse = {
   id: string;
   updated_at: string;
 }[]
+
+export interface ChatResource {
+  knowledge: (string | number)[];
+}

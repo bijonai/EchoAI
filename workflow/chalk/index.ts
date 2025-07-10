@@ -8,13 +8,14 @@ import { embeddingModel } from "~/utils/ai-sdk/embedding-provider"
 import { chalkModel } from "~/utils/ai-sdk/chalk-provider"
 import { message } from "~/utils/ai-sdk/message"
 import { QDRANT_URL, QDRANT_API_KEY } from "~/utils/env"
+import { createChunkFilter } from "~/utils/retrieve/filter"
 
 const searchEnv = {
   baseURL: QDRANT_URL,
   apiKey: QDRANT_API_KEY,
 }
 
-export function createChalk(context: Message[]) {
+export function createChalk(context: Message[], knowledge: (string | number)[] = []) {
   return async (
     options: ChalkRequestBody,
     onEnd?: (operations: Operation[], content: string) => void
@@ -34,19 +35,20 @@ export function createChalk(context: Message[]) {
       value: options.layout,
     })
 
-    const { chunks } = await search({
+    const { chunks: originChunks } = await search({
       ...searchEnv,
       embedding,
       collections: ['refers', 'comps'],
     })
-    console.log(chunks)
+    const chunks = createChunkFilter(knowledge)(Object.values(originChunks).flat())
 
     context.push(message.user(prompt(USER, {
       page_id: options.page_id ?? '',
       document: options.document ?? '',
       requirement: options.layout,
-      references: Object.values(chunks).flat().map((chunk) => chunk.text).join('\n\n'),
+      references: chunks.map((chunk) => chunk.text).join('\n\n'),
     })))
+    knowledge.push(...chunks.map(chunk => chunk.id))
 
     const operations: Operation[] = []
     let content = ''

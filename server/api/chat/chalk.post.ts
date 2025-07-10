@@ -1,5 +1,5 @@
 import { eq, and } from "drizzle-orm"
-import { ChalkRequestBody, ChalkResult, Operation } from "~/types"
+import { ChalkRequestBody, ChalkResult, ChatResource, Operation } from "~/types"
 import { withAuth } from "~/types/auth"
 import db from "~/db"
 import { chats } from "~/db"
@@ -15,9 +15,10 @@ export const config = {
 export default defineEventHandler(async (event) => {
   const body = JSON.parse(await readBody(event)) as ChalkRequestBody
   const userId = (event as unknown as withAuth)['userId']
-  const [{ readContext, readResults }] = await db.select({
+  const [{ readContext, readResults, readResource }] = await db.select({
     readContext: chats.chalk_context,
     readResults: chats.chalk_results,
+    readResource: chats.resource,
     id: chats.id,
     uid: chats.uid,
   }).from(chats).where(and(
@@ -28,8 +29,9 @@ export default defineEventHandler(async (event) => {
   // Ensure arrays with proper type casting
   const context = Array.isArray(readContext) ? [...readContext] as Message[] : [] as Message[]
   const results = Array.isArray(readResults) ? [...readResults] as ChalkResult[] : [] as ChalkResult[]
-  
-  const chalk = createChalk(context)
+  const resource = readResource as ChatResource
+
+  const chalk = createChalk(context, resource.knowledge)
   return chalk(body, (operations, content) => {
     // Create new arrays for updates
     const updatedContext = [...context, message.assistant(content)]
@@ -46,6 +48,9 @@ export default defineEventHandler(async (event) => {
     update({
       chalk_context: updatedContext,
       chalk_results: updatedResults,
+      resource: {
+        knowledge: resource.knowledge
+      }
     })
   })
 })
