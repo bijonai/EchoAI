@@ -6,7 +6,7 @@ import type { Step } from "~/types/timeline";
 import type { Section } from "~/types/resource";
 import { message } from "~/utils/ai-sdk/message";
 import { generateObject, type Message } from "ai";
-import { designerModel } from "~/utils/ai-sdk/designer_provider";
+import { designerModel } from "~/utils/ai-sdk/designer-provider";
 
 export function createDesigner(context: Message[]) {
   return async (options: DesignerRequestBody & { sections?: Section[] }) => {

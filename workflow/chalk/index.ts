@@ -4,8 +4,8 @@ import { SYSTEM, INTERACTIVE_REFERENCE, LAYOUT_REFERENCE, USER } from "./prompts
 import { parse } from "./parse"
 import { latest, search } from "~/utils"
 import { embed, streamText, type Message } from "ai"
-import { embeddingModel } from "~/utils/ai-sdk/embedding_provider"
-import { chalkModel } from "~/utils/ai-sdk/chalk_provider"
+import { embeddingModel } from "~/utils/ai-sdk/embedding-provider"
+import { chalkModel } from "~/utils/ai-sdk/chalk-provider"
 import { message } from "~/utils/ai-sdk/message"
 import { QDRANT_URL, QDRANT_API_KEY } from "~/utils/env"
 

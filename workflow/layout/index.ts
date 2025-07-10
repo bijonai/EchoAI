@@ -2,7 +2,7 @@ import type { LayoutRequestBody, PageSwitch } from '~/types'
 import { SYSTEM, USER } from './prompts'
 import { prompt } from '~/utils'
 import { message } from '~/utils/ai-sdk/message'
-import { layoutModel } from '~/utils/ai-sdk/layout_provider'
+import { layoutModel } from '~/utils/ai-sdk/layout-provider'
 import { generateText, type Message } from 'ai'
 import { tools } from './tools'
 

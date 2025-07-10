@@ -1,7 +1,7 @@
 import type { SpeakerRequestBody } from "~/types";
 import { prompt } from "~/utils";
 import { SYSTEM, USER } from "./prompts";
-import { speakerModel } from "~/utils/ai-sdk/speaker_provider";
+import { speakerModel } from "~/utils/ai-sdk/speaker-provider";
 import { streamText, type Message } from "ai";
 import { message } from "~/utils/ai-sdk/message";
 

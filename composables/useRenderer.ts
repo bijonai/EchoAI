@@ -50,7 +50,12 @@ export default function useRenderer() {
         })
         return
       }
-      updater(v)
+      try {
+        updater(v)
+      }
+      catch (e) {
+        console.error('[sciux] updater error', e)
+      }
     }
   })
 

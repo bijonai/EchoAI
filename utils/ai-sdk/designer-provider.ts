@@ -4,7 +4,7 @@ import { DESIGNER_MODEL, DESIGNER_MODEL_API_KEY, DESIGNER_MODEL_BASE_URL } from 
 const provider = createOpenAI({
   apiKey: DESIGNER_MODEL_API_KEY,
   baseURL: DESIGNER_MODEL_BASE_URL,
-  compatibility: 'strict',
+  compatibility: 'compatible',
 })
 
 export const designerModel = provider(DESIGNER_MODEL, {
