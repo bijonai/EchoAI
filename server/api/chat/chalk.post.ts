@@ -13,6 +13,7 @@ export const config = {
 }
 
 export default defineEventHandler(async (event) => {
+  const stream = createEventStream(event)
   const body = JSON.parse(await readBody(event)) as ChalkRequestBody
   const userId = (event as unknown as withAuth)['userId']
   const [{ readContext, readResults, readResource }] = await db.select({
