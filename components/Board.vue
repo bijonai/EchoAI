@@ -32,8 +32,10 @@ const { pages } = useRenderer()
 
 function handleSwitch(op: 'next' | 'previous') {
   if (op === 'next') {
+    if (viewingId.value! >= total.value) return
     viewingId.value = viewingId.value! + 1
   } else {
+    if (viewingId.value! <= 1) return
     viewingId.value = viewingId.value! - 1
   }
 }
