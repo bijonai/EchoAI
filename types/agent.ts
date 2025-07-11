@@ -42,7 +42,7 @@ export type ChalkEndAction = Action<
     page: number
     result: string
   }
-  >
+>
 export type ChalkActions = ChalkCalledAction | ChalkLayoutedAction | ChalkOperateAction | ChalkEndAction
 
 // Utils
