@@ -149,6 +149,9 @@ importers:
       vue-router:
         specifier: ^4.5.1
         version: 4.5.1(vue@3.5.16(typescript@5.8.3))
+      xsai:
+        specifier: 0.3.0-beta.8
+        version: 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
       zod:
         specifier: ^3.25.67
         version: 3.25.67
@@ -2318,6 +2321,51 @@ packages:
   '@xmldom/xmldom@0.9.8':
     resolution: {integrity: sha512-p96FSY54r+WJ50FIOsCOjyj/wavs8921hG5+kVMmZgKcvIKxMXHTrjNJvRgWa/zuX3B6t2lijLNFaOyuxUH+2A==}
     engines: {node: '>=14.6'}
+
+  '@xsai/embed@0.3.0-beta.8':
+    resolution: {integrity: sha512-FZqCWmHukeO27fP4uQGlDEX+9mF1tJGi2PWinUhC2WenoYo0SveAN8gBAKw3Y+o13E5lnumiCpMmFlHBdNWA3A==}
+
+  '@xsai/generate-image@0.3.0-beta.8':
+    resolution: {integrity: sha512-K64xVHk8gMKc1Iyz4oyxJJXo0aIBmX1LHX5IxXR/fceaJZnu6G2Tr9vxvLtXh+44c60AqzvSE+NKVzBP3SDMSA==}
+
+  '@xsai/generate-object@0.3.0-beta.8':
+    resolution: {integrity: sha512-1atvwftr3bLEHp65U3RH1kmFHRXEXWkYTtc+DiXos0gAUzEEQ5TWssPlXx5h3r0X60dqbl+jfSC+Ms6Jh+JlfQ==}
+
+  '@xsai/generate-speech@0.3.0-beta.8':
+    resolution: {integrity: sha512-Q0fmmlBnWyRo6M+a8E9+zxDHKIn7wfwNAqnGOeNKPrgrXxFne0s9WUT037lh1KZbK6ABRyXnmKLxWzK6x/5evA==}
+
+  '@xsai/generate-text@0.3.0-beta.8':
+    resolution: {integrity: sha512-jiUV/eDW95BhOiOOSM//a6VXjtvLZu5u03BtNJ2A96/LOCmYw4ELhkCpr6O/GktIML5H+0Fjp/rYfG4A5pGYmg==}
+
+  '@xsai/generate-transcription@0.3.0-beta.8':
+    resolution: {integrity: sha512-bpBRbNnE6UlIXGAk/4+cNAa6h4Zn627jlnaoo5U1GzVXbPRCUF+Z/uMgeRY4A0KUJJZ294jyNQVRgYT4aan8IA==}
+
+  '@xsai/model@0.3.0-beta.8':
+    resolution: {integrity: sha512-l9iMegLrTHzZBGqkpRUBhQQaP18Ou2OKmWPsHlHexcTOk0f0DgHa5Pfh9GzrK8c5ETPAY1PkbDBzPDF8kjAtpQ==}
+
+  '@xsai/shared-chat@0.3.0-beta.8':
+    resolution: {integrity: sha512-ooanQ1Y6dZIIRpROq06WbynLVwyKGL7oj8hHaDp/ZtrWjiLE+rNH7r6oMVUMo3T97lFjV97oX1RY3tCBUNHQQA==}
+
+  '@xsai/shared@0.3.0-beta.8':
+    resolution: {integrity: sha512-S7BYvluU7aA2Ti7HEblV3ISDZbF89VP2dDC5WCrylYlQIYoFlZjlhJhJL5c/+KwX+og0pvh5Y0iSPKdcoMmLmw==}
+
+  '@xsai/stream-object@0.3.0-beta.8':
+    resolution: {integrity: sha512-QKMGMW/tOHJNhsBTdUvdNLenMUPoyYpQ/UoF31TgwUoQD0sFBUji2aD0zOZM7+yHcfAWZl4e1KKKRSzTXf+dew==}
+
+  '@xsai/stream-text@0.3.0-beta.8':
+    resolution: {integrity: sha512-b7CQePZMMJOKFJbhWTJAnvUIgEVXm2xpGRF/EgLoM9WR9B3EQLbM0c3/FggBIy4MlO6BzR2/wwaPs2N24xNtEw==}
+
+  '@xsai/tool@0.3.0-beta.8':
+    resolution: {integrity: sha512-/txJRARXkAiZwQe8oeT7FdgZ1LOq96cE3qfGqI4HRx5LdgTFXAQoUKNcmYYvfYN7B2W8ElIO/LaLoNTHb1OgDQ==}
+
+  '@xsai/utils-chat@0.3.0-beta.8':
+    resolution: {integrity: sha512-Hp+hCqDYfxuhuD8a2GqvEg5ph8rabe+csiK3fDhH9Z2AIaDYm01pN6iluEvYtl6lCSOKYYLO2yjYXNVuIY6uDQ==}
+
+  '@xsai/utils-reasoning@0.3.0-beta.8':
+    resolution: {integrity: sha512-9mvZL2vjF5+Ur66n1nI5VQ2qU5ht6LblbG7OF33PwRp2BxnCg78l+EoUzzIYKwUlMloVIJV3QlY3rqfEoDBwiA==}
+
+  '@xsai/utils-stream@0.3.0-beta.8':
+    resolution: {integrity: sha512-++K32bw3ka2M7BBtItAIGhFO7jymrud0Rs/XZX5y8QbCdSdaT/ccg8JGo0uNWZMRdSM3QzwzuHuisl5MJWczBA==}
 
   abbrev@3.0.1:
     resolution: {integrity: sha512-AO2ac6pjRB3SJmGJo+v5/aK6Omggp6fsLrs6wN9bd35ulu4cCwaAU9+7ZhXjeqHVkaHThLuzH0nZr0YpCDhygg==}
@@ -6470,10 +6518,36 @@ packages:
     resolution: {integrity: sha512-FxF6+rkr1rNSQrhUNYrAFJpRXNzlDoMxeXN5qI84939ylEv3qqPFKa85Oxr6tDaJKqwW6KKyo2v26TSv3k6LeA==}
     engines: {node: '>=0.6.0'}
 
+  xsai@0.3.0-beta.8:
+    resolution: {integrity: sha512-mD4J2EOLR40Qu9XEA31YuQuxPK5n0GN4ZPcYId2h+4Wm+0c0oblJOdaVX/Y98LSiFuPanqV3COnWYCJyMlIigw==}
+
   xss@1.0.15:
     resolution: {integrity: sha512-FVdlVVC67WOIPvfOwhoMETV72f6GbW7aOabBC3WxN/oUdoEMDyLz4OgRv5/gck2ZeNqEQu+Tb0kloovXOfpYVg==}
     engines: {node: '>= 0.10.0'}
     hasBin: true
+
+  xsschema@0.3.0-beta.8:
+    resolution: {integrity: sha512-gMNX9pyTRWMlv2N2BeFfMg0mhLbd4UM0JseCtRri5Y1KXY67kmvnfQGdY90AmmaLbxva2OWfpGHt1e9/d9NY1Q==}
+    peerDependencies:
+      '@valibot/to-json-schema': ^1.0.0
+      arktype: ^2.1.16
+      effect: ^3.14.5
+      sury: ^10.0.0-rc
+      zod: ^3.25.0
+      zod-to-json-schema: ^3.24.5
+    peerDependenciesMeta:
+      '@valibot/to-json-schema':
+        optional: true
+      arktype:
+        optional: true
+      effect:
+        optional: true
+      sury:
+        optional: true
+      zod:
+        optional: true
+      zod-to-json-schema:
+        optional: true
 
   xtend@4.0.2:
     resolution: {integrity: sha512-LKYU1iAXJXUgAXn9URjiu+MWhyUXHsvfp7mcuYm9dSUKK0/CjtrUwFAxD82/mCWbtLsGjFIad0wIsod4zrTAEQ==}
@@ -9065,6 +9139,86 @@ snapshots:
       tslib: 2.8.1
 
   '@xmldom/xmldom@0.9.8': {}
+
+  '@xsai/embed@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/generate-image@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/generate-object@0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)':
+    dependencies:
+      '@xsai/generate-text': 0.3.0-beta.8
+      xsschema: 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@valibot/to-json-schema'
+      - arktype
+      - effect
+      - sury
+      - zod
+      - zod-to-json-schema
+
+  '@xsai/generate-speech@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/generate-text@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+      '@xsai/shared-chat': 0.3.0-beta.8
+
+  '@xsai/generate-transcription@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/model@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/shared-chat@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+
+  '@xsai/shared@0.3.0-beta.8': {}
+
+  '@xsai/stream-object@0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)':
+    dependencies:
+      '@xsai/stream-text': 0.3.0-beta.8
+      xsschema: 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@valibot/to-json-schema'
+      - arktype
+      - effect
+      - sury
+      - zod
+      - zod-to-json-schema
+
+  '@xsai/stream-text@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared-chat': 0.3.0-beta.8
+
+  '@xsai/tool@0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)':
+    dependencies:
+      '@xsai/shared': 0.3.0-beta.8
+      '@xsai/shared-chat': 0.3.0-beta.8
+      xsschema: 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+    transitivePeerDependencies:
+      - '@valibot/to-json-schema'
+      - arktype
+      - effect
+      - sury
+      - zod
+      - zod-to-json-schema
+
+  '@xsai/utils-chat@0.3.0-beta.8':
+    dependencies:
+      '@xsai/shared-chat': 0.3.0-beta.8
+
+  '@xsai/utils-reasoning@0.3.0-beta.8': {}
+
+  '@xsai/utils-stream@0.3.0-beta.8': {}
 
   abbrev@3.0.1: {}
 
@@ -13899,11 +14053,45 @@ snapshots:
 
   xpath@0.0.34: {}
 
+  xsai@0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67):
+    dependencies:
+      '@xsai/embed': 0.3.0-beta.8
+      '@xsai/generate-image': 0.3.0-beta.8
+      '@xsai/generate-object': 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+      '@xsai/generate-speech': 0.3.0-beta.8
+      '@xsai/generate-text': 0.3.0-beta.8
+      '@xsai/generate-transcription': 0.3.0-beta.8
+      '@xsai/model': 0.3.0-beta.8
+      '@xsai/shared': 0.3.0-beta.8
+      '@xsai/shared-chat': 0.3.0-beta.8
+      '@xsai/stream-object': 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+      '@xsai/stream-text': 0.3.0-beta.8
+      '@xsai/tool': 0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67)
+      '@xsai/utils-chat': 0.3.0-beta.8
+      '@xsai/utils-reasoning': 0.3.0-beta.8
+      '@xsai/utils-stream': 0.3.0-beta.8
+    transitivePeerDependencies:
+      - '@valibot/to-json-schema'
+      - arktype
+      - effect
+      - sury
+      - zod
+      - zod-to-json-schema
+
   xss@1.0.15:
     dependencies:
       commander: 2.20.3
       cssfilter: 0.0.10
     optional: true
+
+  xsschema@0.3.0-beta.8(@valibot/to-json-schema@1.3.0(valibot@1.1.0(typescript@5.8.3)))(arktype@2.1.20)(effect@3.16.9)(sury@10.0.4)(zod-to-json-schema@3.24.5(zod@3.25.67))(zod@3.25.67):
+    optionalDependencies:
+      '@valibot/to-json-schema': 1.3.0(valibot@1.1.0(typescript@5.8.3))
+      arktype: 2.1.20
+      effect: 3.16.9
+      sury: 10.0.4
+      zod: 3.25.67
+      zod-to-json-schema: 3.24.5(zod@3.25.67)
 
   xtend@4.0.2: {}
 

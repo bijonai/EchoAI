@@ -19,20 +19,15 @@ export const EMBEDDING_MODEL = process.env.EMBEDDING_MODEL!
 export const EMBEDDING_MODEL_BASE_URL = process.env.EMBEDDING_MODEL_BASE_URL!
 export const EMBEDDING_MODEL_API_KEY = process.env.EMBEDDING_MODEL_API_KEY!
 
-// Designer
-export const DESIGNER_MODEL = process.env.DESIGNER_MODEL!
-export const DESIGNER_MODEL_BASE_URL = process.env.DESIGNER_MODEL_BASE_URL!
-export const DESIGNER_MODEL_API_KEY = process.env.DESIGNER_MODEL_API_KEY!
+// Agent
+export const AGENT_MODEL = process.env.AGENT_MODEL!
+export const AGENT_MODEL_BASE_URL = process.env.AGENT_MODEL_BASE_URL!
+export const AGENT_MODEL_API_KEY = process.env.AGENT_MODEL_API_KEY!
 
 // Chalk
 export const CHALK_MODEL = process.env.CHALK_MODEL!
 export const CHALK_MODEL_BASE_URL = process.env.CHALK_MODEL_BASE_URL!
 export const CHALK_MODEL_API_KEY = process.env.CHALK_MODEL_API_KEY!
-
-// Speaker
-export const SPEAKER_MODEL = process.env.SPEAKER_MODEL!
-export const SPEAKER_MODEL_BASE_URL = process.env.SPEAKER_MODEL_BASE_URL!
-export const SPEAKER_MODEL_API_KEY = process.env.SPEAKER_MODEL_API_KEY!
 
 // Layout
 export const LAYOUT_MODEL = process.env.LAYOUT_MODEL!
