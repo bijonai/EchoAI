@@ -23,12 +23,12 @@ export type ChalkCalledAction = Action<
     page: number
   }
   >
-export type ChalkLayoutedAction = Action<
-  'chalk-layouted',
-  {
-    page: number
-  }
-  >
+// export type ChalkLayoutedAction = Action<
+//   'chalk-layouted',
+//   {
+//     page: number
+//   }
+//   >
 export type ChalkOperateAction = Action<
   'chalk-operate',
   {
@@ -43,7 +43,29 @@ export type ChalkEndAction = Action<
     result: string
   }
 >
-export type ChalkActions = ChalkCalledAction | ChalkLayoutedAction | ChalkOperateAction | ChalkEndAction
+export type ChalkActions = ChalkCalledAction | ChalkOperateAction | ChalkEndAction
+
+export type LayoutStartAction = Action<
+  'layout-start',
+  {}
+  >
+export type LayoutedAction = Action<
+  'layout-done',
+  {
+    layout: string
+    page: number
+  }
+  >
+export type LayoutActions = LayoutStartAction | LayoutedAction
+
+export type AgentMessageChunkAction = Action<
+  'agent-message-chunk',
+  {
+    chunk: string
+    // id: string
+  }
+  >
+export type AgentActions = AgentMessageChunkAction
 
 // Utils
 export function action<T extends Action<string, any>>(type: T['type'], data: (T extends ActionSuccess<string, any> ? T['data'] : never)) {

@@ -1,7 +1,7 @@
-import { embed, generateText, message, streamText, type Message } from 'xsai'
+import { embed, message, streamText, type Message } from 'xsai'
 import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
-import { LAYOUT_CONTEXT_SYSTEM, SYSTEM, USER } from './prompts'
-import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkLayoutedAction, type ChalkOperateAction } from '~/types/agent'
+import { SYSTEM, USER } from './prompts'
+import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
 import { type ReadableStream } from 'node:stream/web'
 import type { Operation } from '~/types'
 import { parse } from './parse'
@@ -30,32 +30,16 @@ export interface ChalkOptions {
 }
 
 export function createChalk(
-  context: {
-    chalk: Message[],
-    layout: Message[],
-  }
+  context: Message[]
 ) {
-  if (context.layout.length === 0) {
-    context.layout.push(message.system(LAYOUT_CONTEXT_SYSTEM))
-  }
-  if (context.chalk.length === 0) {
-    context.chalk.push(message.system(SYSTEM))
+  if (context.length === 0) {
+    context.push(message.system(SYSTEM))
   }
 
   return async function* (
     options: ChalkOptions,
   ): AsyncGenerator<ChalkActions> {
     yield action<ChalkCalledAction>('chalk-called', { page: options.page })
-
-    // Collect requirement to detail task.
-    context.layout.push(message.user(options.input))
-    const { text: layout, messages } = await generateText({
-      ..._env,
-      messages: context.layout,
-    })
-    context.layout.length = 0
-    context.layout.push(...messages)
-    yield action<ChalkLayoutedAction>('chalk-layouted', { page: options.page })
 
     // RAG
     const filter = createChunkFilter(options.chunks)
@@ -71,15 +55,15 @@ export function createChalk(
     const references = filter(Object.values(chunks).flat())
 
     // Start to operate document.
-    context.chalk.push(message.user(
+    context.push(message.user(
       prompt(USER, {
-        requirement: layout!,
+        requirement: options.input,
         reference: references.map(chunk => chunk.text).join('\n\n'),
       })
     ))
-    const { textStream } = await streamText({
+    const { textStream, stepStream } = await streamText({
       ..._env,
-      messages: context.chalk,
+      messages: context,
     })
     let content = ''
     const operations: Operation[] = []

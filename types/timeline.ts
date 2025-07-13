@@ -13,5 +13,3 @@ export interface Branch {
   from?: string
   to?: string
 }
-
-

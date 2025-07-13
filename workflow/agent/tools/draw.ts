@@ -1,14 +1,16 @@
 import { tool } from "xsai";
 import { z } from "zod";
+import { action, type Action, type LayoutActions } from "~/types/agent";
 import type { PageStore } from "~/types/page";
 import { createChalk } from "~/workflow/chalk";
+import { createLayout } from "~/workflow/layout";
 
-export function chalkTool(
+export function drawTool(
   store: PageStore,
-  send: (message: string) => void
+  push: (action: Action<string, any>) => void
 ) {
   return tool({
-    name: 'chalk',
+    name: 'draw',
     description: 'Tool to generate interactive figures according to natural language.',
     parameters: z.object({
       input: z.string()
@@ -17,26 +19,17 @@ export function chalkTool(
         .describe('The page number of the target page.'),
     }),
     execute: async (input) => {
+      push(action<LayoutActions>('layout-start', {}))
       const page = store[input.page.toString()]
-      const chalk = createChalk({
-        chalk: page.chalk_context,
-        layout: page.layout_context,
+      const layout = createLayout(page.layout_context)
+      const content = await layout({
+        input: input.input
       })
-      const generator = chalk({
-        input: input.input,
-        page: input.page,
-        chunks: page.knowledge,
-      })
-      const result = async () => {
-        for await (const chunk of generator) {
-          send(JSON.stringify(chunk))
-          if (chunk.type === 'chalk-layouted') {
-            result()
-            return
-          }
-        }
-      }
-      return await result()
+      push(action<LayoutActions>('layout-done', {
+        layout: content,
+        page: input.page
+      }))
+      return { success: true, content: content, message: 'design page successfully' }
     }
   })
 }
