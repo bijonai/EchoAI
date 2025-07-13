@@ -13,3 +13,7 @@ export interface Branch {
   from?: string
   to?: string
 }
+
+export interface Design {
+  root: Branch[]
+}

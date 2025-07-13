@@ -2,7 +2,7 @@ import type { DesignerRequestBody } from "~/types";
 import { prompt, latest } from "~/utils";
 import { ADDITION, SYSTEM, USER, USER_WITH_RESOURCE } from "./prompts";
 import { structure } from "./structure";
-import type { Step } from "~/types/timeline";
+import type { Step } from "~/types/design";
 import type { Section } from "~/types/resource";
 import { message } from "~/utils/ai-sdk/message";
 import { generateObject, type Message } from "ai";

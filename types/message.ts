@@ -17,3 +17,5 @@ export interface TaskMessage extends BaseMessage {
   type: 'task'
   task_id: string
 }
+
+export type ChatMessage = UserMessage | AgentMessage | TaskMessage
