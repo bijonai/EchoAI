@@ -1,7 +1,6 @@
 import { generateText, message, type Message } from "xsai";
 import { LAYOUT_MODEL, LAYOUT_MODEL_API_KEY, LAYOUT_MODEL_BASE_URL } from "~/utils/env";
 import { SYSTEM } from "./prompts";
-import { action, type LayoutAction } from "~/types/agent";
 
 const _env = {
   apiKey: LAYOUT_MODEL_API_KEY,

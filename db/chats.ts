@@ -12,5 +12,6 @@ export const chats = pgTable("chats", {
   messages: json("messages").notNull().default([]),
   design: json("design").notNull().default({ root: [] }),
   title: text("title").notNull().default(''),
+  tasks: json("tasks").notNull().default([]),
 });
 

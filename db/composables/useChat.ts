@@ -4,6 +4,7 @@ import type { PgColumn } from "drizzle-orm/pg-core"
 import type { Message } from "xsai"
 import { chats } from "~/db"
 import type { Operation } from "~/types"
+import type { Task } from "~/types/task"
 import type { Branch, Design } from "~/types/design"
 import type { ChatMessage } from "~/types/message"
 import type { PageStore } from "~/types/page"
@@ -31,7 +32,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   let messages: ChatMessage[] | null = null
   let design: Design | null = null
   let title: string | null = null
-
+  let tasks: Task[] | null = null
   async function pull(selector: Record<string, PgColumn>, defaultColumn?: Record<string, any>) {
     const column = defaultColumn ?? single(await db.select(selector).from(chats).where(auth).limit(1))
     id = column.id ?? null
@@ -42,8 +43,9 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     messages = <ChatMessage[]>column.messages ?? null
     design = <Design>column.design ?? null
     title = column.title ?? null
+    tasks = <Task[]>column.tasks ?? null
     return {
-      id, uid, pages, context, status, messages, design, title,
+      id, uid, pages, context, status, messages, design, title, tasks,
     }
   }
 
@@ -171,7 +173,28 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     title = title
     addChange('title')
   }
-  
+
+  function updateTasks(tasks: Task[]) {
+    if (!tasks) return
+    tasks.length = 0
+    tasks.push(...tasks)
+    addChange('tasks')
+  }
+
+  function addTask(task: Task) {
+    if (!tasks) return
+    tasks.push(task)
+    addChange('tasks')
+  }
+
+  function updateTaskStatus(taskId: string, status: Status, timestamp: Date = new Date()) {
+    if (!tasks) return
+    const task = tasks.find(task => task.id === taskId)
+    if (!task) return
+    task.status = status
+    addChange('tasks')
+  }
+
   async function apply() {
     const [result] = await db.insert(chats)
       .values(Object.fromEntries(changed.map(key => {
@@ -192,6 +215,8 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
             return [key, design]
           case 'title':
             return [key, title]
+          case 'tasks':
+            return [key, tasks]
           default:
             return [key, null]
         }
@@ -205,6 +230,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
         messages: chats.messages,
         design: chats.design,
         title: chats.title,
+        tasks: chats.tasks,
     })
     id = result.id
     uid = result.uid
@@ -214,6 +240,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     messages = <ChatMessage[]>result.messages
     design = <Design>result.design
     title = result.title
+    tasks = <Task[]>result.tasks
     changed.length = 0
   }
 
@@ -235,5 +262,8 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     addMessage,
     updateStatus,
     updateTitle,
+    updateTasks,
+    addTask,
+    updateTaskStatus,
   }
 }
