@@ -1,4 +1,4 @@
-import { message, streamText, type Message, type StreamTextStep } from "xsai"
+import { message, streamText, type Message } from "xsai"
 import { SYSTEM, USER_DOUBT, USER_NEXT } from "./prompts"
 import { drawTool } from "./tools/draw"
 import { action, type Action, type AgentActions, type LayoutActions } from "~/types/agent"
@@ -8,6 +8,7 @@ import { ReadableStream } from "node:stream/web"
 import { mergeReadableStreams } from "../utils/merge-stream"
 import { designTool } from "./tools/design"
 import type { Design } from "~/types/design"
+import type { StreamTextEvent } from "../types"
 
 const _env = {
   apiKey: AGENT_MODEL_API_KEY,
@@ -38,25 +39,21 @@ export function createAgent(
       message.user(prompt(USER_NEXT))
     )
 
-    const { textStream, stepStream } = await streamText({
+    const { fullStream, messages } = await streamText({
       ..._env,
       messages: context,
       tools,
       maxSteps: 8
     })
 
-    const allStream = mergeReadableStreams({
-      text: <ReadableStream<string>>textStream,
-      step: <ReadableStream<StreamTextStep>>stepStream,
-    })
-    for await (const chunk of allStream) {
-      if (chunk.source === 'text') {
+    for await (const chunk of <ReadableStream<StreamTextEvent>>fullStream) {
+      if (chunk.type === 'text-delta') {
         yield action<AgentActions>('agent-message-chunk', {
-          chunk: chunk.value,
+          chunk: chunk.text,
         })
       } else {
-        if (chunk.source === 'step') {
-          const { toolName, result, args } = chunk.value.toolResults.at(-1)!
+        if (chunk.type === 'tool-result') {
+          const { toolName, result, args } = chunk
           if (toolName === 'draw') {
             yield action<LayoutActions>('layout-done', {
               layout: result,
@@ -66,5 +63,8 @@ export function createAgent(
         }
       }
     }
+
+    context.length = 0
+    context.push(...(await messages))
   }
 }

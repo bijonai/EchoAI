@@ -1,4 +1,4 @@
-import { embed, message, streamText, type Message, type StreamTextStep } from 'xsai'
+import { embed, message, streamText, type Message } from 'xsai'
 import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
 import { SYSTEM, USER } from './prompts'
 import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
@@ -7,7 +7,7 @@ import type { Operation } from '~/types'
 import { parse } from './parse'
 import { createChunkFilter } from '~/utils/retrieve/filter'
 import { QDRANT_URL, QDRANT_API_KEY, EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from '~/utils/env'
-import { mergeReadableStreams } from '../utils/merge-stream'
+import type { StreamTextEvent } from '../types'
 
 const _env = {
   baseURL: CHALK_MODEL_BASE_URL,
@@ -62,18 +62,14 @@ export function createChalk(
         reference: references.map(chunk => chunk.text).join('\n\n'),
       })
     ))
-    const { textStream, stepStream } = await streamText({
+    const { fullStream, messages } = await streamText({
       ..._env,
       messages: context,
     })
     let content = ''
     const operations: Operation[] = []
-    const allStream = mergeReadableStreams({
-      text: <ReadableStream<string>>textStream,
-      step: <ReadableStream<StreamTextStep>>stepStream,
-    })
-    for await (const chunk of allStream) {
-      if (chunk.source === 'text') {
+    for await (const chunk of <ReadableStream<StreamTextEvent>>fullStream) {
+      if (chunk.type === 'text-delta') {
         content += chunk
         const parsed = parse(content)
         if (parsed.length > operations.length) {
@@ -84,9 +80,11 @@ export function createChalk(
             page: options.page
           })
         }
-      } else if (chunk.source === 'step') {
       }
     }
+
+    context.length = 0
+    context.push(...(await messages))
 
     return action<ChalkEndAction>('chalk-end', {
       page: options.page,
