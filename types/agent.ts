@@ -45,18 +45,25 @@ export type ChalkEndAction = Action<
 >
 export type ChalkActions = ChalkCalledAction | ChalkOperateAction | ChalkEndAction
 
+export type TaskCreatedAction = Action<
+  'task-created',
+  {
+    id: string
+  }
+>
+
 export type LayoutStartAction = Action<
   'layout-start',
   {}
   >
-export type LayoutedAction = Action<
+export type LayoutDoneAction = Action<
   'layout-done',
   {
     layout: string
     page: number
   }
   >
-export type LayoutActions = LayoutStartAction | LayoutedAction
+export type LayoutActions = LayoutStartAction | LayoutDoneAction
 
 export type AgentMessageChunkAction = Action<
   'agent-message-chunk',

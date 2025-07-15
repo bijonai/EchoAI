@@ -23,11 +23,11 @@ export default defineEventHandler(async (event) => {
     tasks: chats.tasks,
   })
   const taskId = crypto.randomUUID()
-  const taskResult: Task = { ...task, id: taskId, status: Status.PENDING }
+  const taskResult: Task = { ...task, id: taskId, status: Status.PENDING, createAt: new Date() }
   addTask(taskResult)
   await apply()
   return {
     success: true,
     data: taskResult,
-  }
+  } satisfies CreateTaskResponse
 })

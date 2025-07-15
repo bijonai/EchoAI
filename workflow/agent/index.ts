@@ -1,12 +1,11 @@
 import { message, streamText, type Message, type StreamTextStep } from "xsai"
 import { SYSTEM, USER_DOUBT, USER_NEXT } from "./prompts"
 import { drawTool } from "./tools/draw"
-import { action, type Action, type AgentActions } from "~/types/agent"
+import { action, type Action, type AgentActions, type LayoutActions } from "~/types/agent"
 import type { PageStore } from "~/types/page"
 import { prompt } from "~/utils"
 import { ReadableStream } from "node:stream/web"
 import { mergeReadableStreams } from "../utils/merge-stream"
-import { createChalk } from "../chalk"
 
 const _env = {
   apiKey: AGENT_MODEL_API_KEY,
@@ -25,9 +24,7 @@ export function createAgent(
     context.push(message.system(SYSTEM))
   }
   return async function* (options: AgentOptions) {
-    const resultQueue: Action<string, any>[] = []
-    let lastResultQueueLength = resultQueue.length
-    const draw = await drawTool(options.pages, (action) => resultQueue.push(action))
+    const draw = await drawTool(options.pages)
     const tools = [draw]
 
     if (options.input) context.push(
@@ -45,35 +42,22 @@ export function createAgent(
     })
 
     const allStream = mergeReadableStreams({
-      text: textStream,
-      step: stepStream,
+      text: <ReadableStream<string>>textStream,
+      step: <ReadableStream<StreamTextStep>>stepStream,
     })
-    for await (const chunk of <ReadableStream<StreamTextStep | string>>allStream) {
-      if (resultQueue.length > lastResultQueueLength) {
-        lastResultQueueLength = resultQueue.length
-        yield resultQueue.at(-1)!
-      }
-      if (typeof chunk === 'string') {
+    for await (const chunk of allStream) {
+      if (chunk.source === 'text') {
         yield action<AgentActions>('agent-message-chunk', {
-          chunk,
+          chunk: chunk.value,
         })
       } else {
-        if (chunk.stepType === 'tool-result') {
-          const { toolName, result, args } = chunk.toolResults.at(-1)!
+        if (chunk.source === 'step') {
+          const { toolName, result, args } = chunk.value.toolResults.at(-1)!
           if (toolName === 'draw') {
-            const { input, page: pageId } = <{ input: string, page: number }>args
-            const page = options.pages[pageId.toString()]
-            const chalk = createChalk(page.chalk_context)
-            const content = chalk({
-              page: pageId,
-              input,
-              chunks: page.knowledge
-            });
-            (async () => {
-              for await (const op of content) {
-                resultQueue.push(op)
-              }
-            })()
+            yield action<LayoutActions>('layout-done', {
+              layout: result,
+              page: args.page,
+            })
           }
         }
       }

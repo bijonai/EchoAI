@@ -1,4 +1,5 @@
 type StreamEntry<K extends PropertyKey, T> = { source: K; value: T };
+import { ReadableStream } from "node:stream/web";
 
 export function mergeReadableStreams<
   T extends Readonly<Record<string | number | symbol, ReadableStream<any>>>

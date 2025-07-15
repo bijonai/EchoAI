@@ -7,7 +7,6 @@ import { createLayout } from "~/workflow/layout";
 
 export function drawTool(
   store: PageStore,
-  push: (action: Action<string, any>) => void
 ) {
   return tool({
     name: 'draw',
@@ -19,16 +18,11 @@ export function drawTool(
         .describe('The page number of the target page.'),
     }),
     execute: async (input) => {
-      push(action<LayoutActions>('layout-start', {}))
       const page = store[input.page.toString()]
       const layout = createLayout(page.layout_context)
       const content = await layout({
         input: input.input
       })
-      push(action<LayoutActions>('layout-done', {
-        layout: content,
-        page: input.page
-      }))
       return { success: true, content: content, message: 'design page successfully' }
     }
   })
