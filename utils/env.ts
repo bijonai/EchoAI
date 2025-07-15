@@ -36,3 +36,6 @@ export const LAYOUT_MODEL_API_KEY = process.env.LAYOUT_MODEL_API_KEY!
 
 // Devtools
 export const BOARD_DEBUG = process.env.BOARD_DEBUG!
+
+// Unauthorized Mode
+export const UNAUTHORIZED_USER = process.env.UNAUTHORIZED_USER
