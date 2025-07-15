@@ -13,18 +13,20 @@ export default defineEventHandler(async (event) => {
   const userId = getUserId(event)
   const params = await readBody(event)
   const { pull, apply } = useChat(db, { chatId: params.chatId, userId })
-  const { tasks, pages, context } = await pull({
+  const { tasks, pages, context, design } = await pull({
     id: chats.id,
     uid: chats.uid,
     pages: chats.pages,
     context: chats.context,
     tasks: chats.tasks,
+    design: chats.design,
   })
 
   const agent = createAgent(context)
   for await (const act of agent({
     input: params.input,
     pages,
+    design,
   })) {
     if (act.type === 'layout-done') {
       if (!act.success) return

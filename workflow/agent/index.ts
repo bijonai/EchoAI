@@ -6,6 +6,8 @@ import type { PageStore } from "~/types/page"
 import { prompt } from "~/utils"
 import { ReadableStream } from "node:stream/web"
 import { mergeReadableStreams } from "../utils/merge-stream"
+import { designTool } from "./tools/design"
+import type { Design } from "~/types/design"
 
 const _env = {
   apiKey: AGENT_MODEL_API_KEY,
@@ -16,6 +18,7 @@ const _env = {
 export interface AgentOptions {
   input?: string
   pages: PageStore
+  design: Design
 }
 export function createAgent(
   context: Message[]
@@ -25,7 +28,8 @@ export function createAgent(
   }
   return async function* (options: AgentOptions) {
     const draw = await drawTool(options.pages)
-    const tools = [draw]
+    const design = await designTool(options.design)
+    const tools = [draw, design]
 
     if (options.input) context.push(
       message.user(prompt(USER_DOUBT))
