@@ -1,8 +1,6 @@
 import { tool } from "xsai";
 import { z } from "zod";
-import { action, type Action, type LayoutActions } from "~/types/agent";
 import type { PageStore } from "~/types/page";
-import { createChalk } from "~/workflow/chalk";
 import { createLayout } from "~/workflow/layout";
 
 export function drawTool(

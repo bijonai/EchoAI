@@ -1,13 +1,16 @@
 import { message, streamText, type Message } from "xsai"
 import { SYSTEM, USER_DOUBT, USER_NEXT } from "./prompts"
 import { drawTool } from "./tools/draw"
-import { action, type Action, type AgentActions, type LayoutActions } from "~/types/agent"
+import { action, type Action, type AgentActions, type PageActions, type DesignActions, type LayoutActions, type StepActions } from "~/types/agent"
 import type { PageStore } from "~/types/page"
 import { prompt } from "~/utils"
 import { ReadableStream } from "node:stream/web"
-import { designTool } from "./tools/design"
-import type { Design } from "~/types/design"
+import { designTool, wrapper } from "./tools/design"
+import type { Branch, Design } from "~/types/design"
 import type { StreamTextEvent } from "../types"
+import type { z } from "zod"
+import { createPageTool } from "./tools/page"
+import { stepToTool } from "./tools/step"
 
 const _env = {
   apiKey: AGENT_MODEL_API_KEY,
@@ -29,7 +32,9 @@ export function createAgent(
   return async function* (options: AgentOptions) {
     const draw = await drawTool(options.pages)
     const design = await designTool(options.design)
-    const tools = [draw, design]
+    const createPage = await createPageTool(options.pages)
+    const stepTo = await stepToTool()
+    const tools = [draw, design, createPage, stepTo]
 
     if (options.input) context.push(
       message.user(prompt(USER_DOUBT))
@@ -54,9 +59,33 @@ export function createAgent(
         if (chunk.type === 'tool-result') {
           const { toolName, result, args } = chunk
           if (toolName === 'draw') {
+            const { content } = JSON.parse(result as string)
             yield action<LayoutActions>('layout-done', {
-              layout: result,
-              page: args.page,
+              layout: content,
+              page: args.page,  
+            })
+          } else if (toolName === 'create-page') {
+            const { data } = JSON.parse(result as string)
+            yield action<PageActions>('create-page', {
+              id: data.id,
+              title: data.title,
+            })
+          } else if (toolName === 'step-to') {
+            const { data } = JSON.parse(result as string)
+            yield action<StepActions>('step-to', {
+              step: data.step,
+            })
+          }
+        } else if (chunk.type === 'tool-call') {
+          const { toolName, args } = chunk
+          const { elements, from, to } = <z.infer<typeof wrapper>>JSON.parse(args)
+          if (toolName === 'design') {
+            yield action<DesignActions>('design-branch', {
+              design: {
+                steps: elements,
+                from,
+                to,
+              } satisfies Branch,
             })
           }
         }

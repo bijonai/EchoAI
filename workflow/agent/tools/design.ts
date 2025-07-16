@@ -12,6 +12,8 @@ export const structure = z.object({
 })
 export const wrapper = z.object({
   elements: z.array(structure).describe('The steps of the lesson'),
+  from: z.string().describe('The start base point of previous-designed branches').optional(),
+  to: z.string().describe('The end base point of previous-designed branches').optional(),
 })
 
 export async function designTool(design: Design) {
@@ -26,6 +28,8 @@ export async function designTool(design: Design) {
         data: {
           start: input.elements[0],
           end: input.elements[input.elements.length - 1],
+          from: input.from,
+          to: input.to,
         }
       }
     },
