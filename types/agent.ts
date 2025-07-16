@@ -1,3 +1,4 @@
+import type { Branch } from "./design"
 import type { Operation } from "./operation"
 
 export interface ActionSuccess<N extends string, T> {
@@ -23,12 +24,6 @@ export type ChalkCalledAction = Action<
     page: number
   }
   >
-// export type ChalkLayoutedAction = Action<
-//   'chalk-layouted',
-//   {
-//     page: number
-//   }
-//   >
 export type ChalkOperateAction = Action<
   'chalk-operate',
   {
@@ -64,6 +59,31 @@ export type LayoutDoneAction = Action<
   }
   >
 export type LayoutActions = LayoutStartAction | LayoutDoneAction
+
+export type DesignBranchAction = Action<
+  'design-branch',
+  {
+    design: Branch
+  }
+>
+export type DesignActions = DesignBranchAction
+
+export type StepToAction = Action<
+  'step-to',
+  {
+    step: string
+  }
+>
+export type StepActions = StepToAction
+
+export type CreatePageAction = Action<
+  'create-page',
+  {
+    id: string
+    title: string
+  }
+>
+export type PageActions = CreatePageAction
 
 export type AgentMessageChunkAction = Action<
   'agent-message-chunk',

@@ -9,6 +9,7 @@ import type { Branch, Design } from "~/types/design"
 import type { ChatMessage } from "~/types/message"
 import type { PageStore } from "~/types/page"
 import type { Status } from "~/types/shared"
+import type { Current } from "~/types/current"
 
 export interface UseChatParams {
   chatId: string
@@ -33,6 +34,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   let design: Design | null = null
   let title: string | null = null
   let tasks: Task[] | null = null
+  let current: Current | null = null
   async function pull(selector: Record<string, PgColumn>, defaultColumn?: Record<string, any>) {
     const column = defaultColumn ?? single(await db.select(selector).from(chats).where(auth).limit(1))
     id = column.id ?? null
@@ -44,8 +46,9 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     design = <Design>column.design ?? null
     title = column.title ?? null
     tasks = <Task[]>column.tasks ?? null
+    current = <Current>column.current ?? null
     return {
-      id, uid, pages, context, status, messages, design, title, tasks,
+      id, uid, pages, context, status, messages, design, title, tasks, current,
     }
   }
 
@@ -195,6 +198,18 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     addChange('tasks')
   }
 
+  function updateCurrent(current: Current) {
+    if (!current) return
+    current = current
+    addChange('current')
+  }
+
+  function updateCurrentStep(step: string) {
+    if (!current) return
+    current.step = step
+    addChange('current')
+  }
+
   async function apply() {
     const [result] = await db.insert(chats)
       .values(Object.fromEntries(changed.map(key => {
@@ -231,6 +246,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
         design: chats.design,
         title: chats.title,
         tasks: chats.tasks,
+        current: chats.current,
     })
     id = result.id
     uid = result.uid
@@ -265,5 +281,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     updateTasks,
     addTask,
     updateTaskStatus,
+    updateCurrent,
+    updateCurrentStep,
   }
 }

@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const stream = createEventStream(event)
   const userId = getUserId(event)
   const params = await readBody(event)
-  const { pull, apply } = useChat(db, { chatId: params.chatId, userId })
+  const { pull, apply, addPage, updateCurrentStep } = useChat(db, { chatId: params.chatId, userId })
   const { tasks, pages, context, design } = await pull({
     id: chats.id,
     uid: chats.uid,
@@ -47,7 +47,17 @@ export default defineEventHandler(async (event) => {
           id: data.id,
         })
       ))
+    } else if (act.type === 'create-page') {
+      if (!act.success) return
+      addPage(act.data.title)
+    } else if (act.type === 'design-branch') {
+      if (!act.success) return
+      // TODO: design branch
+    } else if (act.type === 'step-to') {
+      if (!act.success) return
+      updateCurrentStep(act.data.step)
     }
+    await apply()
     stream.push(JSON.stringify(action))
   }
 

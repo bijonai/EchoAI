@@ -9,7 +9,7 @@ export interface Step {
 
 export interface Branch {
   steps: Step[]
-  children: Branch[]
+  children?: Branch[]
   from?: string
   to?: string
 }
