@@ -5,6 +5,5 @@ export function latest<T>(arr: T[]): T | undefined {
 }
 
 export function getUserId(event: any) {
-  if (UNAUTHORIZED_USER) return UNAUTHORIZED_USER
   return event['userId'] as string
 }

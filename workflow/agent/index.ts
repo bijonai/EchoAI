@@ -5,7 +5,6 @@ import { action, type Action, type AgentActions, type LayoutActions } from "~/ty
 import type { PageStore } from "~/types/page"
 import { prompt } from "~/utils"
 import { ReadableStream } from "node:stream/web"
-import { mergeReadableStreams } from "../utils/merge-stream"
 import { designTool } from "./tools/design"
 import type { Design } from "~/types/design"
 import type { StreamTextEvent } from "../types"
