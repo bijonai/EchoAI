@@ -87,6 +87,8 @@ export function createAgent(
                 to,
               } satisfies Branch,
             })
+          } else if (toolName === 'draw') {
+            yield action<LayoutActions>('layout-start', {})
           }
         }
       }
