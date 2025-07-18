@@ -37,7 +37,9 @@ export function createAgent(
     const tools = [draw, design, createPage, stepTo]
 
     if (options.input) context.push(
-      message.user(prompt(USER_DOUBT))
+      message.user(prompt(USER_DOUBT, {
+        input: options.input,
+      }))
     )
     else context.push(
       message.user(prompt(USER_NEXT))
