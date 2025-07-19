@@ -28,15 +28,6 @@ Your description should include and ONLY include the following points:
 - Others
   + render a code block if it's CS-related.
   + render formulas with latex (latex content should be given)
-
-## Tools
-You have a whiteboard could switch page, you can use the following tools to describe the layout and figures:
-
-- \`add-page(title: string)\`: add a new page if the content is not based on previous figures.
-- \`switch-page(pageId: string)\`: switch to a page with page id if you need to describe the layout and figures based on previous content.
-    + Posing a question or problem for the user to solve.
-    + Guiding the user through applying learned concepts to distinctly new scenarios or diverse examples, often on a page designed for such exercises.
-    + Revisiting or comparing content on a previously established page.
     
 ## Output
 
@@ -49,45 +40,4 @@ In following steps, I will provide some steps need to be designed and described,
 - A concrete conclusion or key takeaway from this step
 
 When you complete a design, the user may arise an additional requirement, your choice could be describe the additional layout and figures based on the previous description, or call the tool to create a new page or switch to previous page.
-`
-
-export const USER = `
-The requirement form user is:
-
-\`\`\`markdown
-<:insert:prompt>
-\`\`\`
-
-STEP: <:insert:step>
-
-PROBLEM: <:insert:problem>
-
-KNOWLEDGE: <:insert:knowledge>
-
-EXPLANATION: <:insert:explanation>
-
-CONCLUSION: <:insert:conclusion>
-
-INTERACTION: <:insert:interaction>
-
-YOU ARE AT A **CRITICAL DECISION POINT** REGARDING PAGE MANAGEMENT.
-Based on the information above and the nature of the content you are about to generate, CHOOSE ONE of the following three actions:
-
-1.  **CONTINUE ON THE CURRENT PAGE IF:**
-    The content you will output is a direct, minor addition, annotation, or simple modification to the *immediately preceding figures or text* on the current page. (e.g., adding labels to an existing diagram, slightly elaborating a point without needing new major figures).
-
-2.  **USE TOOL \`add-page(title: string)\` IF:**
-    The content you will output introduces a significant new sub-topic, a detailed example, or a new set of diagrams that, while **conceptually related to and building upon the explanation just provided**, warrants a fresh page for better organization, clarity, or a different layout structure. This is for expanding the current lesson with new, substantial explanatory material.
-    *Example: After explaining the Pythagorean theorem with one triangle, you might use \`add-page(title: string)\` to introduce a new page showing its application in a complex word problem with new diagrams.*
-
-3.  **USE TOOL \`switch-page(pageId: string)\` IF:**
-    The content you will output involves transitioning to a **distinctly different mode of interaction or a different (possibly pre-existing) context**. This is appropriate for:
-    * Posing a direct question, exercise, or problem for the user to solve (which might be on a standard 'question' page layout).
-    * Guiding the user through applying the learned concept to new, varied scenarios or transferring knowledge to different types of problems, potentially on a specific practice page.
-    * Revisiting a concept on a different, previously established page for review, comparison, or to build a new connection.
-    * **You must have a target \`pageId\` in mind for this action.**
-
-Because the space of each page is limited, you should divide various content into multiple pages as much as possible.
-
-> NOW you are at: PAGE ID \`<:insert:id>\`
-`
+`.trim()

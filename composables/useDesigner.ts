@@ -1,4 +1,4 @@
-import type { Branch, Step } from "~/types/timeline";
+import type { Branch, Step } from "~/types/design";
 import type { ChatInfo } from ".";
 import { chat } from "~/endpoint";
 import type { Message } from "~/types";

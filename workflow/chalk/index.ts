@@ -1,80 +1,93 @@
-import type { ChalkRequestBody, Operation } from "~/types"
-import { prompt } from "~/utils"
-import { SYSTEM, INTERACTIVE_REFERENCE, LAYOUT_REFERENCE, USER } from "./prompts"
-import { parse } from "./parse"
-import { latest, search } from "~/utils"
-import { embed, streamText, type Message } from "ai"
-import { embeddingModel } from "~/utils/ai-sdk/embedding-provider"
-import { chalkModel } from "~/utils/ai-sdk/chalk-provider"
-import { message } from "~/utils/ai-sdk/message"
-import { QDRANT_URL, QDRANT_API_KEY } from "~/utils/env"
-import { createChunkFilter } from "~/utils/retrieve/filter"
+import { embed, message, streamText, type Message } from 'xsai'
+import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
+import { SYSTEM, USER } from './prompts'
+import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
+import type { Operation } from '~/types'
+import { parse } from './parse'
+import { createChunkFilter } from '~/utils/retrieve/filter'
+import { QDRANT_URL, QDRANT_API_KEY, EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from '~/utils/env'
+import type { StreamTextEvent } from '../types'
 
-const searchEnv = {
+const _env = {
+  baseURL: CHALK_MODEL_BASE_URL,
+  apiKey: CHALK_MODEL_API_KEY,
+  model: CHALK_MODEL
+}
+const _embedding_env = {
+  baseURL: EMBEDDING_MODEL_BASE_URL,
+  apiKey: EMBEDDING_MODEL_API_KEY,
+  model: EMBEDDING_MODEL,
+}
+const _search_env = {
   baseURL: QDRANT_URL,
   apiKey: QDRANT_API_KEY,
 }
 
-export function createChalk(context: Message[], knowledge: (string | number)[] = []) {
-  return async (
-    options: ChalkRequestBody,
-    onEnd?: (operations: Operation[], content: string) => void
-  ) => {
-    if (context.length === 0) {
-      context.push(message.system(
-        [
-          prompt(SYSTEM),
-          prompt(INTERACTIVE_REFERENCE),
-          prompt(LAYOUT_REFERENCE),
-        ].join('\n\n')
-      ))
-    }
+export interface ChalkOptions {
+  input: string
+  page: number
+  chunks: (string | number)[]
+}
 
+export function createChalk(
+  context: Message[]
+) {
+  if (context.length === 0) {
+    context.push(message.system(SYSTEM))
+  }
+
+  return async function* (
+    options: ChalkOptions,
+  ): AsyncGenerator<ChalkActions> {
+    yield action<ChalkCalledAction>('chalk-called', { page: options.page })
+
+    // RAG
+    const filter = createChunkFilter(options.chunks)
     const { embedding } = await embed({
-      model: embeddingModel,
-      value: options.layout,
+      ..._embedding_env,
+      input: options.input,
     })
-
-    const { chunks: originChunks } = await search({
-      ...searchEnv,
+    const { chunks } = await search({
+      ..._search_env,
       embedding,
       collections: ['refers', 'comps'],
     })
-    const chunks = createChunkFilter(knowledge)(Object.values(originChunks).flat())
+    const references = filter(Object.values(chunks).flat())
 
-    context.push(message.user(prompt(USER, {
-      page_id: options.page_id ?? '',
-      document: options.document ?? '',
-      requirement: options.layout,
-      references: chunks.map((chunk) => chunk.text).join('\n\n'),
-    })))
-    knowledge.push(...chunks.map(chunk => chunk.id))
-
-    const operations: Operation[] = []
-    let content = ''
-    const { textStream } = streamText({
-      model: chalkModel,
+    // Start to operate document.
+    context.push(message.user(
+      prompt(USER, {
+        requirement: options.input,
+        reference: references.map(chunk => chunk.text).join('\n\n'),
+      })
+    ))
+    const { fullStream, messages } = await streamText({
+      ..._env,
       messages: context,
     })
-
-    return new ReadableStream({
-      async start(controller) {
-        for await (const chunk of textStream) {
-          content += <string>chunk
-          const newOperations = parse(content)
-          if (newOperations.length > operations.length) {
-            const lastOp = latest(newOperations)!
-            lastOp.id = crypto.randomUUID()
-            operations.push(lastOp)
-            controller.enqueue(JSON.stringify({
-              delta: {
-                operations,
-              }
-            }))
-          }
+    let content = ''
+    const operations: Operation[] = []
+    for await (const chunk of fullStream) {
+      if (chunk.type === 'text-delta') {
+        content += chunk
+        const parsed = parse(content)
+        if (parsed.length > operations.length) {
+          const operation = parsed[operations.length]
+          operations.push(operation)
+          yield action<ChalkOperateAction>('chalk-operate', {
+            operation,
+            page: options.page
+          })
         }
-        onEnd?.(operations, content)
       }
+    }
+
+    context.length = 0
+    context.push(...(await messages))
+
+    return action<ChalkEndAction>('chalk-end', {
+      page: options.page,
+      result: content,
     })
   }
 }

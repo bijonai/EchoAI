@@ -9,8 +9,11 @@ export interface Step {
 
 export interface Branch {
   steps: Step[]
-  start?: string
-  end?: string
+  children?: Branch[]
+  from?: string
+  to?: string
 }
 
-
+export interface Design {
+  root: Branch[]
+}

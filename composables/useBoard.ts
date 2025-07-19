@@ -1,6 +1,6 @@
 import { NodeType, type BaseNode, type DocumentNode } from "sciux"
 import type { ChatInfo } from "."
-import type { Step } from "~/types/timeline"
+import type { Step } from "~/types/design"
 import { chat } from "~/endpoint"
 import type { ChalkResult } from "~/types"
 

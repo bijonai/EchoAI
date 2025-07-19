@@ -1,7 +1,7 @@
 import { chat } from "~/endpoint";
 import type { ChatInfo } from ".";
 import type { Message } from "~/types";
-import type { Branch } from "~/types/timeline";
+import type { Branch } from "~/types/design";
 import { latest } from "~/utils";
 
 export default function useHistory(info: ChatInfo) {

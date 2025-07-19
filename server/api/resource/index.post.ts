@@ -1,6 +1,6 @@
 import { ResourceUploadRequestBody, ResourceUploadResponse } from "~/types/resource"
-import { withAuth } from "~/types/auth"
 import db, { resource } from "~/db"
+import { getUserId } from "~/utils/tool"
 
 export const config = {
   runtime: 'edge'
@@ -8,7 +8,7 @@ export const config = {
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event) as ResourceUploadRequestBody
-  const userId = (event as unknown as withAuth)['userId']
+  const userId = getUserId(event)
 
   const [result] = await db.insert(resource)
     .values({
