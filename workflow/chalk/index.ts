@@ -2,7 +2,6 @@ import { embed, message, streamText, type Message } from 'xsai'
 import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
 import { SYSTEM, USER } from './prompts'
 import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
-import { type ReadableStream } from 'node:stream/web'
 import type { Operation } from '~/types'
 import { parse } from './parse'
 import { createChunkFilter } from '~/utils/retrieve/filter'
@@ -68,7 +67,7 @@ export function createChalk(
     })
     let content = ''
     const operations: Operation[] = []
-    for await (const chunk of <ReadableStream<StreamTextEvent>>fullStream) {
+    for await (const chunk of fullStream) {
       if (chunk.type === 'text-delta') {
         content += chunk
         const parsed = parse(content)

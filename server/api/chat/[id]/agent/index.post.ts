@@ -12,7 +12,8 @@ export default defineEventHandler(async (event) => {
   const stream = createEventStream(event)
   const userId = getUserId(event)
   const params = await readBody(event)
-  const { pull, apply, addPage, updateCurrentStep } = useChat(db, { chatId: params.chatId, userId })
+  const chatId = getRouterParam(event, 'id')!
+  const { pull, apply, addPage, updateCurrentStep } = useChat(db, { chatId, userId })
   const { tasks, pages, context, design } = await pull({
     id: chats.id,
     uid: chats.uid,

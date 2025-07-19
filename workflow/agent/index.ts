@@ -4,13 +4,12 @@ import { drawTool } from "./tools/draw"
 import { action, type Action, type AgentActions, type PageActions, type DesignActions, type LayoutActions, type StepActions } from "~/types/agent"
 import type { PageStore } from "~/types/page"
 import { prompt } from "~/utils"
-import { ReadableStream } from "node:stream/web"
 import { designTool, wrapper } from "./tools/design"
 import type { Branch, Design } from "~/types/design"
-import type { StreamTextEvent } from "../types"
 import type { z } from "zod"
 import { createPageTool } from "./tools/page"
 import { stepToTool } from "./tools/step"
+import { AGENT_MODEL, AGENT_MODEL_API_KEY, AGENT_MODEL_BASE_URL } from '~/utils/env'
 
 const _env = {
   apiKey: AGENT_MODEL_API_KEY,
@@ -52,7 +51,7 @@ export function createAgent(
       maxSteps: 8
     })
 
-    for await (const chunk of <ReadableStream<StreamTextEvent>>fullStream) {
+    for await (const chunk of fullStream) {
       if (chunk.type === 'text-delta') {
         yield action<AgentActions>('agent-message-chunk', {
           chunk: chunk.text,

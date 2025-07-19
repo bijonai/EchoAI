@@ -16,12 +16,14 @@ export default defineEventHandler(async (event) => {
 
   const token = getRequestHeader(event, "Authorization")?.split(" ")[1];
 
-  if (!token) {
+  if (!token && !UNAUTHORIZED_USER) {
     throw createError({
       statusCode: 401,
       statusMessage: "Unauthorized: No token provided",
     });
   }
+  
+  if (!token) return
 
   try {
     const { payload } = await jwtVerify(token, jwks, {
