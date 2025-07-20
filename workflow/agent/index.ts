@@ -29,9 +29,9 @@ export function createAgent(
     context.push(message.system(SYSTEM))
   }
   return async function* (options: AgentOptions) {
-    const draw = await drawTool(options.pages)
+    const draw = await drawTool(() => options.pages)
     const design = await designTool(options.design)
-    const createPage = await createPageTool(options.pages)
+    const createPage = await createPageTool(() => options.pages)
     const stepTo = await stepToTool()
     const tools = [draw, design, createPage, stepTo]
 
@@ -67,6 +67,13 @@ export function createAgent(
             })
           } else if (toolName === 'create-page') {
             const { data } = JSON.parse(result as string)
+            options.pages[data.id] = {
+              title: data.title,
+              layout_context: [],
+              chalk_context: [],
+              operations: [],
+              knowledge: [],
+            }
             yield action<PageActions>('create-page', {
               id: data.id,
               title: data.title,

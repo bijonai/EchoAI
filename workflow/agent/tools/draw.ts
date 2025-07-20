@@ -4,7 +4,7 @@ import type { PageStore } from "~/types/page";
 import { createLayout } from "~/workflow/layout";
 
 export function drawTool(
-  store: PageStore,
+  getStore: () => PageStore,
 ) {
   return tool({
     name: 'draw',
@@ -16,6 +16,7 @@ export function drawTool(
         .describe('The page number of the target page.'),
     }),
     execute: async (input) => {
+      const store = getStore()
       const page = store[input.page.toString()]
       const layout = createLayout(page.layout_context)
       const content = await layout({
