@@ -232,6 +232,8 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
             return [key, title]
           case 'tasks':
             return [key, tasks]
+          case 'current':
+            return [key, current]
           default:
             return [key, null]
         }
