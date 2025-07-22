@@ -9,7 +9,7 @@ import { stepToTool } from "./tools/step"
 import { streamText, type Message } from "ai"
 import { message } from "~/utils/ai-sdk/message"
 import { agentModel } from "~/utils/ai-sdk/provider"
-import { action, type AgentActions, type DesignActions, type LayoutActions, type PageActions, type StepActions } from "~/types/agent"
+import { action, type AgentActions, type AgentContextUpdateAction, type DesignActions, type LayoutActions, type PageActions, type StepActions } from "~/types/agent"
 import type { Current } from "~/types/current"
 
 export interface AgentOptions {
@@ -37,7 +37,7 @@ export function createAgent(
       'step-to': stepTo,
     }
 
-    context.push(message.system(prompt(STATUS, {
+    context.push(message.data(prompt(STATUS, {
       design: JSON.stringify(options.design),
       current: JSON.stringify(options.current),
     })))
@@ -54,19 +54,17 @@ export function createAgent(
       )
     }
 
+    console.log('context =>', context)
+
     const { fullStream, response } = await streamText({
       model: agentModel,
       messages: context,
       tools,
-      maxSteps: 1024,
+      maxSteps: 100,
     })
 
-    console.log(context)
-
     for await (const chunk of fullStream) {
-      console.log(JSON.stringify(chunk))
-      console.log('--------------------------------')
-
+      console.log('chunk =>', chunk)
       if (chunk.type === 'text-delta') {
         yield action<AgentActions>('agent-message-chunk', {  
           chunk: chunk.textDelta,
@@ -123,9 +121,10 @@ export function createAgent(
       }
     }
 
-    context.length = 0
-    context.push(...(await response).messages as Message[])
-    console.log(context)
-    console.log('--------------------------------')
+    context.push(...(await response).messages.filter((msg) => msg.role !== 'tool') as Message[])
+    yield action<AgentContextUpdateAction>('agent-context-update', {
+      context,
+      response: (await response).messages.filter((msg) => msg.role !== 'tool') as Message[],
+    })
   }
 }

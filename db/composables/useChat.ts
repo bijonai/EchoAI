@@ -5,7 +5,7 @@ import type { Message } from "ai"
 import { chats } from "~/db"
 import type { Operation } from "~/types"
 import type { Task } from "~/types/task"
-import type { Branch, Design } from "~/types/design"
+import type { Design } from "~/types/design"
 import type { ChatMessage } from "~/types/message"
 import type { PageStore } from "~/types/page"
 import type { Status } from "~/types/shared"
@@ -144,10 +144,11 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     return newPage
   }
 
-  function updateContext(context: Message[]) {
+  function updateContext(newContext: Message[]) {
     if (!context) return
     context.length = 0
-    context.push(...context)
+    context.push(...newContext)
+    console.log('updateContext =>', context)
     addChange('context')
   }
 
@@ -157,17 +158,16 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     addChange('context')
   }
 
-  function updateDesign(branch: Branch) {
+  function updateDesign(newDesign: Design) {
     if (!design) return
-    design.root.length = 0
-    design.root.push(branch)
+    design = newDesign
     addChange('design')
   }
 
-  function updateMessages(messages: ChatMessage[]) {
+  function updateMessages(newMessages: ChatMessage[]) {
     if (!messages) return
     messages.length = 0
-    messages.push(...messages)
+    messages.push(...newMessages)
     addChange('messages')
   }
 
@@ -177,22 +177,22 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     addChange('messages')
   }
 
-  function updateStatus(status: Status) {
+  function updateStatus(newStatus: Status) {
     if (!status) return
-    status = status
+    status = newStatus
     addChange('status')
   }
 
-  function updateTitle(title: string) {
+  function updateTitle(newTitle: string) {
     if (!title) return
-    title = title
+    title = newTitle
     addChange('title')
   }
 
-  function updateTasks(tasks: Task[]) {
+  function updateTasks(newTasks: Task[]) {
     if (!tasks) return
     tasks.length = 0
-    tasks.push(...tasks)
+    tasks.push(...newTasks)
     addChange('tasks')
   }
 
@@ -210,9 +210,9 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     addChange('tasks')
   }
 
-  function updateCurrent(current: Current) {
+  function updateCurrent(newCurrent: Current) {
     if (!current) return
-    current = current
+    current = newCurrent
     addChange('current')
   }
 

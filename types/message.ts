@@ -1,3 +1,5 @@
+import type { Message } from "ai"
+
 export interface BaseMessage {
   type: string
   id: string

@@ -1,3 +1,4 @@
+import type { Message } from "ai"
 import type { Design } from "./design"
 import type { Operation } from "./operation"
 
@@ -22,58 +23,57 @@ export type ChalkCalledAction = Action<
   'chalk-called',
   {
     page: number
-  }
-  >
+  }>
+
 export type ChalkOperateAction = Action<
   'chalk-operate',
   {
     operation: Operation
     page: number
-  }
->
+  }>
+
 export type ChalkEndAction = Action<
   'chalk-end',
   {
     page: number
     result: string
-  }
->
+  }>
+
 export type ChalkActions = ChalkCalledAction | ChalkOperateAction | ChalkEndAction
 
 export type TaskCreatedAction = Action<
   'task-created',
   {
     id: string
-  }
->
+  }>
 
 export type LayoutStartAction = Action<
   'layout-start',
-  {}
-  >
+  {}>
+
 export type LayoutDoneAction = Action<
   'layout-done',
   {
     layout: string
     page: number
-  }
-  >
+  }>
+
 export type LayoutActions = LayoutStartAction | LayoutDoneAction
 
 export type DesignBranchAction = Action<
   'design-branch',
   {
     design: Design
-  }
->
+  }>
+
 export type DesignActions = DesignBranchAction
 
 export type StepToAction = Action<
   'step-to',
   {
     step: string
-  }
->
+  }>
+
 export type StepActions = StepToAction
 
 export type CreatePageAction = Action<
@@ -81,17 +81,24 @@ export type CreatePageAction = Action<
   {
     id: string
     title: string
-  }
->
+  }>
+
 export type PageActions = CreatePageAction
 
 export type AgentMessageChunkAction = Action<
   'agent-message-chunk',
   {
     chunk: string
-  }
-  >
-export type AgentActions = AgentMessageChunkAction
+  }>
+
+export type AgentContextUpdateAction = Action<
+  'agent-context-update',
+  {
+    context: Message[],
+    response: Message[]
+  }>
+
+export type AgentActions = AgentMessageChunkAction | AgentContextUpdateAction
 
 // Utils
 export function action<T extends Action<string, any>>(type: T['type'], data: (T extends ActionSuccess<string, any> ? T['data'] : never)) {

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const userId = getUserId(event)
   const params = await getQuery(event)
   const chatId = getRouterParam(event, 'id')!
-  const { pull, apply, addPage, updateCurrentStep } = useChat(db, { chatId, userId })
+  const { pull, apply, addPage, updateCurrentStep, updateDesign, updateContext, addMessage } = useChat(db, { chatId, userId })
 
   let pages: PageStore, context: Message[], design: Design, current: Current;
   try {
@@ -46,6 +46,9 @@ export default defineEventHandler(async (event) => {
       design,
       current,
     })) {
+      console.log(JSON.stringify(act))
+      console.log('--------------------------------')
+
       if (act.type === 'layout-done') {
         if (!act.success) return
         const { data } = await $fetch(`/api/chat/${chatId}/task/create`, {
@@ -70,10 +73,35 @@ export default defineEventHandler(async (event) => {
         addPage(act.data.title)
       } else if (act.type === 'design-branch') {
         if (!act.success) return
-        // TODO: design branch
+        updateDesign(act.data.design)
       } else if (act.type === 'step-to') {
         if (!act.success) return
         updateCurrentStep(act.data.step)
+      } else if (act.type === 'agent-context-update') {
+        if (!act.success) return
+        updateContext(act.data.context)
+        addMessage({
+          type: 'user',
+          content: params.input as string,
+          id: '0',
+        })
+        act.data.response.forEach(msg => {
+          addMessage({
+            type: 'agent',
+            content: (() => {
+              let content = '';
+              (msg.content as any).map((part: any) => {
+                if (part.type === 'text') {
+                  content += part.text + '\n'
+                }
+              })
+              return content
+            })(),
+            id: msg.id,
+          })
+        })
+        await apply()
+        continue;
       }
       await apply()
       await stream.push(JSON.stringify(act))
