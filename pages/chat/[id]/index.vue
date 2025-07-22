@@ -1,111 +1,23 @@
 <script setup lang="ts">
-import type { Timeline } from '#components'
-import { nextTick, ref, watch, onMounted } from 'vue'
+import { useChat } from '~/composables/useChat'
+import { useRoute } from 'vue-router'
+import useAgent from '~/composables/useAgent';
 
 const route = useRoute()
-const router = useRouter()
+const accessToken = useState<string | undefined>('access-token');
 
-const nextType = <NextType>ref('next')
-const token = useState('access-token')
+const chatInfo = {
+  chat_id: route.params.id as string,
+  token: accessToken.value ?? ''
+}
+
 const prompts = ref('')
 
-const nowStep = useState<string | null>('now-step')
+const agentEnvironment = await useChat(chatInfo)
 
-const info = {
-  token: <string>token.value,
-  chat_id: route.params.id as string,
-}
-const { messages, next: speaker } = useSpeaker(nextType, info)
-const { branches, step, next: designer } = useDesigner(nextType, info, messages)
-const { pageId, viewingId, initialize, next: nextBoard, apply: applyBoard } = useBoard(info)
-initialize()
+const boardHandler = useBoard(agentEnvironment)
+const { agent } = useAgent(chatInfo, agentEnvironment, boardHandler)
 
-const { apply, get } = useHistory(info)
-
-const timelines = ref<InstanceType<typeof Timeline> | null>(null)
-
-watch(prompts, (newPrompts) => {
-  if (nextType.value === 'prohibited') { return }
-  if (newPrompts.trim() === '') {
-    nextType.value = 'next'
-  } else {
-    nextType.value = 'doubt'
-  }
-}, { immediate: true })
-
-async function handleNext(move: boolean = true) {
-  const activeStep = move ? findStepNext(step.value!, branches.value) : findStep(step.value!, branches.value)
-
-  if (nextType.value === 'doubt') {
-    designer(findStep(step.value!, branches.value), {
-      prompt: prompts.value,
-    }).then(() => {
-      nextType.value = 'next'
-      handleNext(false)
-    })
-  } else {
-    if (!activeStep || activeStep === END) return
-
-    nowStep.value = activeStep.step.toString()
-    await timelines.value?.moveToActiveCard()
-
-    const promises = [
-      speaker(activeStep),
-      nextBoard(activeStep, prompts.value),
-    ]
-    await Promise.all(promises)
-
-    step.value = activeStep.step.toString()
-    prompts.value = ''
-
-    nextType.value = 'next'
-  }
-}
-
-apply(messages, branches, step as Ref<string>).then(() => {
-  nowStep.value = step.value
-})
-
-get().then((result) => {
-  applyBoard(result.chalk)
-})
-
-const newParam = route.query.new
-const resourceId = route.query.resource_id
-
-if (newParam) {
-  nextType.value = 'doubt'
-  apply(messages, branches, step as Ref<string>).then(() => {
-    designer(null, {
-      prompt: newParam as string,
-      resource_id: resourceId as string,
-    }).then(() => {
-      handleNext(false)
-    })
-  })
-  router.replace({ query: { ...route.query, new: undefined } })
-}
-
-const messageList = ref<HTMLElement | null>(null)
-
-function scrollToBottom(mandatory: boolean = false) {
-  const el = messageList.value
-  if (!el) return
-
-  const isAtBottom = el.scrollTop + el.clientHeight >= el.scrollHeight - 100
-  if (isAtBottom || mandatory) {
-    el.scrollTo({
-      top: el.scrollHeight,
-      behavior: 'smooth',
-    })
-  }
-}
-
-watch(messages.value, () => {
-  nextTick(() => {
-    scrollToBottom()
-  })
-})
 </script>
 
 <template>

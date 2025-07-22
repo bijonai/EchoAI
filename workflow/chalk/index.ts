@@ -1,4 +1,3 @@
-import { embed, message, streamText, type Message } from 'xsai'
 import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
 import { SYSTEM, USER } from './prompts'
 import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
@@ -7,17 +6,11 @@ import { parse } from './parse'
 import { createChunkFilter } from '~/utils/retrieve/filter'
 import { QDRANT_URL, QDRANT_API_KEY, EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from '~/utils/env'
 import type { StreamTextEvent } from '../types'
+import { embed, streamText, type Message } from 'ai'
+import { message } from '~/utils/ai-sdk/message'
+import { embeddingModel } from '~/utils/ai-sdk/embedding-provider'
+import { chalkModel } from '~/utils/ai-sdk/provider'
 
-const _env = {
-  baseURL: CHALK_MODEL_BASE_URL,
-  apiKey: CHALK_MODEL_API_KEY,
-  model: CHALK_MODEL
-}
-const _embedding_env = {
-  baseURL: EMBEDDING_MODEL_BASE_URL,
-  apiKey: EMBEDDING_MODEL_API_KEY,
-  model: EMBEDDING_MODEL,
-}
 const _search_env = {
   baseURL: QDRANT_URL,
   apiKey: QDRANT_API_KEY,
@@ -44,8 +37,8 @@ export function createChalk(
     // RAG
     const filter = createChunkFilter(options.chunks)
     const { embedding } = await embed({
-      ..._embedding_env,
-      input: options.input,
+      model: embeddingModel,
+      value: options.input,
     })
     const { chunks } = await search({
       ..._search_env,
@@ -61,8 +54,8 @@ export function createChalk(
         reference: references.map(chunk => chunk.text).join('\n\n'),
       })
     ))
-    const { fullStream, messages } = await streamText({
-      ..._env,
+    const { fullStream, response } = await streamText({
+      model: chalkModel,
       messages: context,
     })
     let content = ''
@@ -83,7 +76,7 @@ export function createChalk(
     }
 
     context.length = 0
-    context.push(...(await messages))
+    context.push(...(await response).messages as Message[])
 
     return action<ChalkEndAction>('chalk-end', {
       page: options.page,

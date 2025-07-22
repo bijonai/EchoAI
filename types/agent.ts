@@ -1,4 +1,4 @@
-import type { Branch } from "./design"
+import type { Design } from "./design"
 import type { Operation } from "./operation"
 
 export interface ActionSuccess<N extends string, T> {
@@ -63,7 +63,7 @@ export type LayoutActions = LayoutStartAction | LayoutDoneAction
 export type DesignBranchAction = Action<
   'design-branch',
   {
-    design: Branch
+    design: Design
   }
 >
 export type DesignActions = DesignBranchAction
@@ -89,7 +89,6 @@ export type AgentMessageChunkAction = Action<
   'agent-message-chunk',
   {
     chunk: string
-    // id: string
   }
   >
 export type AgentActions = AgentMessageChunkAction

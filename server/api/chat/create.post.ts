@@ -14,10 +14,10 @@ export default defineEventHandler(async (event) => {
     uid: userId,
     title: 'New Chat',
     status: 'init',
-    pages: '[]',
+    pages: {},
     context: '[]',
     messages: '[]',
-    design: { root: [] },
+    design: {},
     tasks: '[]',
     current: {},
   }).returning({ id: chats.id })

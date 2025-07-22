@@ -15,5 +15,5 @@ export interface Branch {
 }
 
 export interface Design {
-  root: Branch[]
+  [key: string]: Branch
 }

@@ -1,7 +1,7 @@
 import { and, eq } from "drizzle-orm"
 import type { NodePgDatabase } from "drizzle-orm/node-postgres"
 import type { PgColumn } from "drizzle-orm/pg-core"
-import type { Message } from "xsai"
+import type { Message } from "ai"
 import { chats } from "~/db"
 import type { Operation } from "~/types"
 import type { Task } from "~/types/task"
@@ -15,6 +15,11 @@ export interface UseChatParams {
   chatId: string
   userId: string
 }
+
+interface ChangeRecord {
+  [key: string]: boolean
+}
+
 export function useChat(db: NodePgDatabase, params: UseChatParams) {
   const { chatId, userId } = params
   const auth = and(
@@ -23,7 +28,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   )
   const single = <T>(arr: T[]) => arr[0]
 
-  const changed: string[] = []
+  let changed: ChangeRecord = {}
 
   let pages: PageStore | null = null
   let id: string | null = null
@@ -35,8 +40,14 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   let title: string | null = null
   let tasks: Task[] | null = null
   let current: Current | null = null
-  async function pull(selector: Record<string, PgColumn>, defaultColumn?: Record<string, any>) {
-    const column = defaultColumn ?? single(await db.select(selector).from(chats).where(auth).limit(1))
+
+  async function pull(selector: Record<string, PgColumn>) {
+    const column = single(await db.select(selector).from(chats).where(auth).limit(1))
+
+    if (!column) {
+      throw new Error('Chat not found')
+    }
+
     id = column.id ?? null
     uid = column.uid ?? null
     pages = column.pages as PageStore ?? null
@@ -47,14 +58,15 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     title = column.title ?? null
     tasks = <Task[]>column.tasks ?? null
     current = <Current>column.current ?? null
+
     return {
       id, uid, pages, context, status, messages, design, title, tasks, current,
     }
   }
 
   function addChange(key: string) {
-    if (changed.includes(key)) return
-    changed.push(key)
+    if (changed[key]) return
+    changed[key] = true
   }
 
   function updatePageChalkContext(pageId: number, context: Message[]) {
@@ -211,8 +223,9 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   }
 
   async function apply() {
-    const [result] = await db.insert(chats)
-      .values(Object.fromEntries(changed.map(key => {
+    if (Object.keys(changed).length === 0) { return }
+    const [result] = await db.update(chats)
+      .set(Object.fromEntries(Object.keys(changed).map(key => {
         switch (key) {
           case 'pages':
             return [key, pages]
@@ -238,7 +251,8 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
             return [key, null]
         }
       })))
-    .returning({
+      .where(auth)
+      .returning({
         id: chats.id,
         uid: chats.uid,
         pages: chats.pages,
@@ -249,7 +263,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
         title: chats.title,
         tasks: chats.tasks,
         current: chats.current,
-    })
+      })
     id = result.id
     uid = result.uid
     pages = result.pages as PageStore
@@ -259,7 +273,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     design = <Design>result.design
     title = result.title
     tasks = <Task[]>result.tasks
-    changed.length = 0
+    changed = {}
   }
 
   return {
