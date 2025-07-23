@@ -1,111 +1,134 @@
-import type { AddNodeOperation, ChalkRequestBody, CreateChatRequestBody, CreateChatResponse, DesignerRequestBody, DesignerResponse, GetChatRequestBody, GetChatResponse, HistoryResponse, LayoutResponse, RemoveNodeOperation, SetContentOperation, SpeakerRequestBody, RemovePropOperation, ChalkResponseStream, LayoutRequestBody, SetPropOperation, PageSwitch, Operation } from "~/types";
+import type { AgentMessageChunkAction, DesignActions, LayoutActions, PageActions, StepActions, TaskCreatedAction } from "~/types/agent";
+import type { Task } from "~/types/task";
+import type { ChatInfo } from "~/composables/index";
+import type { Message } from "xsai";
+import type { Current } from "~/types/current";
+import type { Design } from "~/types/design";
+import type { ChatMessage } from "~/types/message";
+import type { Status } from "~/types/shared";
+import type { PageStore } from "~/types/page";
 
-export async function create(body: CreateChatRequestBody, token?: string): Promise<CreateChatResponse> {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  return fetch('/api/chat/create', {
-    headers,
-    method: 'POST',
-    body: JSON.stringify(body),
-  }).then(res => res.json()) satisfies Promise<CreateChatResponse>
+export interface Chat {
+  id: string
+  context: Message[]
+  status: Status
+  messages: ChatMessage[]
+  design: Design
+  title: string
+  tasks: Task[]
+  current: Current
+  pages: PageStore
 }
 
-export async function get(body: GetChatRequestBody, token?: string): Promise<GetChatResponse> {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  return fetch('/api/chat/get', {
-    headers,
-    method: 'POST',
-    body: JSON.stringify(body),
-  }).then(res => res.json()) satisfies Promise<GetChatResponse>
-}
-
-export async function history(token?: string): Promise<HistoryResponse> {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  return fetch('/api/chat/history', {
-    headers,
-    method: 'GET',
-  }).then(res => res.json()) satisfies Promise<HistoryResponse>
-}
-
-export type LayoutCallbacks = {
-  onOperate?(operation: PageSwitch): void
-}
-export async function layout(body: LayoutRequestBody, callbacks: LayoutCallbacks = {}, token?: string): Promise<LayoutResponse> {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  const response = await fetch('/api/chat/layout', {
-    headers,
-    method: 'POST',
-    body: JSON.stringify(body),
+async function get(info: ChatInfo) {
+  const response = await fetch(`/api/chat/${info.chat_id}`, {
+    headers: {
+      Authorization: `Bearer ${info.token}`,
+    },
+  }).catch(err => {
+    throw new Error('Failed to fetch ' + err)
   })
-  const result = await response.json() satisfies Promise<LayoutResponse>
-  if (result.operation) callbacks.onOperate?.(result.operation)
-  return result
+
+  return (await response.json()) as Chat
 }
 
-export async function designer(body: DesignerRequestBody, token?: string): Promise<DesignerResponse> {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  const response = await fetch('/api/chat/designer', {
-    headers,
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-  return await response.json() satisfies DesignerResponse
-}
+type AgentAction = TaskCreatedAction |
+  AgentMessageChunkAction |
+  DesignActions |
+  StepActions |
+  PageActions |
+  LayoutActions
 
-export type SpeakerCallbacks = {
-  onChunk?(chunk: string): void
-}
-export async function speaker(body: SpeakerRequestBody, callbacks: SpeakerCallbacks = {}, token?: string) {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  const response = await fetch('/api/chat/speaker', {
-    headers,
+async function* agent(info: ChatInfo, input: string) {
+  const response = await fetch(`/api/chat/${info.chat_id}/agent`, {
+    headers: {
+      Authorization: `Bearer ${info.token}`,
+    },
     method: 'POST',
-    body: JSON.stringify(body),
+    body: JSON.stringify({ input, chatId: info.chat_id }),
+  }).catch(err => {
+    throw new Error('Failed to fetch', { cause: err })
   })
+
   const reader = response.body?.getReader()
-  if (!reader) return
-  const decoder = new TextDecoder();
-  (async () => {
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      const text = decoder.decode(value)
-      callbacks.onChunk?.(text)
+  if (!reader) {
+    throw new Error('Failed to get response reader')
+  }
+
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) {
+      break
     }
-  })()
-  return response
-}
+    buffer += decoder.decode(value, { stream: true })
+    let lines = buffer.split('\n\n');
+    buffer = lines.pop() ?? "";
 
-export type ChalkCallbacks = {
-  onOperate?(operation: Operation): void
-}
-export async function chalk(body: ChalkRequestBody, callbacks: ChalkCallbacks = {}, token?: string) {
-  const headers = new Headers()
-  headers.set('Authorization', `Bearer ${token}`)
-  const response = await fetch('/api/chat/chalk', {
-    headers,
-    method: 'POST',
-    body: JSON.stringify(body),
-  })
-  const reader = response.body?.getReader()
-  if (!reader) return
-  const decoder = new TextDecoder();
-  (async () => {
-    while (true) {
-      const { done, value } = await reader.read()
-      if (done) break
-      const text = decoder.decode(value, { stream: true })
-      const data = <ChalkResponseStream>JSON.parse(text)
-      const { operations } = data.delta
-      for (const op of operations) {
-        callbacks.onOperate?.(op)
+    for (const line of lines) {
+      if (!/^data:.+$/.test(line)) continue;
+      let action: AgentAction | null = null
+      try {
+        action = <AgentAction>JSON.parse(line.slice(6))
+      } catch (error) {
+        continue
       }
+      yield action
     }
-  })()
-  return response
+  }
+}
+
+async function taskInfo(info: ChatInfo, taskId: string) {
+  const response = await fetch(`/api/chat/${info.chat_id}/task/${taskId}`, {
+    headers: {
+      Authorization: `Bearer ${info.token}`,
+    },
+  }).catch(err => {
+    throw new Error('Failed to fetch task info', { cause: err })
+  })
+
+  return (await response.json())['data'] as Task
+}
+
+async function* taskExecute(info: ChatInfo, taskId: string) {
+  const response = await fetch(`/api/chat/${info.chat_id}/task/${taskId}/execute`, {
+    headers: {
+      Authorization: `Bearer ${info.token}`,
+    },
+  }).catch(err => {
+    throw new Error('Failed to fetch', { cause: err })
+  })
+
+  const reader = response.body?.getReader()
+  if (!reader) {
+    throw new Error('Failed to get response reader')
+  }
+
+  const decoder = new TextDecoder()
+  let buffer = ''
+
+  while (true) {
+    const { done, value } = await reader.read()
+    if (done) {
+      break
+    }
+    buffer += decoder.decode(value, { stream: true })
+    const lines = buffer.split('\n\n')
+    buffer = lines.pop() ?? "";
+
+    for (const line of lines) {
+      if (!/^data:.+$/.test(line)) continue;
+      yield line.slice(6).trim()
+    }
+  }
+}
+
+
+export {
+  get,
+  agent,
+  taskInfo,
+  taskExecute,
 }
