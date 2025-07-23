@@ -1,4 +1,4 @@
-import { tool } from "ai";
+import { generateId, tool } from "ai";
 import { z } from "zod";
 import type { Design } from "~/types/design";
 
@@ -19,7 +19,7 @@ export const branchSchema: z.ZodType<any> = z.lazy(() => z.object({
 }));
 
 export const wrapper = z.object({
-  key: z.string().describe('The key of the lesson plan'),
+  key: z.string().describe('The key of the lesson plan, keep empty to create a new lesson plan').optional(),
   value: branchSchema.describe('The value of the lesson plan'),
 })
 
@@ -28,7 +28,11 @@ export async function designTool(design: Design) {
     description: 'Design a lesson plan for the user or based on previous teaching steps.',
     parameters: wrapper,
     async execute(input) {
-      design[input.key] = input.value
+      if (input.key) {
+        design[input.key] = input.value
+      } else {
+        design[generateId()] = input.value
+      }
       return {
         message: 'create design successfully',
         success: true,

@@ -26,7 +26,7 @@ Your task includes:
   + FROM: The start point of <CHILD-BRANCH>, should be a <STEP> id exist in is's <PARENT-BRANCH>, <PARENT-BRANCH> have no <FROM>
   + TO: The end point of <PARENT-BRANCH>, should be a <STEP> id exist in is's <CHILD-BRANCH>, <CHILD-BRANCH> have no <TO>
 - Tool: \`design({ key: string, value: { steps: [...], children: [...] } })\`
-  + \`key\`: The title of the Branch
+  + \`key\`: The key of the lesson plan witch need to be changed, keep empty to create a new lesson plan
   + \`value\`: The structure of the Branch, type: \`{ steps: [...], children: [...] }\`, have all branches in the lesson plan.
 - Mission
   + IF: USER want to learn a new knowledge which have no connection with previous knowledge, design a root <BRANCH>.
@@ -113,6 +113,7 @@ Process Second:
   - You should use \`create-page\` and \`draw\` tool to manage the whiteboard and use whiteboard to show the knowledge point to the user.
 
 You must following the instruction of each process, and you should not do anything else.
+You could only use most once \`step-to\` tool in each user input, discuss about single step in one user input, stop when the discuss about a step is finished, don't jump to second step in one user input.
 `.trim()
 
 export const STATUS = `

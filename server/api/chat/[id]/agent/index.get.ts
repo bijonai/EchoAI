@@ -1,4 +1,4 @@
-import { Message } from "ai"
+import { generateId, Message } from "ai"
 import db, { chats } from "~/db"
 import { useChat } from "~/db/composables/useChat"
 import { action, TaskCreatedAction } from "~/types/agent"
@@ -83,7 +83,7 @@ export default defineEventHandler(async (event) => {
         addMessage({
           type: 'user',
           content: params.input as string,
-          id: '0',
+          id: generateId(),
         })
         act.data.response.forEach(msg => {
           addMessage({

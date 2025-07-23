@@ -54,8 +54,6 @@ export function createAgent(
       )
     }
 
-    console.log('context =>', context)
-
     const { fullStream, response } = await streamText({
       model: agentModel,
       messages: context,
@@ -64,7 +62,6 @@ export function createAgent(
     })
 
     for await (const chunk of fullStream) {
-      console.log('chunk =>', chunk)
       if (chunk.type === 'text-delta') {
         yield action<AgentActions>('agent-message-chunk', {  
           chunk: chunk.textDelta,

@@ -130,7 +130,7 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
 
   function addPage(title: string) {
     if (!pages) return
-    const maxId = Math.max(...Object.keys(pages).map(Number))
+    const maxId = Object.keys(pages).length > 0 ? Math.max(...Object.keys(pages).map(Number)) : 0
     const newPage = {
       id: maxId + 1,
       chalk_context: [],
@@ -148,7 +148,6 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
     if (!context) return
     context.length = 0
     context.push(...newContext)
-    console.log('updateContext =>', context)
     addChange('context')
   }
 
