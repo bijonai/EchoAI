@@ -39,7 +39,13 @@ export type ChalkEndAction = Action<
     result: string
   }>
 
-export type ChalkActions = ChalkCalledAction | ChalkOperateAction | ChalkEndAction
+export type ChalkContextUpdateAction = Action<
+  'chalk-context-update',
+  {
+    context: Message[]
+  }>
+
+export type ChalkActions = ChalkCalledAction | ChalkOperateAction | ChalkEndAction | ChalkContextUpdateAction
 
 export type TaskCreatedAction = Action<
   'task-created',

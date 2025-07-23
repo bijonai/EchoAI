@@ -1,15 +1,15 @@
-import { CHALK_MODEL_API_KEY, CHALK_MODEL_BASE_URL, CHALK_MODEL, prompt } from '~/utils'
+import { prompt } from '~/utils'
 import { SYSTEM, USER } from './prompts'
-import { action, type ChalkActions, type ChalkCalledAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
+import { action, type ChalkActions, type ChalkCalledAction, type ChalkContextUpdateAction, type ChalkEndAction, type ChalkOperateAction } from '~/types/agent'
 import type { Operation } from '~/types'
 import { parse } from './parse'
 import { createChunkFilter } from '~/utils/retrieve/filter'
-import { QDRANT_URL, QDRANT_API_KEY, EMBEDDING_MODEL_BASE_URL, EMBEDDING_MODEL_API_KEY, EMBEDDING_MODEL } from '~/utils/env'
-import type { StreamTextEvent } from '../types'
+import { QDRANT_URL, QDRANT_API_KEY } from '~/utils/env'
 import { embed, streamText, type Message } from 'ai'
 import { message } from '~/utils/ai-sdk/message'
 import { embeddingModel } from '~/utils/ai-sdk/embedding-provider'
 import { chalkModel } from '~/utils/ai-sdk/provider'
+import { search } from '~/utils/retrieve/search'
 
 const _search_env = {
   baseURL: QDRANT_URL,
@@ -47,7 +47,6 @@ export function createChalk(
     })
     const references = filter(Object.values(chunks).flat())
 
-    // Start to operate document.
     context.push(message.user(
       prompt(USER, {
         requirement: options.input,
@@ -62,7 +61,7 @@ export function createChalk(
     const operations: Operation[] = []
     for await (const chunk of fullStream) {
       if (chunk.type === 'text-delta') {
-        content += chunk
+        content += chunk.textDelta
         const parsed = parse(content)
         if (parsed.length > operations.length) {
           const operation = parsed[operations.length]
@@ -75,10 +74,13 @@ export function createChalk(
       }
     }
 
-    context.length = 0
     context.push(...(await response).messages as Message[])
 
-    return action<ChalkEndAction>('chalk-end', {
+    yield action<ChalkContextUpdateAction>('chalk-context-update', {
+      context,
+    })
+
+    yield action<ChalkEndAction>('chalk-end', {
       page: options.page,
       result: content,
     })
