@@ -19,8 +19,10 @@ export function createLayout(
       model: layoutModel,
       messages: context,
     })
-    context.length = 0
     context.push(...(await response).messages as Message[])
-    return layout
+    return {
+      layout,
+      context,
+    }
   }
 }

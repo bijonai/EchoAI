@@ -1,10 +1,12 @@
-import { tool } from "ai";
+import { tool, type Message } from "ai";
 import { z } from "zod";
 import type { PageStore } from "~/types/page";
 import { createLayout } from "~/workflow/layout";
 
 export function drawTool(
   getStore: () => PageStore,
+  updatePageLayoutContext: (pageId: number, context: Message[]) => void,
+  apply: () => Promise<void>,
 ) {
   return tool({
     description: 'Tool to generate interactive figures according to natural language.',
@@ -18,10 +20,14 @@ export function drawTool(
       const store = getStore()
       const page = store[input.page.toString()]
       const layout = createLayout(page?.layout_context ?? [])
-      const content = await layout({
+      const { layout: result, context } = await layout({
         input: input.input
       })
-      return { success: true, content: content, message: 'design page successfully' }
+
+      console.log(context)
+      updatePageLayoutContext(input.page, context)
+      await apply()
+      return { success: true, content: result, message: 'design page successfully' }
     }
   })
 }

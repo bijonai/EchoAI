@@ -18,6 +18,12 @@ export interface AgentOptions {
   design: Design
   current: Current
 }
+
+export interface dbHandler {
+  updatePageLayoutContext: (pageId: number, context: Message[]) => void,
+  apply: () => Promise<void>,
+}
+
 export function createAgent(
   context: Message[]
 ) {
@@ -25,8 +31,8 @@ export function createAgent(
     context.push(message.system(SYSTEM))
   }
 
-  return async function* (options: AgentOptions) {
-    const draw = await drawTool(() => options.pages)
+  return async function* (options: AgentOptions, dbHandler: dbHandler) {
+    const draw = await drawTool(() => options.pages, dbHandler.updatePageLayoutContext, dbHandler.apply)
     const design = await designTool(options.design)
     const createPage = await createPageTool(() => options.pages)
     const stepTo = await stepToTool()

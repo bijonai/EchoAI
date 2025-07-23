@@ -70,61 +70,49 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   }
 
   function updatePageChalkContext(pageId: number, context: Message[]) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.chalk_context.length = 0
-    page.chalk_context.push(...context)
+    if (!pages || !pages[pageId]) return
+    pages[pageId].chalk_context.length = 0
+    pages[pageId].chalk_context.push(...context)
     addChange('pages')
   }
 
   function updatePageLayoutContext(pageId: number, context: Message[]) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.layout_context.length = 0
-    page.layout_context.push(...context)
+    if (!pages || !pages[pageId]) return
+    console.log(context)
+    pages[pageId].layout_context.length = 0
+    pages[pageId].layout_context.push(...context)
+    addChange('pages')
   }
 
   function updatePageKnowledge(pageId: number, knowledge: string[]) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.knowledge.length = 0
-    page.knowledge.push(...knowledge)
+    if (!pages || !pages[pageId]) return
+    pages[pageId].knowledge.length = 0
+    pages[pageId].knowledge.push(...knowledge)
     addChange('pages')
   }
 
   function addPageKnowledge(pageId: number, knowledge: string) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.knowledge.push(knowledge)
+    if (!pages || !pages[pageId]) return
+    pages[pageId].knowledge.push(knowledge)
     addChange('pages')
   }
 
   function updatePageOperation(pageId: number, operation: Operation[]) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.operations.length = 0
-    page.operations.push(...operation)
+    if (!pages || !pages[pageId]) return
+    pages[pageId].operations.length = 0
+    pages[pageId].operations.push(...operation)
     addChange('pages')
   }
 
   function updatePageTitle(pageId: number, title: string) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.title = title
+    if (!pages || !pages[pageId]) return
+    pages[pageId].title = title
     addChange('pages')
   }
 
   function addPageOperation(pageId: number, operation: Operation) {
-    if (!pages) return
-    const page = pages[pageId]
-    if (!page) return
-    page.operations.push(operation)
+    if (!pages || !pages[pageId]) return
+    pages[pageId].operations.push(operation)
     addChange('pages')
   }
 

@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   const userId = getUserId(event)
   const params = await getQuery(event)
   const chatId = getRouterParam(event, 'id')!
-  const { pull, apply, addPage, updateCurrentStep, updateDesign, updateContext, addMessage } = useChat(db, { chatId, userId })
+  const { pull, apply, addPage, updateCurrentStep, updateDesign, updateContext, addMessage, updatePageLayoutContext } = useChat(db, { chatId, userId })
 
   let pages: PageStore, context: Message[], design: Design, current: Current;
   try {
@@ -45,10 +45,10 @@ export default defineEventHandler(async (event) => {
       pages,
       design,
       current,
+    }, {
+      updatePageLayoutContext: updatePageLayoutContext,
+      apply: apply,
     })) {
-      console.log(JSON.stringify(act))
-      console.log('--------------------------------')
-
       if (act.type === 'layout-done') {
         if (!act.success) return
         const { data } = await $fetch(`/api/chat/${chatId}/task/create`, {
