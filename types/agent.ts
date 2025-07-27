@@ -52,6 +52,7 @@ export type TaskCreatedAction = Action<
   {
     id: string
   }>
+export type TaskResultActions = ChalkActions
 
 export type LayoutStartAction = Action<
   'layout-start',

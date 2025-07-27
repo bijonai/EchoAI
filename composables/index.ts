@@ -6,7 +6,7 @@ import type { PageStore } from "~/types/page"
 import type { Page } from "~/types/page"
 
 export interface ChatInfo {
-  chat_id: string
+  chatId: string
   token: string
 }
 
