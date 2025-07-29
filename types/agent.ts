@@ -52,7 +52,7 @@ export type TaskCreatedAction = Action<
   {
     id: string
   }>
-export type TaskResultActions = ChalkActions
+export type TaskActions = TaskCreatedAction
 
 export type LayoutStartAction = Action<
   'layout-start',
@@ -97,7 +97,6 @@ export type AgentMessageChunkAction = Action<
   {
     chunk: string
   }>
-
 export type AgentContextUpdateAction = Action<
   'agent-context-update',
   {
@@ -105,7 +104,14 @@ export type AgentContextUpdateAction = Action<
     response: Message[]
   }>
 
-export type AgentActions = AgentMessageChunkAction | AgentContextUpdateAction
+export type AgentActions =
+  | AgentMessageChunkAction
+  | AgentContextUpdateAction
+  | PageActions
+  | StepActions
+  | TaskActions
+  | DesignActions
+  | LayoutActions
 
 // Utils
 export function action<T extends Action<string, any>>(type: T['type'], data: (T extends ActionSuccess<string, any> ? T['data'] : never)) {

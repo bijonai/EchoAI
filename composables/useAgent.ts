@@ -4,6 +4,12 @@
 // import { type BoardHandler } from "./useBoard";
 // import useTask from "./useTask";
 
+import { agent } from "~/endpoint/chat";
+import type { ChatInfo } from ".";
+import { useMessages } from "./useMessages";
+import { useTasks } from "./useTasks";
+import type { AgentMessage } from "~/types/message";
+
 // export default function useAgent(info: ChatInfo, environment: AgentEnvironment, boardHandler: BoardHandler) {
 //   const { taskHandler } = useTask(info, environment, boardHandler)
 
@@ -49,4 +55,72 @@
 //   }
 // }
 
-export function useAgent() {}
+export function useAgent(info: ChatInfo) {
+  const { messages } = useMessages(info)
+  const { tasks } = useTasks(info)
+  
+  async function ask(input?: string) {
+    const agentGenerator = agent(info)
+    for await (const action of agentGenerator) {
+      if (!action.success) return console.error(`[Agent Error] ${action.error}`)
+      const latest = messages.value[messages.value.length - 1]
+      switch (action.type) {
+        case 'agent-message-chunk':
+          if (latest.type !== 'agent') {
+            messages.value.push({
+              type: 'agent',
+              content: '',
+              id: '',
+            })
+          }
+          (<AgentMessage>messages.value[messages.value.length - 1]).content += action.data.chunk
+          break
+        case 'task-created':
+          setTimeout(() => {
+            // TODO: execute task
+          })
+          break
+        case 'create-page':
+          messages.value.push({
+            type: 'page',
+            page: parseInt(action.data.id),
+            id: '',
+          })
+          break
+        case 'design-branch':
+          messages.value.push({
+            type: 'design',
+            id: ''
+          })
+          break
+        case 'step-to':
+          messages.value.push({
+            type: 'step',
+            step: action.data.step,
+            id: ''
+          })
+        case 'layout-start':
+          messages.value.push({
+            type: 'layout',
+            complete: false,
+            id: ''
+          })
+          break
+        case 'layout-done':
+          if (latest.type !== 'layout') {
+            messages.value.push({
+              type: 'layout',
+              complete: false,
+              id: ''
+            })
+          }
+          messages.value[messages.value.length - 1] = {
+            type: 'layout',
+            complete: true,
+            id: '',
+            result: action.data.layout,
+          }
+      }
+    }
+  }
+}

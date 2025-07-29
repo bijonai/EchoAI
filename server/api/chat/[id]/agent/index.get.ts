@@ -8,9 +8,6 @@ import { PageStore } from "~/types/page"
 import { getUserId } from "~/utils/tool"
 import { createAgent } from "~/workflow/agent"
 
-export interface AgentParams {
-  input: string
-}
 
 export default defineEventHandler(async (event) => {
   const stream = createEventStream(event)

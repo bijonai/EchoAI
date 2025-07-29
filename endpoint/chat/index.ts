@@ -9,6 +9,7 @@
 // import type { PageStore } from "~/types/page";
 
 import type { Message } from "ai"
+import type { AgentActions } from "~/types/agent"
 import type { ChatMessage } from "~/types/message"
 import type { PageStore } from "~/types/page"
 import type { BaseResponse } from "~/types/response"
@@ -196,6 +197,13 @@ export async function context({ chatId, token }: FetchParams): FetchResponse<Mes
 export async function tasks({ chatId, token }: FetchParams): FetchResponse<Task[]> {
   const response = await baseFetch(`${chatId}/tasks`, 'GET', token)
   return await response.json() as FetchResponse<Task[]>
+}
+
+export async function* agent({ chatId, token }: FetchParams): AsyncGenerator<AgentActions> {
+  const response = baseSSEFetch(`${chatId}/agent`, 'GET', token)
+  for await (const action of response) {
+    yield action
+  }
 }
 
 export * as task from './task'

@@ -23,7 +23,7 @@ export interface AgentMessage extends BaseMessage {
 
 export interface LayoutMessage extends BaseMessage {
   type: 'layout'
-  status: Status
+  complete: boolean,
   result?: string
   chalk_task_id?: string
 }
