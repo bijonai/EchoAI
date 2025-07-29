@@ -32,32 +32,40 @@ export function createAgent(
   }
 
   return async function* (options: AgentOptions, dbHandler: dbHandler) {
-    const draw = await drawTool(() => options.pages, dbHandler.updatePageLayoutContext, dbHandler.apply)
-    const design = await designTool(options.design)
-    const createPage = await createPageTool(() => options.pages)
-    const stepTo = await stepToTool()
+    const draw = await drawTool(
+      () => options.pages,
+      dbHandler.updatePageLayoutContext,
+      dbHandler.apply
+    );
+    const design = await designTool(options.design);
+    const createPage = await createPageTool(() => options.pages);
+    const stepTo = await stepToTool();
     const tools = {
       draw,
       design,
-      'create-page': createPage,
-      'step-to': stepTo,
-    }
+      "create-page": createPage,
+      "step-to": stepTo,
+    };
 
-    context.push(message.data(prompt(STATUS, {
-      design: JSON.stringify(options.design),
-      current: JSON.stringify(options.current),
-    })))
+    context.push(
+      message.data(
+        prompt(STATUS, {
+          design: JSON.stringify(options.design),
+          current: JSON.stringify(options.current),
+        })
+      )
+    );
 
     if (options.input) {
       context.push(
-        message.user(prompt(USER_DOUBT, {
-          input: options.input,
-        }))
-      )
+        message.user(
+          prompt(USER_DOUBT, {
+            input: options.input,
+          })
+        )
+      );
     } else {
-      context.push(
-        message.user(prompt(USER_NEXT))
-      )
+      context.push(message.user(prompt(USER_NEXT)));
     }
 
     const { fullStream, response } = await streamText({
@@ -65,69 +73,79 @@ export function createAgent(
       messages: context,
       tools,
       maxSteps: 100,
-    })
+    });
 
     for await (const chunk of fullStream) {
-      if (chunk.type === 'text-delta') {
-        yield action<AgentActions>('agent-message-chunk', {  
+      if (chunk.type === "text-delta") {
+        yield action<AgentActions>("agent-message-chunk", {
           chunk: chunk.textDelta,
-        })
+        });
       } else {
-        if (chunk.type === 'tool-result') {
-          const { toolName, result, args } = chunk
+        if (chunk.type === "tool-result") {
+          const { toolName, result, args } = chunk;
           switch (toolName) {
-            case 'draw': {
-              const { content } = result
-              yield action<LayoutActions>('layout-done', {
+            case "draw": {
+              const { content } = result;
+              yield action<LayoutActions>("layout-done", {
                 layout: content,
                 page: args.page,
-              })
-              break
+              });
+              break;
             }
-            case 'create-page': {
-              const { data } = result
+            case "create-page": {
+              const { data } = result;
               options.pages[data.id] = {
                 title: data.title,
                 layout_context: [],
                 chalk_context: [],
                 operations: [],
                 knowledge: [],
-              }
-              yield action<PageActions>('create-page', {
+              };
+              yield action<PageActions>("create-page", {
                 id: data.id,
                 title: data.title,
-              })
-              break
+              });
+              break;
             }
-            case 'step-to': {
-              const { data } = result
-              yield action<StepActions>('step-to', {
+            case "step-to": {
+              const { data } = result;
+              yield action<StepActions>("step-to", {
                 step: data.step,
-              })
-              break
+              });
+              break;
             }
-            case 'design': {
-              const { data } = result
-              options.design = data
-              yield action<DesignActions>('design-branch', {
+            case "design": {
+              const { data } = result;
+              options.design = data;
+              yield action<DesignActions>("design-branch", {
                 design: data,
-              })
-              break
+              });
+              break;
             }
           }
-        } else if (chunk.type === 'tool-call') {
-          const { toolName } = chunk
-          if (toolName === 'draw') {
-            yield action<LayoutActions>('layout-start', {})
+        } else if (chunk.type === "tool-call") {
+          const { toolName } = chunk;
+          if (toolName === "draw") {
+            yield action<LayoutActions>("layout-start", {});
           }
         }
       }
     }
 
-    context.push(...(await response).messages.filter((msg) => msg.role !== 'tool') as Message[])
-    yield action<AgentContextUpdateAction>('agent-context-update', {
+    context.push(
+      ...((await response).messages
+        .filter((msg) => msg.role !== "tool")
+        .map((msg) => {
+          if (msg.role === "assistant" && Array.isArray(msg.content)) {
+            msg.content = msg.content.filter(
+              (part) => part.type !== "tool-call"
+            );
+          }
+          return msg;
+        }) as Message[])
+    );
+    yield action<AgentContextUpdateAction>("agent-context-update", {
       context,
-      response: (await response).messages.filter((msg) => msg.role !== 'tool') as Message[],
-    })
+    });
   }
 }

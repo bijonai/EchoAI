@@ -98,11 +98,11 @@ export type AgentMessageChunkAction = Action<
     chunk: string
   }>
 export type AgentContextUpdateAction = Action<
-  'agent-context-update',
+  "agent-context-update",
   {
-    context: Message[],
-    response: Message[]
-  }>
+    context: Message[];
+  }
+>;
 
 export type AgentActions =
   | AgentMessageChunkAction
