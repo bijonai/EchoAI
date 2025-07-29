@@ -1,4 +1,5 @@
 import type { Message } from "ai"
+import type { Status } from "./shared"
 
 export interface BaseMessage {
   type: string
@@ -15,9 +16,30 @@ export interface AgentMessage extends BaseMessage {
   content: string
 }
 
-export interface TaskMessage extends BaseMessage {
-  type: 'task'
-  task_id: string
+// export interface TaskMessage extends BaseMessage {
+//   type: 'task'
+//   task_id: string
+// }
+
+export interface LayoutMessage extends BaseMessage {
+  type: 'layout'
+  status: Status
+  result?: string
+  chalk_task_id?: string
 }
 
-export type ChatMessage = UserMessage | AgentMessage | TaskMessage
+export interface DesignMessage extends BaseMessage {
+  type: 'design'
+}
+
+export interface StepMessage extends BaseMessage {
+  type: 'step'
+  step: string
+}
+
+export interface PageMessage extends BaseMessage {
+  type: 'page'
+  page: number
+}
+
+export type ChatMessage = UserMessage | AgentMessage | LayoutMessage | DesignMessage | StepMessage | PageMessage
