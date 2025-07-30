@@ -24,7 +24,6 @@ export function drawTool(
         input: input.input
       })
 
-      console.log(context)
       updatePageLayoutContext(input.page, context)
       await apply()
       return { success: true, content: result, message: 'design page successfully' }

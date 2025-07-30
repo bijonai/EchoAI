@@ -4,7 +4,6 @@ import { useChat } from "~/db/composables/useChat"
 import { action, TaskCreatedAction } from "~/types/agent"
 import { Current } from "~/types/current"
 import { Design } from "~/types/design"
-import { ChatMessage } from "~/types/message";
 import { PageStore } from "~/types/page";
 import { getUserId } from "~/utils/tool";
 import { createAgent } from "~/workflow/agent";
@@ -13,7 +12,7 @@ export default defineEventHandler(async (event) => {
   const stream = createEventStream(event);
 
   const userId = getUserId(event);
-  const params = await getQuery(event);
+  const params = getQuery(event);
   const chatId = getRouterParam(event, "id")!;
   const {
     pull,
@@ -54,7 +53,7 @@ export default defineEventHandler(async (event) => {
 
   const agent = createAgent(context);
 
-  (async () => {
+  const run = new Promise(async () => {
     for await (const act of agent(
       {
         input: params.input as string,
@@ -129,7 +128,9 @@ export default defineEventHandler(async (event) => {
       await stream.push(JSON.stringify(act));
     }
     await stream.close();
-  })();
+  });
+
+  Promise.all([run]);
 
   return stream.send();
 });

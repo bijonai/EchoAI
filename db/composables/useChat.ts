@@ -86,7 +86,6 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
 
   function updatePageLayoutContext(pageId: number, context: Message[]) {
     if (!pages || !pages[pageId]) return;
-    console.log(context);
     pages[pageId].layout_context.length = 0;
     pages[pageId].layout_context.push(...context);
     addChange("pages");
@@ -218,7 +217,6 @@ export function useChat(db: NodePgDatabase, params: UseChatParams) {
   function updateTaskStatus(
     taskId: string,
     status: Status,
-    timestamp: Date = new Date()
   ) {
     if (!tasks) return;
     const task = tasks.find((task) => task.id === taskId);

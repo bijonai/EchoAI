@@ -68,7 +68,7 @@ export function createAgent(
       context.push(message.user(prompt(USER_NEXT)));
     }
 
-    const { fullStream, response } = await streamText({
+    const { fullStream, response } = streamText({
       model: agentModel,
       messages: context,
       tools,
