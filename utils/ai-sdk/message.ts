@@ -24,4 +24,12 @@ export class message {
       content,
     }
   }
+
+  static data(content: string): Message {
+    return {
+      id: crypto.randomUUID(),
+      role: 'data',
+      content,
+    }
+  }
 }

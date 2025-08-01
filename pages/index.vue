@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { chat } from '~/endpoint';
+import { chat, unwrap } from '~/endpoint';
 
 const accessToken = useState<string | undefined>('access-token');
 const isAuthenticated = useState<boolean | undefined>('is-authenticated');
@@ -8,10 +8,12 @@ const userInfo = useLogtoUser()
 const prompts = ref('')
 
 async function start() {
-  const data = await chat.create({
-    prompt: prompts.value,
-  }, accessToken.value)
-  navigateTo(`/chat/${data.chat_id}?new=${prompts.value}`)
+  const response = await chat.create(accessToken.value)
+  const [{ id }, error] = unwrap(response)
+  if (error) {
+    return console.error(error)
+  }
+  navigateTo(`/chat/${id}?new=${prompts.value}`)
 }
 </script>
 

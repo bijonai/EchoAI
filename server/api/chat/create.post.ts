@@ -1,22 +1,34 @@
-import db from "~/db"
-import { CreateChatRequestBody, CreateChatResponse } from "~/types"
-import { withAuth } from "~/types/auth"
-import { chats } from "~/db"
+import db, { chats } from "~/db";
+import { BaseResponse } from "~/types/response";
+import { getUserId } from "~/utils/tool";
 
-export const config = {
-  runtime: 'edge'
-}
+export interface CreateChatParams { }
+
+export type CreateChatResponse = BaseResponse<{
+  id: string
+}>
 
 export default defineEventHandler(async (event) => {
-  const body = JSON.parse(await readBody(event)) as CreateChatRequestBody
-  const userId = (event as unknown as withAuth)['userId']
-  const [chat] = await db.insert(chats)
-    .values({
-      uid: userId,
-      context: [{ role: 'user', content: body.prompt }],
-    })
-    .returning({ id: chats.id })
+  const userId = getUserId(event)
+  const [{ id }] = await db.insert(chats).values({
+    uid: userId,
+    title: 'New Chat',
+    status: 'init',
+    pages: {},
+    context: '[]',
+    messages: '[]',
+    design: {},
+    tasks: '[]',
+    current: {},
+  }).returning({ id: chats.id })
+  if (!id) {
+    return {
+      success: false,
+      message: 'Create chat failed',
+    }
+  }
   return {
-    chat_id: chat.id,
-  } satisfies CreateChatResponse
+    success: true,
+    data: { id },
+  }
 })

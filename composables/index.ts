@@ -1,9 +1,9 @@
-export type NextType = Ref<'next' | 'doubt' | 'prohibited'>
 export interface ChatInfo {
-  chat_id: string
+  chatId: string
   token: string
 }
 
-export * from "./useSpeaker"
-export * from "./useDesigner"
-export * from "./useBoard"
+export * from './useAgent'
+export * from './useBoard'
+export * from './useMessages'
+export * from './useTasks'

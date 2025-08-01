@@ -2,7 +2,7 @@
 import { ref, onMounted, onBeforeUnmount, computed, watch } from 'vue'
 import * as d3 from 'd3'
 import TimelineSlot from './TimelineSlot.vue';
-import type { Branch } from '~/types/timeline';
+import type { Branch } from '~/types/design';
 import type { Timeline } from './TimelineUtils';
 
 const props = defineProps<{

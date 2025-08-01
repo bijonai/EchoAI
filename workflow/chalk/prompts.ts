@@ -110,14 +110,6 @@ The operation should be separated to suitable parts, which could be summarized a
 `.trim()
 
 export const USER = `
-Now you are at:
-> Page ID: <:insert:page_id>
-
-> Page Document (The root node should be considered when use XPath):
-\`\`\`sciux
-<:insert:document>
-\`\`\`
-
 This is the requirements from user:
 
 \`\`\`txt
@@ -131,7 +123,7 @@ And I find some documents and references you may need:
 > - attributes format: \`<name>:<description>(type)[default value]\`
 > - namespace: for example, the fullname \`<namespace:name>\` can only be used in \`<namespace>\` component, the \`namespace:\` can be omitted.
 
-<:insert:references>
+<:insert:reference>
 \`\`\`
 
 You can **ONLY** use the components or other apis mentioned in the references or previous references.

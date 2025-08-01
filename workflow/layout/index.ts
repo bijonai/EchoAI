@@ -1,41 +1,28 @@
-import type { LayoutRequestBody, PageSwitch } from '~/types'
-import { SYSTEM, USER } from './prompts'
-import { prompt } from '~/utils'
-import { message } from '~/utils/ai-sdk/message'
-import { layoutModel } from '~/utils/ai-sdk/layout-provider'
-import { generateText, type Message } from 'ai'
-import { tools } from './tools'
+import { generateText, type Message } from "ai";
+import { LAYOUT_MODEL, LAYOUT_MODEL_API_KEY, LAYOUT_MODEL_BASE_URL } from "~/utils/env";
+import { SYSTEM } from "./prompts";
+import { message } from "~/utils/ai-sdk/message";
+import { layoutModel } from "~/utils/ai-sdk/provider";
 
-export function createLayout(context: Message[]) {
-  return async (options: LayoutRequestBody): Promise<{
-    content: string
-    operations: PageSwitch[]
-  } | null> => {    
-    if (context.length === 0) {
-      context.push(message.system(prompt(SYSTEM)))
-    }
-
-    context.push(message.user(prompt(USER, {
-      ...options.step,
-      id: options.page_id,
-    })))
-
-    const { text, steps, response } = await generateText({
+export interface LayoutOptions {
+  input: string
+}
+export function createLayout(
+  context: Message[]
+) {
+  if (context.length === 0) {
+    context.push(message.system(SYSTEM))
+  }
+  return async function (options: LayoutOptions) {
+    context.push(message.user(options.input))
+    const { text: layout, response } = await generateText({
       model: layoutModel,
       messages: context,
-      tools: tools(options),
-      maxSteps: 2,
     })
-
-    const toolCalls = steps.map(step => step.toolCalls).flat()
-    context.push(...response.messages as Message[])
-
+    context.push(...(await response).messages as Message[])
     return {
-      content: text!,
-      operations: toolCalls.map(call => ({
-        type: call.toolName,
-        ...(typeof call.args === 'string' ? JSON.parse(call.args) : call.args),
-      })),
+      layout,
+      context,
     }
   }
 }

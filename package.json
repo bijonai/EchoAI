@@ -11,6 +11,7 @@
     "db:init": "drizzle-kit push"
   },
   "dependencies": {
+    "@ai-sdk/google": "^1.2.22",
     "@ai-sdk/openai": "^1.3.23",
     "@ai-sdk/vue": "^1.2.12",
     "@logto/nuxt": "^1.2.5",
@@ -26,7 +27,7 @@
     "@types/d3": "^7.4.3",
     "@types/pg": "^8.15.4",
     "@valibot/to-json-schema": "^1.3.0",
-    "ai": "^4.3.16",
+    "ai": "^4.3.19",
     "arktype": "^2.1.20",
     "better-sqlite3": "^11.10.0",
     "crypto-js": "^4.2.0",
@@ -64,6 +65,7 @@
   "devDependencies": {
     "@shikijs/rehype": "^3.6.0",
     "@types/crypto-js": "^4.2.2",
+    "@types/node": "^24.0.14",
     "wrangler": "^4.21.2"
   }
 }
