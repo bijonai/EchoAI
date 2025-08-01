@@ -123,4 +123,10 @@ export function useAgent(info: ChatInfo) {
       }
     }
   }
+
+  return {
+    ask,
+    tasks,
+    messages,
+  }
 }

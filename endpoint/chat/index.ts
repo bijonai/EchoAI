@@ -206,4 +206,15 @@ export async function* agent({ chatId, token }: FetchParams): AsyncGenerator<Age
   }
 }
 
+export async function create(token?: string): FetchResponse<{ id: string }> {
+  const headers = token ? {
+    Authorization: `Bearer ${token}`,
+  } : {}
+  const response = await fetch('/api/chat/create', {
+    method: 'POST',
+    headers,
+  })
+  return await response.json() as FetchResponse<{ id: string }>
+}
+
 export * as task from './task'

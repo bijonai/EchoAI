@@ -1,22 +1,24 @@
 <script setup lang="ts">
-import { useChat } from '~/composables/useChat'
 import { useRoute } from 'vue-router'
-import useAgent from '~/composables/useAgent';
+import { useAgent } from '~/composables';
 
 const route = useRoute()
 const accessToken = useState<string | undefined>('access-token');
 
 const chatInfo = {
-  chat_id: route.params.id as string,
+  chatId: route.params.id as string,
   token: accessToken.value ?? ''
 }
 
 const prompts = ref('')
 
-const agentEnvironment = await useChat(chatInfo)
+const { ask, messages } = useAgent(chatInfo)
 
-const boardHandler = useBoard(agentEnvironment)
-const { agent } = useAgent(chatInfo, agentEnvironment, boardHandler)
+onMounted(async () => {
+  if (route.query.new) {
+    ask(route.query.new as string)
+  }
+})
 
 </script>
 
